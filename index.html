@@ -1,4 +1,4 @@
-س
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -9,32 +9,44 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#fff7fa;color:#30212a}
-header{background:#741c45;color:white;text-align:center;padding:25px}
+header{background:#741c45;color:white;text-align:center;padding:24px 15px}
 header h1{margin:0;font-size:34px}
-main{max-width:500px;margin:25px auto;padding:15px}
-.card{background:white;border:1px solid #f0dbe5;border-radius:18px;padding:22px;box-shadow:0 5px 20px #741c4510}
-h2{color:#741c45}
-label{display:block;margin:14px 0 6px}
-input,select{width:100%;padding:12px;border:1px solid #dfc5d2;border-radius:9px;font:inherit}
-button{width:100%;padding:13px;margin-top:14px;border:0;border-radius:10px;background:#741c45;color:white;font-size:16px}
+header p{margin-bottom:0}
+main{max-width:760px;margin:20px auto;padding:12px}
+.card{background:white;border:1px solid #f0dbe5;border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 5px 20px #741c4510}
+h2,h3{color:#741c45}
+label{display:block;margin:12px 0 6px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #dfc5d2;border-radius:9px;font:inherit;background:white}
+textarea{min-height:90px;resize:vertical}
+button{padding:12px;border:0;border-radius:10px;background:#741c45;color:white;font-size:15px;cursor:pointer}
+button:disabled{opacity:.55}
+.full{width:100%;margin-top:12px}
 .alt{background:#f7e8ef;color:#741c45}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row button{flex:1}
+.hidden{display:none!important}
 #msg{line-height:1.8;overflow-wrap:anywhere}
+.small{font-size:13px;color:#77616d;line-height:1.8}
+.profiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.member{border:1px solid #f0dbe5;border-radius:14px;padding:15px;overflow-wrap:anywhere}
+.member h3{margin-top:0}
+.pill{display:inline-block;background:#f7e8ef;color:#741c45;border-radius:20px;padding:5px 10px;font-size:12px}
 footer{text-align:center;padding:20px;color:#77616d}
 </style>
 </head>
 <body>
 <header>
 <h1>نصيب ❤️</h1>
-<p>نصيبك في الحلال</p>
+<p>تعارف جاد بنية الزواج وبموافقة الطرفين</p>
 </header>
 
 <main>
-<section class="card">
-<h2 id="title">إنشاء حساب جديد</h2>
+<section class="card" id="authCard">
+<h2 id="authTitle">إنشاء حساب جديد</h2>
 <form id="authForm">
-<div id="extra">
+<div id="signupFields">
 <label for="name">الاسم</label>
-<input id="name" maxlength="80" required>
+<input id="name" maxlength="80" autocomplete="name" required>
 
 <label for="birth">تاريخ الميلاد</label>
 <input id="birth" type="date" required>
@@ -56,119 +68,317 @@ footer{text-align:center;padding:20px;color:#77616d}
 <label for="password">كلمة المرور (8 أحرف على الأقل)</label>
 <input id="password" type="password" minlength="8" autocomplete="new-password" required>
 
-<button id="submit" type="submit">إنشاء الحساب</button>
+<button class="full" id="submitBtn" type="submit">إنشاء الحساب</button>
 </form>
+<button class="full alt" id="switchBtn" type="button">عندي حساب — تسجيل الدخول</button>
+<p id="authMsg" role="status"></p>
+<p class="small">يجب أن يكون عمرك 18 سنة أو أكثر. لا تشارك كلمة مرورك مع أي شخص.</p>
+</section>
 
-<button class="alt" id="switch" type="button">عندي حساب — تسجيل الدخول</button>
-<button class="alt" id="logout" type="button" hidden>تسجيل الخروج</button>
-<p id="msg" role="status"></p>
+<section id="app" class="hidden">
+<div class="card">
+<div class="row">
+<div style="flex:1">
+<h2 style="margin-top:0">أهلًا بك في نصيب</h2>
+<p id="welcome"></p>
+</div>
+<button id="logoutBtn" class="alt" style="align-self:start">تسجيل الخروج</button>
+</div>
+<p id="appMsg" role="status"></p>
+</div>
+
+<section class="card">
+<h2>ملفي الشخصي</h2>
+<form id="profileForm">
+<label for="pname">الاسم</label>
+<input id="pname" maxlength="80" required>
+
+<label for="pbirth">تاريخ الميلاد</label>
+<input id="pbirth" type="date" required>
+
+<label for="pgender">النوع</label>
+<select id="pgender" required>
+<option value="male">ذكر</option>
+<option value="female">أنثى</option>
+</select>
+
+<label for="pcity">المدينة</label>
+<input id="pcity" maxlength="80" required>
+
+<label for="bio">نبذة عنك</label>
+<textarea id="bio" maxlength="500" placeholder="اكتب نبذة محترمة عن نفسك وما تبحث عنه"></textarea>
+
+<button class="full" type="submit">حفظ بياناتي</button>
+</form>
+<p class="small">تعديل بياناتك لا يعني أن ملفك أصبح معتمدًا تلقائيًا. الملفات المعروضة للآخرين يجب أن تكون معتمدة من الإدارة.</p>
+</section>
+
+<section class="card">
+<h2>أعضاء معتمدون</h2>
+<p class="small">لن تظهر هنا إلا الملفات التي يسمح حسابك وسياسات قاعدة البيانات بالاطلاع عليها.</p>
+<button id="reloadBtn" class="alt">تحديث القائمة</button>
+<div id="members" class="profiles" style="margin-top:15px"></div>
+</section>
+
+<section class="card">
+<h2>الخصوصية والأمان</h2>
+<p class="small">لا تنشر رقم هاتفك أو عنوانك أو بياناتك المالية في النبذة. لا ترسل أموالًا لأشخاص تعرفت عليهم عبر الإنترنت. استخدم زر الإبلاغ عند ملاحظة حساب مريب.</p>
+</section>
 </section>
 </main>
+
 <footer>نصيب © 2026 — منصة للزواج الجاد</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const client = window.supabase.createClient(
-  "https://gdavyferkvekaprdgcft.supabase.co",
-  "sb_publishable_QJnnLMv9pltgpeKQgmPGuw_c4CAyG7K"
-);
+const SUPABASE_URL = "https://gdavyferkvekaprdgcft.supabase.co";
+const SUPABASE_KEY = "sb_publishable_QJnnLMv9pltgpeKQgmPGuw_c4CAyG7K";
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const $ = id => document.getElementById(id);
-let signup = true;
+let isSignup = true;
+let currentUser = null;
 
-function message(text) {
-  $("msg").textContent = text;
+function showAuthMessage(text) {
+  $("authMsg").textContent = text;
 }
-
-$("switch").onclick = () => {
-  signup = !signup;
-  $("extra").hidden = !signup;
+function showAppMessage(text) {
+  $("appMsg").textContent = text;
+}
+function setSignupMode(value) {
+  isSignup = value;
+  $("signupFields").classList.toggle("hidden", !value);
   ["name","birth","gender","city"].forEach(id => {
-    $(id).required = signup;
+    $(id).required = value;
   });
-  $("title").textContent = signup ? "إنشاء حساب جديد" : "تسجيل الدخول";
-  $("submit").textContent = signup ? "إنشاء الحساب" : "دخول";
-  $("switch").textContent = signup
+  $("authTitle").textContent = value ? "إنشاء حساب جديد" : "تسجيل الدخول";
+  $("submitBtn").textContent = value ? "إنشاء الحساب" : "دخول";
+  $("switchBtn").textContent = value
     ? "عندي حساب — تسجيل الدخول"
     : "إنشاء حساب جديد";
-  $("password").autocomplete = signup ? "new-password" : "current-password";
-  message("");
-};
+  $("password").autocomplete = value ? "new-password" : "current-password";
+  showAuthMessage("");
+}
 
-$("authForm").onsubmit = async event => {
+$("switchBtn").addEventListener("click", () => setSignupMode(!isSignup));
+
+function validAdult(dateString) {
+  if (!dateString) return false;
+  const dob = new Date(dateString + "T00:00:00");
+  if (Number.isNaN(dob.getTime())) return false;
+  const now = new Date();
+  let age = now.getFullYear() - dob.getFullYear();
+  const monthDiff = now.getMonth() - dob.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < dob.getDate())) age--;
+  return age >= 18 && dob <= now;
+}
+
+$("authForm").addEventListener("submit", async event => {
   event.preventDefault();
-  $("submit").disabled = true;
-  message("جاري التنفيذ...");
+  $("submitBtn").disabled = true;
+  showAuthMessage("جاري التنفيذ...");
 
   try {
     const email = $("email").value.trim();
     const password = $("password").value;
 
-    if (signup) {
-      if (new Date($("birth").value) > new Date()) {
-        message("تاريخ الميلاد غير صحيح.");
+    if (isSignup) {
+      if (!validAdult($("birth").value)) {
+        showAuthMessage("التسجيل متاح لمن بلغ 18 سنة أو أكثر فقط.");
         return;
       }
 
-      const { data, error } = await client.auth.signUp({
+      const profileData = {
+        display_name: $("name").value.trim(),
+        birth_date: $("birth").value,
+        gender: $("gender").value,
+        city: $("city").value.trim()
+      };
+
+      const { data, error } = await db.auth.signUp({
         email,
         password,
-        options: {
-          data: {
-            display_name: $("name").value.trim(),
-            birth_date: $("birth").value,
-            gender: $("gender").value,
-            city: $("city").value.trim()
-          }
-        }
+        options: { data: profileData }
       });
-
       if (error) throw error;
 
-      if (data.session) {
-        message("تم إنشاء الحساب بنجاح.");
-        $("logout").hidden = false;
+      if (data.user && data.session) {
+        currentUser = data.user;
+        const { error: profileError } = await db.from("profiles").upsert({
+          id: data.user.id,
+          ...profileData
+        }, { onConflict: "id" });
+
+        if (profileError) {
+          showAuthMessage("تم إنشاء الحساب، لكن تعذر حفظ الملف الشخصي: " + profileError.message);
+        } else {
+          showAuthMessage("تم إنشاء الحساب.");
+          await openApp(data.user);
+        }
       } else {
-        message("تم إرسال طلب التسجيل. افحص بريدك لتأكيد الحساب، ثم سجّل الدخول.");
+        showAuthMessage("تم إرسال طلب التسجيل. افحص بريدك لتأكيد الحساب، ثم سجّل الدخول. إذا لم يصل التأكيد، راجع مجلد الرسائل غير المرغوب فيها.");
       }
     } else {
-      const { error } = await client.auth.signInWithPassword({
-        email,
-        password
-      });
+      const { data, error } = await db.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      message("تم تسجيل الدخول بنجاح.");
-      $("logout").hidden = false;
+      currentUser = data.user;
+      await openApp(data.user);
     }
   } catch (error) {
-    message("تعذر إكمال العملية: " + error.message);
+    showAuthMessage("تعذر إكمال العملية: " + (error.message || "خطأ غير معروف"));
   } finally {
-    $("submit").disabled = false;
+    $("submitBtn").disabled = false;
   }
-};
+});
 
-$("logout").onclick = async () => {
-  const { error } = await client.auth.signOut();
+async function openApp(user) {
+  currentUser = user;
+  $("authCard").classList.add("hidden");
+  $("app").classList.remove("hidden");
+  $("welcome").textContent = "حسابك: " + (user.email || "");
+  showAppMessage("جاري تحميل بياناتك...");
+  await loadProfile();
+  await loadMembers();
+}
+
+async function loadProfile() {
+  if (!currentUser) return;
+  const { data, error } = await db.from("profiles")
+    .select("id,display_name,birth_date,gender,city,bio,approved")
+    .eq("id", currentUser.id)
+    .maybeSingle();
+
   if (error) {
-    message("تعذر تسجيل الخروج: " + error.message);
+    showAppMessage("تعذر قراءة الملف الشخصي. راجع سياسات RLS في Supabase: " + error.message);
     return;
   }
-  $("logout").hidden = true;
-  message("تم تسجيل الخروج.");
-};
+
+  const meta = currentUser.user_metadata || {};
+  const p = data || meta;
+  $("pname").value = p.display_name || "";
+  $("pbirth").value = p.birth_date || "";
+  $("pgender").value = p.gender || "male";
+  $("pcity").value = p.city || "";
+  $("bio").value = p.bio || "";
+  showAppMessage(data && data.approved
+    ? "ملفك الشخصي معتمد."
+    : "ملفك الشخصي غير معتمد بعد، أو يحتاج إلى مراجعة الإدارة.");
+}
+
+$("profileForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  if (!currentUser) return;
+  if (!validAdult($("pbirth").value)) {
+    showAppMessage("يجب أن يكون عمرك 18 سنة أو أكثر.");
+    return;
+  }
+
+  const payload = {
+    id: currentUser.id,
+    display_name: $("pname").value.trim(),
+    birth_date: $("pbirth").value,
+    gender: $("pgender").value,
+    city: $("pcity").value.trim(),
+    bio: $("bio").value.trim()
+  };
+
+  showAppMessage("جاري حفظ البيانات...");
+  const { error } = await db.from("profiles").upsert(payload, { onConflict: "id" });
+  if (error) {
+    showAppMessage("تعذر الحفظ. قد تحتاج إلى إصلاح سياسات قاعدة البيانات: " + error.message);
+    return;
+  }
+
+  const { error: metaError } = await db.auth.updateUser({
+    data: {
+      display_name: payload.display_name,
+      birth_date: payload.birth_date,
+      gender: payload.gender,
+      city: payload.city
+    }
+  });
+
+  showAppMessage(metaError
+    ? "تم حفظ الملف الشخصي، لكن تعذر تحديث البيانات الإضافية للحساب."
+    : "تم حفظ بياناتك بنجاح. الاعتماد النهائي من الإدارة.");
+  await loadMembers();
+});
+
+async function loadMembers() {
+  if (!currentUser) return;
+  $("members").textContent = "جاري تحميل الملفات...";
+  const { data, error } = await db.from("profiles")
+    .select("id,display_name,city,bio,gender")
+    .eq("approved", true)
+    .neq("id", currentUser.id)
+    .limit(30);
+
+  if (error) {
+    $("members").textContent = "تعذر تحميل الأعضاء. تأكد من سياسات RLS ومن صلاحية قراءة الملفات المعتمدة. " + error.message;
+    return;
+  }
+
+  $("members").replaceChildren();
+  if (!data || data.length === 0) {
+    $("members").textContent = "لا توجد ملفات معتمدة للعرض حاليًا.";
+    return;
+  }
+
+  data.forEach(member => {
+    const card = document.createElement("article");
+    card.className = "member";
+
+    const title = document.createElement("h3");
+    title.textContent = member.display_name || "عضو نصيب";
+    card.appendChild(title);
+
+    const city = document.createElement("p");
+    city.textContent = "المدينة: " + (member.city || "غير محددة");
+    card.appendChild(city);
+
+    const gender = document.createElement("p");
+    gender.textContent = "النوع: " +
+      (member.gender === "male" ? "ذكر" : member.gender === "female" ? "أنثى" : "غير محدد");
+    card.appendChild(gender);
+
+    if (member.bio) {
+      const bio = document.createElement("p");
+      bio.textContent = member.bio;
+      card.appendChild(bio);
+    }
+
+    const tag = document.createElement("span");
+    tag.className = "pill";
+    tag.textContent = "ملف معتمد";
+    card.appendChild(tag);
+    $("members").appendChild(card);
+  });
+}
+
+$("reloadBtn").addEventListener("click", loadMembers);
+
+$("logoutBtn").addEventListener("click", async () => {
+  const { error } = await db.auth.signOut();
+  if (error) {
+    showAppMessage("تعذر تسجيل الخروج: " + error.message);
+    return;
+  }
+  currentUser = null;
+  $("app").classList.add("hidden");
+  $("authCard").classList.remove("hidden");
+  $("password").value = "";
+  showAuthMessage("تم تسجيل الخروج.");
+});
 
 (async () => {
-  const { data } = await client.auth.getSession();
-  if (data.session) {
-    $("logout").hidden = false;
-    message("أنت مسجل الدخول بالفعل.");
+  const { data, error } = await db.auth.getSession();
+  if (error) {
+    showAuthMessage("تعذر التحقق من الجلسة: " + error.message);
+    return;
   }
+  if (data.session) await openApp(data.session.user);
 })();
 </script>
 </body>
   </html>
-
-
-
-
   
