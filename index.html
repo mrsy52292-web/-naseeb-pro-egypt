@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -9,104 +8,114 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#fff7fa;color:#30212a}
-header{background:#741c45;color:white;padding:22px 16px;text-align:center}
-header h1{margin:0 0 8px}
-header p{margin:0}
+header{background:#741c45;color:white;padding:22px;text-align:center}
 main{max-width:850px;margin:20px auto;padding:0 12px}
-.card{background:white;border:1px solid #f0dce5;border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 3px 14px #741c450a}
-h2{font-size:20px;margin-top:0}
-input,select,textarea{display:block;width:100%;padding:12px;margin:8px 0 14px;border:1px solid #d9c4ce;border-radius:9px;font:inherit;background:white}
-textarea{min-height:90px}
-button{font:inherit;border:0;border-radius:9px;padding:11px 15px;background:#741c45;color:white;cursor:pointer;margin:4px 2px}
-button.secondary{background:#f5e7ee;color:#741c45}
-button:disabled{opacity:.5}
-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
-nav button{flex:1;min-width:90px}
-.status{padding:12px;background:#f8edf2;border-radius:9px;margin:12px 0;overflow-wrap:anywhere}
+.card{background:white;border:1px solid #f0dce5;border-radius:16px;padding:18px;margin-bottom:16px}
+h2{font-size:20px}
+input,select,textarea{display:block;width:100%;padding:12px;margin:8px 0 14px;border:1px solid #d9c4ce;border-radius:9px;font:inherit}
+button{font:inherit;border:0;border-radius:9px;padding:11px 15px;background:#741c45;color:white;margin:4px;cursor:pointer}
+.secondary{background:#f5e7ee;color:#741c45}
+nav{display:flex;flex-wrap:wrap;gap:5px}
+nav button{flex:1}
 .hidden{display:none!important}
+.status{padding:12px;background:#f8edf2;border-radius:9px;margin:12px 0;overflow-wrap:anywhere}
 .member{border:1px solid #ead7e0;border-radius:12px;padding:14px;margin:10px 0}
-.member h3{margin:0 0 8px}
-small,.muted{color:#786773}
-footer{text-align:center;padding:22px;color:#786773}
-label{display:block;font-size:14px}
+.chatbox{border:1px solid #ead7e0;border-radius:12px;padding:10px;max-height:320px;overflow:auto}
+.bubble{padding:9px 12px;border-radius:12px;margin:7px 0;max-width:90%;overflow-wrap:anywhere;background:#f5e7ee}
+.mine{background:#741c45;color:white;margin-right:auto}
+footer{text-align:center;padding:20px;color:#786773}
 </style>
 </head>
 <body>
 <header>
-  <h1>نصيب ❤️</h1>
-  <p>تعارف جاد بنية الزواج وبموافقة الطرفين</p>
-  <p style="margin-top:10px;font-size:14px">الخصوصية والاحترام أساس التعارف</p>
+<h1>نصيب ❤️</h1>
+<p>تعارف جاد بنية الزواج وبموافقة الطرفين</p>
+<p>الخصوصية والاحترام أساس التعارف</p>
 </header>
 
 <main>
 <section id="auth" class="card">
-  <h2>أهلًا بك في نصيب</h2>
-  <p>أنشئ حسابًا أو سجّل دخولك للمتابعة.</p>
-  <label>البريد الإلكتروني</label>
-  <input id="email" type="email" autocomplete="email" placeholder="name@example.com">
-  <label>كلمة المرور</label>
-  <input id="password" type="password" autocomplete="current-password" placeholder="كلمة المرور">
-  <button id="loginBtn">تسجيل الدخول</button>
-  <button id="signupBtn" class="secondary">إنشاء حساب</button>
-  <div id="authMsg" class="status" aria-live="polite"></div>
+<h2>أهلًا بك في نصيب</h2>
+<label>البريد الإلكتروني</label>
+<input id="email" type="email" placeholder="name@example.com">
+<label>كلمة المرور</label>
+<input id="password" type="password">
+<button id="loginBtn">تسجيل الدخول</button>
+<button id="signupBtn" class="secondary">إنشاء حساب</button>
+<div id="authMsg" class="status"></div>
 </section>
 
 <section id="app" class="hidden">
-  <div class="card">
-    <strong>أهلًا بك في نصيب ❤️</strong>
-    <p id="account"></p>
-    <div id="roleMsg" class="status"></div>
-    <button id="logoutBtn" class="secondary">تسجيل الخروج</button>
-  </div>
+<div class="card">
+<b>أهلًا بك في نصيب ❤️</b>
+<p id="account"></p>
+<div id="roleMsg" class="status"></div>
+<button id="logoutBtn" class="secondary">تسجيل الخروج</button>
+</div>
 
-  <nav>
-    <button data-tab="profile">ملفي الشخصي</button>
-    <button data-tab="members">الأعضاء</button>
-    <button data-tab="admin" id="adminNav" class="hidden">لوحة الإدارة</button>
-  </nav>
+<nav>
+<button data-tab="profile">ملفي الشخصي</button>
+<button data-tab="members">الأعضاء ❤️</button>
+<button data-tab="matches">تطابقاتي 💞</button>
+<button data-tab="chat">الرسائل 💬</button>
+<button data-tab="admin" id="adminNav" class="hidden">لوحة الإدارة</button>
+</nav>
 
-  <section id="profile" class="card">
-    <h2>ملفي الشخصي</h2>
-    <label>الاسم</label>
-    <input id="displayName" maxlength="80">
-    <label>تاريخ الميلاد</label>
-    <input id="birthDate" type="date">
-    <label>النوع</label>
-    <select id="gender">
-      <option value="">اختر</option>
-      <option value="male">ذكر</option>
-      <option value="female">أنثى</option>
-    </select>
-    <label>المدينة</label>
-    <input id="city" maxlength="80">
-    <label>نبذة عنك</label>
-    <textarea id="bio" maxlength="500"></textarea>
-    <button id="saveProfile">حفظ بياناتي</button>
-    <div id="profileMsg" class="status" aria-live="polite"></div>
-    <p class="muted">حفظ البيانات لا يعني اعتماد الملف تلقائيًا؛ قد يحتاج إلى مراجعة الإدارة.</p>
-  </section>
+<section id="profile" class="card">
+<h2>ملفي الشخصي</h2>
+<label>الاسم</label>
+<input id="displayName" maxlength="80">
+<label>تاريخ الميلاد</label>
+<input id="birthDate" type="date">
+<label>النوع</label>
+<select id="gender">
+<option value="">اختر</option>
+<option value="male">ذكر</option>
+<option value="female">أنثى</option>
+</select>
+<label>المدينة</label>
+<input id="city" maxlength="80">
+<label>نبذة عنك</label>
+<textarea id="bio" maxlength="500"></textarea>
+<button id="saveProfile">حفظ بياناتي</button>
+<div id="profileMsg" class="status"></div>
+</section>
 
-  <section id="members" class="card hidden">
-    <h2>الأعضاء المعتمدون</h2>
-    <p>تظهر هنا الملفات المعتمدة التي تسمح سياسات قاعدة البيانات بعرضها.</p>
-    <button id="refreshMembers">تحديث القائمة</button>
-    <div id="membersList" aria-live="polite"></div>
-  </section>
+<section id="members" class="card hidden">
+<h2>الأعضاء المعتمدون</h2>
+<button id="refreshMembers">تحديث القائمة</button>
+<div id="membersList"></div>
+</section>
 
-  <section id="admin" class="card hidden">
-    <h2>لوحة الإدارة</h2>
-    <p>هذه الأدوات متاحة لحسابات الإدارة فقط. تظل سياسات قاعدة البيانات هي الحماية الأساسية.</p>
-    <button id="loadProfiles">تحميل الملفات</button>
-    <button id="loadReports" class="secondary">عرض البلاغات</button>
-    <button id="loadPayments" class="secondary">عرض طلبات الدفع</button>
-    <div id="adminMsg" class="status" aria-live="polite"></div>
-    <div id="adminList"></div>
-  </section>
+<section id="matches" class="card hidden">
+<h2>تطابقاتي 💞</h2>
+<button id="refreshMatches">تحديث التطابقات</button>
+<div id="matchesList"></div>
+</section>
+
+<section id="chat" class="card hidden">
+<h2>الرسائل 💬</h2>
+<div id="chatMatches"></div>
+<div id="chatStatus" class="status">اختر تطابقًا لفتح المحادثة.</div>
+<div id="chatMessages" class="chatbox"></div>
+<label>رسالتك</label>
+<textarea id="messageText" maxlength="2000" placeholder="اكتب رسالة محترمة"></textarea>
+<button id="sendMessage">إرسال الرسالة</button>
+</section>
+
+<section id="admin" class="card hidden">
+<h2>لوحة الإدارة</h2>
+<button id="loadProfiles">تحميل الملفات</button>
+<button id="loadReports" class="secondary">عرض البلاغات</button>
+<button id="loadPayments" class="secondary">عرض طلبات الدفع</button>
+<div id="adminMsg" class="status"></div>
+<div id="adminList"></div>
+</section>
 </section>
 
 <section class="card">
-  <h2>الخصوصية والأمان</h2>
-  <p>لا تنشر رقم هاتفك أو عنوانك أو بياناتك المالية. لا ترسل أموالًا لأشخاص تعرفت عليهم عبر الإنترنت، ولا تشارك كلمة المرور.</p>
+<h2>الخصوصية والأمان</h2>
+<p>لا تنشر رقم هاتفك أو عنوانك أو بياناتك المالية. لا تشارك كلمة المرور ولا ترسل أموالًا لأشخاص تعرفت عليهم عبر الإنترنت.</p>
 </section>
 </main>
 
@@ -114,233 +123,311 @@ label{display:block;font-size:14px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-(() => {
+(()=>{
 "use strict";
 
-const SUPABASE_URL = "https://gdavyferkvekaprdgcft.supabase.co";
-const SUPABASE_KEY = "sb_publishable_QJnnLMv9pltgpeKQgmPGuw_c4CAyG7K";
+const client=window.supabase.createClient(
+"https://gdavyferkvekaprdgcft.supabase.co",
+"sb_publishable_QJnnLMv9pltgpeKQgmPGuw_c4CAyG7K"
+);
 
-const $ = id => document.getElementById(id);
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const $=id=>document.getElementById(id);
+let user=null,isAdmin=false,activeMatch=null;
 
-let currentUser = null;
-let isAdmin = false;
+const say=(id,t)=>$(id).textContent=t||"";
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[c]));
 
-function message(id, text) {
-  $(id).textContent = text || "";
+function tab(n){
+["profile","members","matches","chat","admin"].forEach(x=>{
+$(x).classList.toggle("hidden",x!==n||(x==="admin"&&!isAdmin));
+});
+if(n==="members")loadMembers();
+if(n==="matches")loadMatches();
+if(n==="chat")loadChatMatches();
+if(n==="admin"&&isAdmin)loadProfiles();
 }
-function safe(value) {
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
-}
-function showTab(name) {
-  ["profile","members","admin"].forEach(id => $(id).classList.toggle(
-    "hidden", id !== name || (id === "admin" && !isAdmin)
-  ));
-  if (name === "members") loadMembers();
-  if (name === "admin" && isAdmin) loadProfiles();
-}
-document.querySelectorAll("[data-tab]").forEach(button => {
-  button.addEventListener("click", () => showTab(button.dataset.tab));
+
+document.querySelectorAll("[data-tab]").forEach(b=>{
+b.onclick=()=>tab(b.dataset.tab);
 });
 
-async function checkAdmin() {
-  const {data, error} = await client
-    .from("admin_roles")
-    .select("role")
-    .eq("user_id", currentUser.id)
-    .maybeSingle();
+async function start(u){
+user=u;
+$("auth").classList.add("hidden");
+$("app").classList.remove("hidden");
+$("account").textContent="حسابك: "+(u.email||"");
 
-  isAdmin = !error && data?.role === "admin";
-  $("adminNav").classList.toggle("hidden", !isAdmin);
-  message("roleMsg", isAdmin
-    ? "تم تسجيل الدخول بصلاحيات الإدارة."
-    : "تم تسجيل الدخول.");
+try{
+let r=await client.from("admin_roles")
+.select("role").eq("user_id",u.id).maybeSingle();
+
+isAdmin=!r.error&&r.data?.role==="admin";
+$("adminNav").classList.toggle("hidden",!isAdmin);
+say("roleMsg",isAdmin?"تم تسجيل الدخول بصلاحيات الإدارة.":"تم تسجيل الدخول.");
+
+let p=await client.from("profiles")
+.select("id,display_name,birth_date,gender,city,bio,approved")
+.eq("id",u.id).maybeSingle();
+
+if(p.error)throw p.error;
+
+if(p.data){
+$("displayName").value=p.data.display_name||"";
+$("birthDate").value=p.data.birth_date||"";
+$("gender").value=p.data.gender||"";
+$("city").value=p.data.city||"";
+$("bio").value=p.data.bio||"";
+say("profileMsg",p.data.approved?"ملفك معتمد.":"ملفك ينتظر مراجعة الإدارة.");
+}else{
+say("profileMsg","أكمل بيانات ملفك ثم احفظها.");
+}
+}catch(e){
+say("profileMsg","تعذر تحميل البيانات: "+e.message);
+}
 }
 
-async function ensureProfile() {
-  const {data, error} = await client.from("profiles")
-    .select("id,display_name,birth_date,gender,city,bio,approved")
-    .eq("id", currentUser.id)
-    .maybeSingle();
+$("loginBtn").onclick=async()=>{
+say("authMsg","جاري تسجيل الدخول...");
+let r=await client.auth.signInWithPassword({
+email:$("email").value.trim(),
+password:$("password").value
+});
+if(r.error)say("authMsg",r.error.message);
+else await start(r.data.user);
+};
 
-  if (error) throw error;
+$("signupBtn").onclick=async()=>{
+say("authMsg","جاري إنشاء الحساب...");
+let r=await client.auth.signUp({
+email:$("email").value.trim(),
+password:$("password").value
+});
+if(r.error)say("authMsg",r.error.message);
+else if(r.data.session)await start(r.data.user);
+else say("authMsg","راجع بريدك لتأكيد الحساب، ثم سجّل الدخول.");
+};
 
-  if (data) {
-    $("displayName").value = data.display_name || "";
-    $("birthDate").value = data.birth_date || "";
-    $("gender").value = data.gender || "";
-    $("city").value = data.city || "";
-    $("bio").value = data.bio || "";
-    message("profileMsg", data.approved
-      ? "ملفك معتمد."
-      : "ملفك ينتظر مراجعة الإدارة.");
-  } else {
-    message("profileMsg", "أكمل بيانات ملفك ثم اضغط حفظ بياناتي.");
-  }
+$("logoutBtn").onclick=async()=>{
+await client.auth.signOut();
+location.reload();
+};
+
+$("saveProfile").onclick=async()=>{
+let p={
+id:user.id,
+display_name:$("displayName").value.trim(),
+birth_date:$("birthDate").value||null,
+gender:$("gender").value||null,
+city:$("city").value.trim(),
+bio:$("bio").value.trim()
+};
+
+if(!p.display_name)return say("profileMsg","اكتب الاسم أولًا.");
+
+let r=await client.from("profiles").upsert(p,{onConflict:"id"});
+say("profileMsg",r.error?"تعذر الحفظ: "+r.error.message:"تم حفظ البيانات. قد تحتاج إلى مراجعة الإدارة.");
+};
+
+async function loadMembers(){
+let box=$("membersList");
+box.textContent="جاري التحميل...";
+
+let r=await client.from("profiles")
+.select("id,display_name,gender,city,bio")
+.eq("approved",true)
+.order("created_at",{ascending:false});
+
+if(r.error)return box.textContent="تعذر تحميل الأعضاء: "+r.error.message;
+
+let rows=(r.data||[]).filter(p=>p.id!==user.id);
+
+if(!rows.length)return box.textContent="لا توجد ملفات معتمدة أخرى حاليًا.";
+
+box.innerHTML=rows.map(p=>`
+<article class="member">
+<h3>${esc(p.display_name||"عضو نصيب")}</h3>
+<p>المدينة: ${esc(p.city||"غير محددة")}</p>
+<p>${esc(p.bio||"")}</p>
+<button data-like="${esc(p.id)}">إعجاب ❤️</button>
+<span id="like-${esc(p.id)}"></span>
+</article>`).join("");
+
+box.querySelectorAll("[data-like]").forEach(b=>{
+b.onclick=async()=>{
+b.disabled=true;
+let x=await client.from("likes").insert({
+sender_id:user.id,
+receiver_id:b.dataset.like
+});
+say("like-"+b.dataset.like,
+x.error?(x.error.code==="23505"?"سبق إرسال الإعجاب.":x.error.message):" تم إرسال الإعجاب ❤️");
+b.disabled=false;
+if(!x.error)loadMatches();
+};
+});
 }
 
-async function startApp(user) {
-  currentUser = user;
-  $("auth").classList.add("hidden");
-  $("app").classList.remove("hidden");
-  $("account").textContent = "حسابك: " + user.email;
-  try {
-    await checkAdmin();
-    await ensureProfile();
-  } catch (error) {
-    message("profileMsg", "تعذر تحميل الملف: " + error.message);
-  }
+async function myMatches(){
+let r=await client.from("matches")
+.select("id,user_one,user_two")
+.or(`user_one.eq.${user.id},user_two.eq.${user.id}`);
+
+if(r.error)throw r.error;
+return r.data||[];
 }
 
-async function loadMembers() {
-  const list = $("membersList");
-  list.textContent = "جاري تحميل الأعضاء...";
-  const {data, error} = await client.from("profiles")
-    .select("id,display_name,gender,city,bio,approved")
-    .eq("approved", true)
-    .order("created_at", {ascending:false});
+async function drawMatches(target){
+let box=$(target);
+box.textContent="جاري تحميل التطابقات...";
 
-  if (error) {
-    list.textContent = "تعذر تحميل الأعضاء. تحقق من سياسات القراءة.";
-    console.error("loadMembers:", error);
-    return;
-  }
-  if (!data?.length) {
-    list.textContent = "لا توجد ملفات معتمدة متاحة للعرض حاليًا.";
-    return;
-  }
+try{
+let ms=await myMatches();
 
-  list.innerHTML = data.map(member => `
-    <article class="member">
-      <h3>${safe(member.display_name || "عضو نصيب")}</h3>
-      <p>المدينة: ${safe(member.city || "غير محددة")}</p>
-      <p>${safe(member.bio || "")}</p>
-    </article>`).join("");
-}
+if(!ms.length)return box.textContent="لا توجد تطابقات بعد. يلزم إعجاب متبادل.";
 
-async function saveProfile() {
-  message("profileMsg", "جاري حفظ البيانات...");
-  const payload = {
-    id: currentUser.id,
-    display_name: $("displayName").value.trim(),
-    birth_date: $("birthDate").value || null,
-    gender: $("gender").value || null,
-    city: $("city").value.trim(),
-    bio: $("bio").value.trim()
-  };
-  if (!payload.display_name) {
-    message("profileMsg", "اكتب الاسم أولًا.");
-    return;
-  }
-  const {error} = await client.from("profiles").upsert(payload, {onConflict:"id"});
-  if (error) {
-    message("profileMsg", "تعذر الحفظ: " + error.message);
-    return;
-  }
-  message("profileMsg", "تم حفظ البيانات. قد يحتاج الملف إلى مراجعة الإدارة.");
-}
+let ids=[...new Set(ms.map(m=>m.user_one===user.id?m.user_two:m.user_one))];
 
-async function loadProfiles() {
-  if (!isAdmin) return;
-  $("adminList").textContent = "جاري تحميل الملفات...";
-  const {data, error} = await client.from("profiles")
-    .select("id,display_name,city,approved")
-    .order("created_at", {ascending:false});
+let p=await client.from("profiles")
+.select("id,display_name,city").in("id",ids);
 
-  if (error) {
-    $("adminList").textContent = "تعذر تحميل الملفات: " + error.message;
-    return;
-  }
-  $("adminList").innerHTML = (data || []).map(p => `
-    <article class="member">
-      <h3>${safe(p.display_name || "بدون اسم")}</h3>
-      <p>المدينة: ${safe(p.city || "غير محددة")}</p>
-      <p>الحالة: ${p.approved ? "معتمد" : "ينتظر المراجعة"}</p>
-      <button data-approve="${safe(p.id)}" data-value="${!p.approved}">
-        ${p.approved ? "إلغاء الاعتماد" : "اعتماد الملف"}
-      </button>
-    </article>`).join("") || "لا توجد ملفات.";
+if(p.error)throw p.error;
 
-  $("adminList").querySelectorAll("[data-approve]").forEach(button => {
-    button.addEventListener("click", async () => {
-      if (!isAdmin) return;
-      const approved = button.dataset.value === "true";
-      const {error} = await client.from("profiles")
-        .update({approved})
-        .eq("id", button.dataset.approve);
-      if (error) {
-        message("adminMsg", "تعذر تغيير الاعتماد: " + error.message);
-      } else {
-        message("adminMsg", "تم تحديث حالة الملف.");
-        await loadProfiles();
-      }
-    });
-  });
-}
+let map={};
+(p.data||[]).forEach(x=>map[x.id]=x);
 
-async function loadAdminTable(table, columns) {
-  if (!isAdmin) return;
-  $("adminList").textContent = "جاري التحميل...";
-  const {data, error} = await client.from(table).select(columns).limit(50);
-  if (error) {
-    $("adminList").textContent = "تعذر تحميل البيانات: " + error.message;
-    return;
-  }
-  $("adminList").innerHTML = (data || []).map(row =>
-    `<article class="member"><pre style="white-space:pre-wrap;overflow-wrap:anywhere">${safe(JSON.stringify(row,null,2))}</pre></article>`
-  ).join("") || "لا توجد سجلات.";
-}
+box.innerHTML=ms.map(m=>{
+let other=m.user_one===user.id?m.user_two:m.user_one;
+return `<article class="member">
+<b>${esc(map[other]?.display_name||"عضو متطابق")}</b>
+<p>${esc(map[other]?.city||"")}</p>
+<button data-chat="${esc(m.id)}">فتح المحادثة 💬</button>
+</article>`;
+}).join("");
 
-$("loginBtn").addEventListener("click", async () => {
-  message("authMsg", "جاري تسجيل الدخول...");
-  const {data,error} = await client.auth.signInWithPassword({
-    email:$("email").value.trim(),
-    password:$("password").value
-  });
-  if (error) return message("authMsg", error.message);
-  await startApp(data.user);
+box.querySelectorAll("[data-chat]").forEach(b=>{
+b.onclick=()=>openChat(b.dataset.chat);
 });
 
-$("signupBtn").addEventListener("click", async () => {
-  message("authMsg", "جاري إنشاء الحساب...");
-  const {data,error} = await client.auth.signUp({
-    email:$("email").value.trim(),
-    password:$("password").value
-  });
-  if (error) return message("authMsg", error.message);
-  if (data.session) {
-    await startApp(data.user);
-  } else {
-    message("authMsg", "تم إرسال طلب التسجيل. تحقق من بريدك إذا طُلب تأكيد الحساب، ثم سجّل الدخول.");
-  }
+}catch(e){
+box.textContent="تعذر تحميل التطابقات: "+e.message;
+}
+}
+
+function loadMatches(){drawMatches("matchesList");}
+function loadChatMatches(){drawMatches("chatMatches");}
+
+async function openChat(id){
+activeMatch=id;
+tab("chat");
+say("chatStatus","جاري تحميل المحادثة...");
+
+let r=await client.from("messages")
+.select("id,match_id,sender_id,content,created_at")
+.eq("match_id",id)
+.order("created_at",{ascending:true})
+.limit(100);
+
+if(r.error){
+$("chatMessages").textContent="تعذر تحميل الرسائل: "+r.error.message;
+return;
+}
+
+let box=$("chatMessages");
+box.innerHTML=(r.data||[]).map(m=>`
+<div class="bubble ${m.sender_id===user.id?"mine":""}">
+${esc(m.content)}
+<small>${new Date(m.created_at).toLocaleString("ar-EG")}</small>
+</div>`).join("")||"لا توجد رسائل بعد. ابدأ برسالة محترمة.";
+
+box.scrollTop=box.scrollHeight;
+say("chatStatus","المحادثة مفتوحة.");
+}
+
+$("sendMessage").onclick=async()=>{
+if(!activeMatch)return say("chatStatus","افتح محادثة من تطابقاتك أولًا.");
+
+let content=$("messageText").value.trim();
+if(!content)return say("chatStatus","اكتب الرسالة أولًا.");
+
+$("sendMessage").disabled=true;
+
+let r=await client.from("messages").insert({
+match_id:activeMatch,
+sender_id:user.id,
+content
 });
 
-$("logoutBtn").addEventListener("click", async () => {
-  await client.auth.signOut();
-  location.reload();
-});
-$("saveProfile").addEventListener("click", saveProfile);
-$("refreshMembers").addEventListener("click", loadMembers);
-$("loadProfiles").addEventListener("click", loadProfiles);
-$("loadReports").addEventListener("click", () =>
-  loadAdminTable("reports","id,reporter_id,reported_user_id,reason,status,created_at"));
-$("loadPayments").addEventListener("click", () =>
-  loadAdminTable("payments","id,user_name,user_phone,amount,status,created_at"));
+$("sendMessage").disabled=false;
 
-client.auth.onAuthStateChange((event, session) => {
-  if (session?.user && !currentUser) {
-    startApp(session.user);
-  }
+if(r.error)return say("chatStatus","تعذر الإرسال: "+r.error.message);
+
+$("messageText").value="";
+openChat(activeMatch);
+};
+
+async function loadProfiles(){
+if(!isAdmin)return;
+
+let box=$("adminList");
+box.textContent="جاري تحميل الملفات...";
+
+let r=await client.from("profiles")
+.select("id,display_name,city,approved")
+.order("created_at",{ascending:false});
+
+if(r.error)return box.textContent="تعذر التحميل: "+r.error.message;
+
+box.innerHTML=(r.data||[]).map(p=>`
+<article class="member">
+<b>${esc(p.display_name||"بدون اسم")}</b>
+<p>${esc(p.city||"")}</p>
+<p>${p.approved?"معتمد":"ينتظر المراجعة"}</p>
+<button data-approve="${esc(p.id)}" data-value="${!p.approved}">
+${p.approved?"إلغاء الاعتماد":"اعتماد الملف"}
+</button>
+</article>`).join("")||"لا توجد ملفات.";
+
+box.querySelectorAll("[data-approve]").forEach(b=>{
+b.onclick=async()=>{
+let x=await client.from("profiles")
+.update({approved:b.dataset.value==="true"})
+.eq("id",b.dataset.approve);
+
+say("adminMsg",x.error?x.error.message:"تم تحديث الاعتماد.");
+loadProfiles();
+};
+});
+}
+
+async function adminTable(t,c){
+if(!isAdmin)return;
+let box=$("adminList");
+let r=await client.from(t).select(c).limit(50);
+
+if(r.error)return box.textContent=r.error.message;
+
+box.innerHTML=(r.data||[]).map(x=>`
+<article class="member"><pre>${esc(JSON.stringify(x,null,2))}</pre></article>
+`).join("")||"لا توجد سجلات.";
+}
+
+$("refreshMembers").onclick=loadMembers;
+$("refreshMatches").onclick=loadMatches;
+$("loadProfiles").onclick=loadProfiles;
+$("loadReports").onclick=()=>adminTable("reports","id,reporter_id,reported_user_id,reason,status,created_at");
+$("loadPayments").onclick=()=>adminTable("payments","id,user_name,user_phone,amount,status,created_at");
+
+client.auth.onAuthStateChange((e,s)=>{
+if(s?.user&&!user)start(s.user);
 });
 
-(async () => {
-  const {data:{session}} = await client.auth.getSession();
-  if (session?.user) await startApp(session.user);
+(async()=>{
+let r=await client.auth.getSession();
+if(r.data.session?.user)await start(r.data.session.user);
 })();
 })();
 </script>
 </body>
-                                        </html>
-  
+                                           </html>
