@@ -9,28 +9,30 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#fff7fa;color:#30212a}
-header{background:#741c45;color:white;text-align:center;padding:24px 15px}
+header{background:linear-gradient(135deg,#741c45,#a43b69);color:white;text-align:center;padding:25px 14px}
 header h1{margin:0;font-size:34px}
-header p{margin-bottom:0}
-main{max-width:760px;margin:20px auto;padding:12px}
-.card{background:white;border:1px solid #f0dbe5;border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 5px 20px #741c4510}
+header p{margin:8px 0 0}
+main{max-width:900px;margin:20px auto;padding:12px}
+.card{background:white;border:1px solid #f0dbe5;border-radius:18px;padding:18px;margin-bottom:16px;box-shadow:0 5px 20px #741c4510}
 h2,h3{color:#741c45}
 label{display:block;margin:12px 0 6px}
-input,select,textarea{width:100%;padding:12px;border:1px solid #dfc5d2;border-radius:9px;font:inherit;background:white}
+input,select,textarea{width:100%;padding:12px;border:1px solid #dfc5d2;border-radius:10px;font:inherit;background:white;color:#30212a}
 textarea{min-height:90px;resize:vertical}
-button{padding:12px;border:0;border-radius:10px;background:#741c45;color:white;font-size:15px;cursor:pointer}
-button:disabled{opacity:.55}
+button{padding:12px 15px;border:0;border-radius:10px;background:#741c45;color:white;font-size:15px;cursor:pointer}
+button:disabled{opacity:.5}
 .full{width:100%;margin-top:12px}
 .alt{background:#f7e8ef;color:#741c45}
-.row{display:flex;gap:8px;flex-wrap:wrap}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .row button{flex:1}
 .hidden{display:none!important}
-#msg{line-height:1.8;overflow-wrap:anywhere}
-.small{font-size:13px;color:#77616d;line-height:1.8}
-.profiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.small{font-size:13px;color:#77616d;line-height:1.9}
+.status{line-height:1.9;overflow-wrap:anywhere}
+.profiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
 .member{border:1px solid #f0dbe5;border-radius:14px;padding:15px;overflow-wrap:anywhere}
 .member h3{margin-top:0}
 .pill{display:inline-block;background:#f7e8ef;color:#741c45;border-radius:20px;padding:5px 10px;font-size:12px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}
+nav button{flex:1;min-width:110px}
 footer{text-align:center;padding:20px;color:#77616d}
 </style>
 </head>
@@ -38,6 +40,7 @@ footer{text-align:center;padding:20px;color:#77616d}
 <header>
 <h1>نصيب ❤️</h1>
 <p>تعارف جاد بنية الزواج وبموافقة الطرفين</p>
+<p class="small" style="color:#fff">الخصوصية والاحترام أساس التعارف</p>
 </header>
 
 <main>
@@ -71,23 +74,30 @@ footer{text-align:center;padding:20px;color:#77616d}
 <button class="full" id="submitBtn" type="submit">إنشاء الحساب</button>
 </form>
 <button class="full alt" id="switchBtn" type="button">عندي حساب — تسجيل الدخول</button>
-<p id="authMsg" role="status"></p>
-<p class="small">يجب أن يكون عمرك 18 سنة أو أكثر. لا تشارك كلمة مرورك مع أي شخص.</p>
+<button class="full alt" id="resetBtn" type="button">نسيت كلمة المرور؟</button>
+<p id="authMsg" class="status" role="status"></p>
+<p class="small">التسجيل لمن بلغ 18 سنة أو أكثر. لن يُعرض ملفك للآخرين قبل اعتماده.</p>
 </section>
 
 <section id="app" class="hidden">
 <div class="card">
 <div class="row">
 <div style="flex:1">
-<h2 style="margin-top:0">أهلًا بك في نصيب</h2>
-<p id="welcome"></p>
+<h2 style="margin:0">أهلًا بك في نصيب ❤️</h2>
+<p id="welcome" class="small"></p>
 </div>
-<button id="logoutBtn" class="alt" style="align-self:start">تسجيل الخروج</button>
+<button id="logoutBtn" class="alt">تسجيل الخروج</button>
 </div>
-<p id="appMsg" role="status"></p>
+<p id="appMsg" class="status" role="status"></p>
 </div>
 
-<section class="card">
+<nav>
+<button data-page="profile">ملفي الشخصي</button>
+<button data-page="members">الأعضاء</button>
+<button data-page="admin" id="adminTab" class="hidden">لوحة الإدارة</button>
+</nav>
+
+<section id="profilePage" class="card">
 <h2>ملفي الشخصي</h2>
 <form id="profileForm">
 <label for="pname">الاسم</label>
@@ -110,19 +120,31 @@ footer{text-align:center;padding:20px;color:#77616d}
 
 <button class="full" type="submit">حفظ بياناتي</button>
 </form>
-<p class="small">تعديل بياناتك لا يعني أن ملفك أصبح معتمدًا تلقائيًا. الملفات المعروضة للآخرين يجب أن تكون معتمدة من الإدارة.</p>
+<p class="small">حفظ البيانات لا يعني اعتماد الملف تلقائيًا. بعد تعديل الملف قد تحتاج الإدارة إلى مراجعته مرة أخرى.</p>
 </section>
 
-<section class="card">
-<h2>أعضاء معتمدون</h2>
-<p class="small">لن تظهر هنا إلا الملفات التي يسمح حسابك وسياسات قاعدة البيانات بالاطلاع عليها.</p>
+<section id="membersPage" class="card hidden">
+<h2>الأعضاء المعتمدون</h2>
+<p class="small">تظهر هنا الملفات التي اعتمدتها الإدارة وتسمح سياسات قاعدة البيانات بعرضها.</p>
 <button id="reloadBtn" class="alt">تحديث القائمة</button>
-<div id="members" class="profiles" style="margin-top:15px"></div>
+<div id="members" class="profiles"></div>
+</section>
+
+<section id="adminPage" class="card hidden">
+<h2>لوحة الإدارة</h2>
+<p class="small">تظهر هذه الصفحة فقط للحساب الذي يحمل دور admin في جدول admin_roles. صلاحيات قاعدة البيانات تظل هي الحماية الأساسية.</p>
+<div class="row">
+<button id="loadPendingBtn">تحميل الملفات</button>
+<button id="loadReportsBtn" class="alt">عرض البلاغات</button>
+<button id="loadPaymentsBtn" class="alt">عرض طلبات الدفع</button>
+</div>
+<p id="adminMsg" class="status" role="status"></p>
+<div id="adminResults" class="profiles"></div>
 </section>
 
 <section class="card">
 <h2>الخصوصية والأمان</h2>
-<p class="small">لا تنشر رقم هاتفك أو عنوانك أو بياناتك المالية في النبذة. لا ترسل أموالًا لأشخاص تعرفت عليهم عبر الإنترنت. استخدم زر الإبلاغ عند ملاحظة حساب مريب.</p>
+<p class="small">لا تنشر رقم هاتفك أو عنوانك أو بياناتك المالية. لا ترسل أموالًا لأشخاص تعرفت عليهم عبر الإنترنت. لا تشارك كلمة المرور. استخدم الإبلاغ عن الحسابات المريبة.</p>
 </section>
 </section>
 </main>
@@ -131,258 +153,348 @@ footer{text-align:center;padding:20px;color:#77616d}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = "https://gdavyferkvekaprdgcft.supabase.co";
-const SUPABASE_KEY = "sb_publishable_QJnnLMv9pltgpeKQgmPGuw_c4CAyG7K";
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_URL="https://gdavyferkvekaprdgcft.supabase.co";
+const SUPABASE_KEY="sb_publishable_QJnnLMv9pltgpeKQgmPGuw_c4CAyG7K";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const $=id=>document.getElementById(id);
+let isSignup=true;
+let currentUser=null;
+let isAdmin=false;
 
-const $ = id => document.getElementById(id);
-let isSignup = true;
-let currentUser = null;
+function authMessage(t){$("authMsg").textContent=t}
+function appMessage(t){$("appMsg").textContent=t}
+function adminMessage(t){$("adminMsg").textContent=t}
 
-function showAuthMessage(text) {
-  $("authMsg").textContent = text;
+function setSignupMode(value){
+  isSignup=value;
+  $("signupFields").classList.toggle("hidden",!value);
+  ["name","birth","gender","city"].forEach(id=>$(id).required=value);
+  $("authTitle").textContent=value?"إنشاء حساب جديد":"تسجيل الدخول";
+  $("submitBtn").textContent=value?"إنشاء الحساب":"دخول";
+  $("switchBtn").textContent=value?"عندي حساب — تسجيل الدخول":"إنشاء حساب جديد";
+  $("password").autocomplete=value?"new-password":"current-password";
+  authMessage("");
 }
-function showAppMessage(text) {
-  $("appMsg").textContent = text;
-}
-function setSignupMode(value) {
-  isSignup = value;
-  $("signupFields").classList.toggle("hidden", !value);
-  ["name","birth","gender","city"].forEach(id => {
-    $(id).required = value;
-  });
-  $("authTitle").textContent = value ? "إنشاء حساب جديد" : "تسجيل الدخول";
-  $("submitBtn").textContent = value ? "إنشاء الحساب" : "دخول";
-  $("switchBtn").textContent = value
-    ? "عندي حساب — تسجيل الدخول"
-    : "إنشاء حساب جديد";
-  $("password").autocomplete = value ? "new-password" : "current-password";
-  showAuthMessage("");
-}
+$("switchBtn").addEventListener("click",()=>setSignupMode(!isSignup));
 
-$("switchBtn").addEventListener("click", () => setSignupMode(!isSignup));
-
-function validAdult(dateString) {
-  if (!dateString) return false;
-  const dob = new Date(dateString + "T00:00:00");
-  if (Number.isNaN(dob.getTime())) return false;
-  const now = new Date();
-  let age = now.getFullYear() - dob.getFullYear();
-  const monthDiff = now.getMonth() - dob.getMonth();
-  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < dob.getDate())) age--;
-  return age >= 18 && dob <= now;
+function validAdult(value){
+  if(!value)return false;
+  const dob=new Date(value+"T00:00:00");
+  if(Number.isNaN(dob.getTime()))return false;
+  const now=new Date();
+  let age=now.getFullYear()-dob.getFullYear();
+  if(now.getMonth()<dob.getMonth()||
+    (now.getMonth()===dob.getMonth()&&now.getDate()<dob.getDate()))age--;
+  return age>=18&&dob<=now;
 }
 
-$("authForm").addEventListener("submit", async event => {
-  event.preventDefault();
-  $("submitBtn").disabled = true;
-  showAuthMessage("جاري التنفيذ...");
-
-  try {
-    const email = $("email").value.trim();
-    const password = $("password").value;
-
-    if (isSignup) {
-      if (!validAdult($("birth").value)) {
-        showAuthMessage("التسجيل متاح لمن بلغ 18 سنة أو أكثر فقط.");
+$("authForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  $("submitBtn").disabled=true;
+  authMessage("جاري التنفيذ...");
+  try{
+    const email=$("email").value.trim();
+    const password=$("password").value;
+    if(isSignup){
+      if(!validAdult($("birth").value)){
+        authMessage("التسجيل متاح لمن بلغ 18 سنة أو أكثر فقط.");
         return;
       }
-
-      const profileData = {
-        display_name: $("name").value.trim(),
-        birth_date: $("birth").value,
-        gender: $("gender").value,
-        city: $("city").value.trim()
+      const profileData={
+        display_name:$("name").value.trim(),
+        birth_date:$("birth").value,
+        gender:$("gender").value,
+        city:$("city").value.trim()
       };
-
-      const { data, error } = await db.auth.signUp({
-        email,
-        password,
-        options: { data: profileData }
+      const {data,error}=await db.auth.signUp({
+        email,password,options:{data:profileData}
       });
-      if (error) throw error;
-
-      if (data.user && data.session) {
-        currentUser = data.user;
-        const { error: profileError } = await db.from("profiles").upsert({
-          id: data.user.id,
-          ...profileData
-        }, { onConflict: "id" });
-
-        if (profileError) {
-          showAuthMessage("تم إنشاء الحساب، لكن تعذر حفظ الملف الشخصي: " + profileError.message);
-        } else {
-          showAuthMessage("تم إنشاء الحساب.");
-          await openApp(data.user);
-        }
-      } else {
-        showAuthMessage("تم إرسال طلب التسجيل. افحص بريدك لتأكيد الحساب، ثم سجّل الدخول. إذا لم يصل التأكيد، راجع مجلد الرسائل غير المرغوب فيها.");
+      if(error)throw error;
+      if(data.user&&data.session){
+        currentUser=data.user;
+        await ensureProfile(data.user,profileData);
+        await openApp(data.user);
+      }else{
+        authMessage("تم إرسال طلب التسجيل. افحص بريدك لتأكيد الحساب، ثم سجّل الدخول.");
       }
-    } else {
-      const { data, error } = await db.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      currentUser = data.user;
+    }else{
+      const {data,error}=await db.auth.signInWithPassword({email,password});
+      if(error)throw error;
       await openApp(data.user);
     }
-  } catch (error) {
-    showAuthMessage("تعذر إكمال العملية: " + (error.message || "خطأ غير معروف"));
-  } finally {
-    $("submitBtn").disabled = false;
+  }catch(error){
+    authMessage("تعذر إكمال العملية: "+(error.message||"خطأ غير معروف"));
+  }finally{
+    $("submitBtn").disabled=false;
   }
 });
 
-async function openApp(user) {
-  currentUser = user;
+async function ensureProfile(user,extra={}){
+  const m=user.user_metadata||{};
+  const payload={
+    id:user.id,
+    display_name:extra.display_name||m.display_name||"",
+    birth_date:extra.birth_date||m.birth_date||null,
+    gender:extra.gender||m.gender||"male",
+    city:extra.city||m.city||""
+  };
+  const {data,error}=await db.from("profiles")
+    .select("id").eq("id",user.id).maybeSingle();
+  if(error)throw error;
+  if(!data){
+    const {error:insertError}=await db.from("profiles").insert(payload);
+    if(insertError)throw insertError;
+  }
+}
+
+async function checkAdmin(){
+  isAdmin=false;
+  const {data,error}=await db.from("admin_roles")
+    .select("role").eq("user_id",currentUser.id).maybeSingle();
+  if(error){
+    console.warn("Admin role check:",error.message);
+    return;
+  }
+  isAdmin=!!data&&data.role==="admin";
+  $("adminTab").classList.toggle("hidden",!isAdmin);
+}
+
+async function openApp(user){
+  currentUser=user;
   $("authCard").classList.add("hidden");
   $("app").classList.remove("hidden");
-  $("welcome").textContent = "حسابك: " + (user.email || "");
-  showAppMessage("جاري تحميل بياناتك...");
-  await loadProfile();
-  await loadMembers();
+  $("welcome").textContent="حسابك: "+(user.email||"");
+  appMessage("جاري تحميل حسابك...");
+  try{
+    await ensureProfile(user);
+    await checkAdmin();
+    await loadProfile();
+    await loadMembers();
+    appMessage(isAdmin?"تم تسجيل الدخول بصلاحيات الإدارة.":"تم تسجيل الدخول بنجاح.");
+  }catch(error){
+    appMessage("تم الدخول، لكن تعذر تحميل بعض البيانات: "+error.message);
+  }
 }
 
-async function loadProfile() {
-  if (!currentUser) return;
-  const { data, error } = await db.from("profiles")
+async function loadProfile(){
+  if(!currentUser)return;
+  const {data,error}=await db.from("profiles")
     .select("id,display_name,birth_date,gender,city,bio,approved")
-    .eq("id", currentUser.id)
-    .maybeSingle();
-
-  if (error) {
-    showAppMessage("تعذر قراءة الملف الشخصي. راجع سياسات RLS في Supabase: " + error.message);
-    return;
-  }
-
-  const meta = currentUser.user_metadata || {};
-  const p = data || meta;
-  $("pname").value = p.display_name || "";
-  $("pbirth").value = p.birth_date || "";
-  $("pgender").value = p.gender || "male";
-  $("pcity").value = p.city || "";
-  $("bio").value = p.bio || "";
-  showAppMessage(data && data.approved
-    ? "ملفك الشخصي معتمد."
-    : "ملفك الشخصي غير معتمد بعد، أو يحتاج إلى مراجعة الإدارة.");
+    .eq("id",currentUser.id).maybeSingle();
+  if(error)throw error;
+  const p=data||currentUser.user_metadata||{};
+  $("pname").value=p.display_name||"";
+  $("pbirth").value=p.birth_date||"";
+  $("pgender").value=p.gender||"male";
+  $("pcity").value=p.city||"";
+  $("bio").value=p.bio||"";
+  appMessage(data&&data.approved?"ملفك الشخصي معتمد.":"ملفك الشخصي ينتظر اعتماد الإدارة.");
 }
 
-$("profileForm").addEventListener("submit", async event => {
-  event.preventDefault();
-  if (!currentUser) return;
-  if (!validAdult($("pbirth").value)) {
-    showAppMessage("يجب أن يكون عمرك 18 سنة أو أكثر.");
+$("profileForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(!currentUser)return;
+  if(!validAdult($("pbirth").value)){
+    appMessage("يجب أن يكون عمرك 18 سنة أو أكثر.");
     return;
   }
-
-  const payload = {
-    id: currentUser.id,
-    display_name: $("pname").value.trim(),
-    birth_date: $("pbirth").value,
-    gender: $("pgender").value,
-    city: $("pcity").value.trim(),
-    bio: $("bio").value.trim()
+  const payload={
+    id:currentUser.id,
+    display_name:$("pname").value.trim(),
+    birth_date:$("pbirth").value,
+    gender:$("pgender").value,
+    city:$("pcity").value.trim(),
+    bio:$("bio").value.trim()
   };
-
-  showAppMessage("جاري حفظ البيانات...");
-  const { error } = await db.from("profiles").upsert(payload, { onConflict: "id" });
-  if (error) {
-    showAppMessage("تعذر الحفظ. قد تحتاج إلى إصلاح سياسات قاعدة البيانات: " + error.message);
+  appMessage("جاري حفظ بياناتك...");
+  const {error}=await db.from("profiles").upsert(payload,{onConflict:"id"});
+  if(error){
+    appMessage("تعذر الحفظ: "+error.message);
     return;
   }
-
-  const { error: metaError } = await db.auth.updateUser({
-    data: {
-      display_name: payload.display_name,
-      birth_date: payload.birth_date,
-      gender: payload.gender,
-      city: payload.city
+  const {error:metaError}=await db.auth.updateUser({
+    data:{
+      display_name:payload.display_name,
+      birth_date:payload.birth_date,
+      gender:payload.gender,
+      city:payload.city
     }
   });
-
-  showAppMessage(metaError
-    ? "تم حفظ الملف الشخصي، لكن تعذر تحديث البيانات الإضافية للحساب."
-    : "تم حفظ بياناتك بنجاح. الاعتماد النهائي من الإدارة.");
+  appMessage(metaError
+    ?"تم حفظ الملف، لكن تعذر تحديث البيانات الإضافية للحساب."
+    :"تم حفظ بياناتك. سيظل الملف بحاجة إلى اعتماد الإدارة.");
+  await loadProfile();
   await loadMembers();
 });
 
-async function loadMembers() {
-  if (!currentUser) return;
-  $("members").textContent = "جاري تحميل الملفات...";
-  const { data, error } = await db.from("profiles")
+async function loadMembers(){
+  if(!currentUser)return;
+  $("members").textContent="جاري تحميل الأعضاء...";
+  const {data,error}=await db.from("profiles")
     .select("id,display_name,city,bio,gender")
-    .eq("approved", true)
-    .neq("id", currentUser.id)
-    .limit(30);
-
-  if (error) {
-    $("members").textContent = "تعذر تحميل الأعضاء. تأكد من سياسات RLS ومن صلاحية قراءة الملفات المعتمدة. " + error.message;
+    .eq("approved",true).neq("id",currentUser.id).limit(30);
+  if(error){
+    $("members").textContent="تعذر تحميل الأعضاء: "+error.message;
     return;
   }
-
   $("members").replaceChildren();
-  if (!data || data.length === 0) {
-    $("members").textContent = "لا توجد ملفات معتمدة للعرض حاليًا.";
+  if(!data||data.length===0){
+    $("members").textContent="لا توجد ملفات معتمدة للعرض حاليًا.";
     return;
   }
-
-  data.forEach(member => {
-    const card = document.createElement("article");
-    card.className = "member";
-
-    const title = document.createElement("h3");
-    title.textContent = member.display_name || "عضو نصيب";
+  data.forEach(member=>{
+    const card=document.createElement("article");
+    card.className="member";
+    const title=document.createElement("h3");
+    title.textContent=member.display_name||"عضو نصيب";
     card.appendChild(title);
-
-    const city = document.createElement("p");
-    city.textContent = "المدينة: " + (member.city || "غير محددة");
+    const city=document.createElement("p");
+    city.textContent="المدينة: "+(member.city||"غير محددة");
     card.appendChild(city);
-
-    const gender = document.createElement("p");
-    gender.textContent = "النوع: " +
-      (member.gender === "male" ? "ذكر" : member.gender === "female" ? "أنثى" : "غير محدد");
+    const gender=document.createElement("p");
+    gender.textContent="النوع: "+(member.gender==="male"?"ذكر":member.gender==="female"?"أنثى":"غير محدد");
     card.appendChild(gender);
-
-    if (member.bio) {
-      const bio = document.createElement("p");
-      bio.textContent = member.bio;
+    if(member.bio){
+      const bio=document.createElement("p");
+      bio.textContent=member.bio;
       card.appendChild(bio);
     }
-
-    const tag = document.createElement("span");
-    tag.className = "pill";
-    tag.textContent = "ملف معتمد";
+    const tag=document.createElement("span");
+    tag.className="pill";
+    tag.textContent="ملف معتمد";
     card.appendChild(tag);
     $("members").appendChild(card);
   });
 }
 
-$("reloadBtn").addEventListener("click", loadMembers);
-
-$("logoutBtn").addEventListener("click", async () => {
-  const { error } = await db.auth.signOut();
-  if (error) {
-    showAppMessage("تعذر تسجيل الخروج: " + error.message);
+async function loadAdminProfiles(){
+  if(!isAdmin){adminMessage("ليس لديك صلاحية الإدارة.");return}
+  $("adminResults").textContent="جاري تحميل الملفات...";
+  adminMessage("");
+  const {data,error}=await db.from("profiles")
+    .select("id,display_name,city,approved,created_at")
+    .order("created_at",{ascending:false}).limit(100);
+  if(error){
+    $("adminResults").textContent="تعذر تحميل الملفات: "+error.message;
     return;
   }
-  currentUser = null;
-  $("app").classList.add("hidden");
-  $("authCard").classList.remove("hidden");
-  $("password").value = "";
-  showAuthMessage("تم تسجيل الخروج.");
+  $("adminResults").replaceChildren();
+  if(!data||!data.length){
+    $("adminResults").textContent="لا توجد ملفات.";
+    return;
+  }
+  data.forEach(p=>{
+    const card=document.createElement("article");
+    card.className="member";
+    const title=document.createElement("h3");
+    title.textContent=p.display_name||"عضو بدون اسم";
+    card.appendChild(title);
+    const city=document.createElement("p");
+    city.textContent="المدينة: "+(p.city||"غير محددة");
+    card.appendChild(city);
+    const state=document.createElement("p");
+    state.textContent=p.approved?"الحالة: معتمد":"الحالة: ينتظر المراجعة";
+    card.appendChild(state);
+    const btn=document.createElement("button");
+    btn.className=p.approved?"alt":"";
+    btn.textContent=p.approved?"إلغاء الاعتماد":"اعتماد الملف";
+    btn.addEventListener("click",async()=>{
+      if(!isAdmin)return;
+      btn.disabled=true;
+      const {error:updateError}=await db.from("profiles")
+        .update({approved:!p.approved}).eq("id",p.id);
+      btn.disabled=false;
+      if(updateError){
+        adminMessage("تعذر تحديث الحالة: "+updateError.message);
+      }else{
+        adminMessage("تم تحديث حالة الملف.");
+        await loadAdminProfiles();
+        await loadMembers();
+      }
+    });
+    card.appendChild(btn);
+    $("adminResults").appendChild(card);
+  });
+}
+
+async function loadAdminTable(table,columns){
+  if(!isAdmin){adminMessage("ليس لديك صلاحية الإدارة.");return}
+  $("adminResults").textContent="جاري التحميل...";
+  const {data,error}=await db.from(table).select(columns).limit(100);
+  if(error){
+    $("adminResults").textContent="تعذر تحميل البيانات: "+error.message;
+    return;
+  }
+  $("adminResults").replaceChildren();
+  if(!data||!data.length){
+    $("adminResults").textContent="لا توجد سجلات.";
+    return;
+  }
+  data.forEach(item=>{
+    const card=document.createElement("article");
+    card.className="member";
+    const pre=document.createElement("pre");
+    pre.style.whiteSpace="pre-wrap";
+    pre.style.overflowWrap="anywhere";
+    pre.textContent=JSON.stringify(item,null,2);
+    card.appendChild(pre);
+    $("adminResults").appendChild(card);
+  });
+}
+
+document.querySelectorAll("[data-page]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    if(btn.dataset.page==="admin"&&!isAdmin)return;
+    ["profile","members","admin"].forEach(name=>{
+      $(name+"Page").classList.toggle("hidden",name!==btn.dataset.page);
+    });
+    if(btn.dataset.page==="members")loadMembers();
+    if(btn.dataset.page==="admin")loadAdminProfiles();
+  });
 });
 
-(async () => {
-  const { data, error } = await db.auth.getSession();
-  if (error) {
-    showAuthMessage("تعذر التحقق من الجلسة: " + error.message);
-    return;
+$("reloadBtn").addEventListener("click",loadMembers);
+$("loadPendingBtn").addEventListener("click",loadAdminProfiles);
+$("loadReportsBtn").addEventListener("click",()=>loadAdminTable(
+  "reports","id,reporter_id,reported_user_id,reason,status,created_at"
+));
+$("loadPaymentsBtn").addEventListener("click",()=>loadAdminTable(
+  "payments","id,user_name,user_phone,amount,status,created_at"
+));
+
+$("resetBtn").addEventListener("click",async()=>{
+  const email=$("email").value.trim();
+  if(!email){authMessage("اكتب بريدك الإلكتروني أولًا.");return}
+  authMessage("جاري إرسال رابط استعادة كلمة المرور...");
+  const {error}=await db.auth.resetPasswordForEmail(email,{
+    redirectTo:location.origin+location.pathname
+  });
+  authMessage(error?"تعذر الإرسال: "+error.message:"لو البريد مسجل، ستصلك رسالة لاستعادة كلمة المرور.");
+});
+
+$("logoutBtn").addEventListener("click",async()=>{
+  const {error}=await db.auth.signOut();
+  if(error){appMessage("تعذر تسجيل الخروج: "+error.message);return}
+  currentUser=null;
+  isAdmin=false;
+  $("app").classList.add("hidden");
+  $("authCard").classList.remove("hidden");
+  $("password").value="";
+  $("adminTab").classList.add("hidden");
+  setSignupMode(false);
+  authMessage("تم تسجيل الخروج.");
+});
+
+(async()=>{
+  try{
+    const {data,error}=await db.auth.getSession();
+    if(error)throw error;
+    if(data.session)await openApp(data.session.user);
+  }catch(error){
+    authMessage("تعذر التحقق من الجلسة: "+error.message);
   }
-  if (data.session) await openApp(data.session.user);
 })();
 </script>
 </body>
   </html>
-
-
-
-
   
