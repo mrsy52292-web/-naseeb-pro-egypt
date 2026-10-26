@@ -1,3 +1,5 @@
+HTML
+
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -8,27 +10,21 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#fff7fa;color:#30212a}
-header{background:#741c45;color:#fff;text-align:center;padding:20px}
+header{background:#741c45;color:white;text-align:center;padding:20px}
 main{max-width:850px;margin:20px auto;padding:0 12px}
-.card,.member{background:#fff;border:1px solid #f0dce5;border-radius:14px;padding:16px;margin-bottom:14px}
+.card,.member{background:white;border:1px solid #f0dce5;border-radius:14px;padding:16px;margin-bottom:14px}
 input,select,textarea{display:block;width:100%;padding:12px;margin:8px 0 14px;border:1px solid #d9c4ce;border-radius:9px;font:inherit}
-button{font:inherit;border:0;border-radius:9px;padding:11px 14px;background:#741c45;color:#fff;margin:4px;cursor:pointer}
+button{font:inherit;border:0;border-radius:9px;padding:11px 14px;background:#741c45;color:white;margin:4px;cursor:pointer}
 button:disabled{opacity:.5}
 .secondary{background:#f5e7ee;color:#741c45}
 nav{display:flex;flex-wrap:wrap;gap:4px}
 nav button{flex:1}
 .status{padding:12px;background:#f8edf2;border-radius:9px;margin:12px 0;overflow-wrap:anywhere}
 .hidden{display:none!important}
-.chatbox{border:1px solid #ead7e0;border-radius:10px;padding:10px;max-height:320px;overflow:auto;min-height:60px}
-.bubble{padding:9px 12px;border-radius:12px;margin:7px 0;background:#f5e7ee;overflow-wrap:anywhere;white-space:pre-wrap}
-.mine{background:#741c45;color:#fff}
+.chatbox{border:1px solid #ead7e0;border-radius:10px;padding:10px;max-height:320px;overflow:auto}
+.bubble{padding:9px 12px;border-radius:12px;margin:7px 0;background:#f5e7ee;overflow-wrap:anywhere}
+.mine{background:#741c45;color:white}
 .notice{background:#fff0b8;padding:12px;border-radius:10px;margin:10px 0}
-.member-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.online-dot,.offline-dot{display:inline-block;width:11px;height:11px;border-radius:50%;flex-shrink:0}
-.online-dot{background:#18a058;box-shadow:0 0 0 3px #e0f7e9}
-.offline-dot{background:#aaa}
-.online-label{font-size:12px;color:#168348}
-.offline-label{font-size:12px;color:#817780}
 footer{text-align:center;padding:20px;color:#786773}
 </style>
 </head>
@@ -38,16 +34,15 @@ footer{text-align:center;padding:20px;color:#786773}
 <p>تعارف جاد بنية الزواج وبموافقة الطرفين</p>
 <p>الخصوصية والاحترام أساس التعارف</p>
 </header>
-
 <main>
 <section id="auth" class="card">
-<h2>أهلًا بك في نصيب ❤️</h2>
-<label for="email">البريد الإلكتروني</label>
+<h2>أهلًا بك في نصيب</h2>
+<label>البريد الإلكتروني</label>
 <input id="email" type="email" autocomplete="email" placeholder="name@example.com">
-<label for="password">كلمة المرور</label>
+<label>كلمة المرور</label>
 <input id="password" type="password" autocomplete="current-password">
-<button id="loginBtn" type="button">تسجيل الدخول</button>
-<button id="signupBtn" class="secondary" type="button">إنشاء حساب</button>
+<button id="loginBtn">تسجيل الدخول</button>
+<button id="signupBtn" class="secondary">إنشاء حساب</button>
 <div id="authMsg" class="status" role="status">سجّل الدخول أو أنشئ حسابًا جديدًا.</div>
 </section>
 
@@ -56,152 +51,100 @@ footer{text-align:center;padding:20px;color:#786773}
 <b>أهلًا بك في نصيب ❤️</b>
 <p id="account"></p>
 <div id="roleMsg" class="status"></div>
-<div id="myPresence" class="status">جاري الاتصال...</div>
-<button id="logoutBtn" class="secondary" type="button">تسجيل الخروج</button>
+<button id="logoutBtn" class="secondary">تسجيل الخروج</button>
 </div>
-
-<div id="notice" class="notice hidden" role="status"></div>
+<div id="notice" class="notice hidden">💌 عندك رسالة جديدة.</div>
 <nav>
-<button type="button" data-tab="profile">ملفي الشخصي</button>
-<button type="button" data-tab="members">الأعضاء ❤️</button>
-<button type="button" data-tab="matches">تطابقاتي 💞</button>
-<button type="button" data-tab="chat">الرسائل 💬 <span id="unreadBadge">0</span></button>
-<button type="button" data-tab="admin" id="adminNav" class="hidden">الإدارة</button>
+<button data-tab="profile">ملفي الشخصي</button>
+<button data-tab="members">الأعضاء ❤️</button>
+<button data-tab="matches">تطابقاتي 💞</button>
+<button data-tab="chat">الرسائل 💬 <span id="unreadBadge">0</span></button>
+<button data-tab="admin" id="adminNav" class="hidden">الإدارة</button>
 </nav>
 
 <section id="profile" class="card">
 <h2>ملفي الشخصي</h2>
-<label for="displayName">الاسم</label>
-<input id="displayName" maxlength="80">
-<label for="birthDate">تاريخ الميلاد</label>
-<input id="birthDate" type="date">
-<label for="gender">النوع</label>
-<select id="gender">
-<option value="">اختر</option>
-<option value="male">ذكر</option>
-<option value="female">أنثى</option>
-</select>
-<label for="city">المدينة</label>
-<input id="city" maxlength="80">
-<label for="bio">نبذة عنك</label>
-<textarea id="bio" maxlength="500"></textarea>
-<button id="saveProfile" type="button">حفظ بياناتي</button>
+<label>الاسم</label><input id="displayName" maxlength="80">
+<label>تاريخ الميلاد</label><input id="birthDate" type="date">
+<label>النوع</label>
+<select id="gender"><option value="">اختر</option><option value="male">ذكر</option><option value="female">أنثى</option></select>
+<label>المدينة</label><input id="city" maxlength="80">
+<label>نبذة عنك</label><textarea id="bio" maxlength="500"></textarea>
+<button id="saveProfile">حفظ بياناتي</button>
 <div id="profileMsg" class="status"></div>
 </section>
 
 <section id="members" class="card hidden">
-<h2>الأعضاء المعتمدون</h2>
-<p>🟢 متصل الآن — ⚪ غير متصل أو غير معروف</p>
-<button id="refreshMembers" type="button">تحديث القائمة</button>
+<h2>الأعضاء المعتمدون</h2><button id="refreshMembers">تحديث القائمة</button>
 <div id="membersList"></div>
 </section>
-
 <section id="matches" class="card hidden">
-<h2>تطابقاتي 💞</h2>
-<button id="refreshMatches" type="button">تحديث التطابقات</button>
+<h2>تطابقاتي 💞</h2><button id="refreshMatches">تحديث التطابقات</button>
 <div id="matchesList"></div>
 </section>
-
 <section id="chat" class="card hidden">
-<h2>الرسائل 💬</h2>
-<div id="chatMatches"></div>
+<h2>الرسائل 💬</h2><div id="chatMatches"></div>
 <div id="chatStatus" class="status">اختر تطابقًا لفتح المحادثة.</div>
 <div id="chatMessages" class="chatbox"></div>
-<label for="messageText">رسالتك</label>
-<textarea id="messageText" maxlength="2000"></textarea>
-<button id="sendMessage" type="button">إرسال الرسالة</button>
+<label>رسالتك</label><textarea id="messageText" maxlength="2000"></textarea>
+<button id="sendMessage">إرسال الرسالة</button>
 </section>
-
 <section id="admin" class="card hidden">
 <h2>لوحة الإدارة</h2>
-<button id="loadProfiles" type="button">تحميل الملفات</button>
-<button id="loadReports" class="secondary" type="button">عرض البلاغات</button>
-<button id="loadPayments" class="secondary" type="button">طلبات الدفع</button>
-<div id="adminMsg" class="status"></div>
-<div id="adminList"></div>
+<button id="loadProfiles">تحميل الملفات</button>
+<button id="loadReports" class="secondary">عرض البلاغات</button>
+<button id="loadPayments" class="secondary">طلبات الدفع</button>
+<div id="adminMsg" class="status"></div><div id="adminList"></div>
 </section>
 </section>
-
 <section class="card">
 <h2>الخصوصية والأمان</h2>
 <p>لا تنشر رقم هاتفك أو عنوانك أو بياناتك المالية. لا تشارك كلمة المرور ولا ترسل أموالًا لأشخاص تعرفت عليهم عبر الإنترنت.</p>
 </section>
 </main>
-
 <footer>نصيب © 2026 — منصة للزواج الجاد</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+(()=>{
 "use strict";
-(function(){
 const $=id=>document.getElementById(id);
-const say=(id,msg)=>{const e=$(id);if(e)e.textContent=msg||""};
-const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({
- "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-}[c]));
+const say=(id,msg)=>$(id).textContent=msg||"";
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
+let client,user=null,isAdmin=false,activeMatch=null,notifyChannel=null,chatChannel=null,unread=0;
 const sbUrl="https://gdavyferkvekaprdgcft.supabase.co";
 const sbKey="sb_publishable_QJnnLMv9pltgpeKQgmPGuw_c4CAyG7K";
 
-let client=null,user=null,isAdmin=false,activeMatch=null;
-let presenceChannel=null,notifyChannel=null,chatChannel=null;
-let onlineIds=new Set(),unread=0,refreshTimer=null;
-let startedUserId=null,startingUserId=null;
-
-function errText(e){
- return e?.message||"حدث خطأ. تحقق من الإنترنت وحاول مرة أخرى.";
+function errorText(e){
+ return e?.message||"حدث خطأ غير معروف. تحقق من الإنترنت وحاول مرة أخرى.";
 }
-function setBusy(id,busy){if($(id))$(id).disabled=busy}
-function setPresence(text){say("myPresence",text)}
-
-function showTab(name){
- ["profile","members","matches","chat","admin"].forEach(n=>{
-  $(n).classList.toggle("hidden",n!==name||(n==="admin"&&!isAdmin));
- });
+async function safe(buttonId,fn){
+ const b=$(buttonId);b.disabled=true;
+ try{await fn()}catch(e){console.error(e);say("authMsg","حدث خطأ: "+errorText(e))}
+ finally{b.disabled=false}
+}
+function tab(name){
+ ["profile","members","matches","chat","admin"].forEach(n=>$(n).classList.toggle("hidden",n!==name||(n==="admin"&&!isAdmin)));
  if(name==="members")loadMembers();
  if(name==="matches")drawMatches("matchesList");
  if(name==="chat")drawMatches("chatMatches");
  if(name==="admin"&&isAdmin)loadProfiles();
 }
-document.querySelectorAll("[data-tab]").forEach(b=>{
- b.addEventListener("click",()=>showTab(b.dataset.tab));
-});
-
-function onlineMarkup(id){
- return onlineIds.has(id)
-  ? '<span class="online-dot"></span><span class="online-label">متصل الآن</span>'
-  : '<span class="offline-dot"></span><span class="offline-label">غير متصل أو غير معروف</span>';
-}
-function updatePresenceLabels(){
- document.querySelectorAll("[data-presence-user]").forEach(el=>{
-  el.innerHTML=onlineMarkup(el.dataset.presenceUser);
- });
-}
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>tab(b.dataset.tab));
 
 async function start(u){
- if(!u)return;
  user=u;
- if(startedUserId===u.id)return;
- if(startingUserId===u.id)return;
- startingUserId=u.id;
- $("auth").classList.add("hidden");
- $("app").classList.remove("hidden");
+ $("auth").classList.add("hidden");$("app").classList.remove("hidden");
  say("account","حسابك: "+(u.email||""));
- say("roleMsg","جاري التحقق من الصلاحيات...");
- setPresence("🟡 جاري الاتصال...");
-
+ say("roleMsg","تم تسجيل الدخول.");
  try{
-  const role=await client.from("admin_roles")
-   .select("role").eq("user_id",u.id).maybeSingle();
+  const role=await client.from("admin_roles").select("role").eq("user_id",u.id).maybeSingle();
   isAdmin=!role.error&&role.data?.role==="admin";
   $("adminNav").classList.toggle("hidden",!isAdmin);
   say("roleMsg",isAdmin?"تم تسجيل الدخول بصلاحيات الإدارة.":"تم تسجيل الدخول.");
-
-  const p=await client.from("profiles")
-   .select("id,display_name,birth_date,gender,city,bio,approved")
-   .eq("id",u.id).maybeSingle();
+  const p=await client.from("profiles").select("id,display_name,birth_date,gender,city,bio,approved").eq("id",u.id).maybeSingle();
   if(p.error)throw p.error;
-
   if(p.data){
    $("displayName").value=p.data.display_name||"";
    $("birthDate").value=p.data.birth_date||"";
@@ -209,205 +152,75 @@ async function start(u){
    $("city").value=p.data.city||"";
    $("bio").value=p.data.bio||"";
    say("profileMsg",p.data.approved?"ملفك معتمد.":"ملفك ينتظر مراجعة الإدارة.");
-  }else{
-   say("profileMsg","أكمل بياناتك ثم اضغط حفظ بياناتي.");
-  }
-  startedUserId=u.id;
-  await setupPresence();
-  await setupNotifications();
- }catch(e){
-  console.error(e);
-  say("profileMsg","تعذر تحميل بعض البيانات: "+errText(e));
-  /* لا نُبقي الدخول عالقًا بسبب فشل تحميل الملف */
-  startedUserId=u.id;
-  await setupPresence();
-  await setupNotifications();
- }finally{
-  startingUserId=null;
- }
+  }else say("profileMsg","أكمل بياناتك ثم اضغط حفظ بياناتي.");
+ }catch(e){say("profileMsg","تعذر تحميل الملف: "+errorText(e))}
+ await setupNotifications();
 }
-
 async function login(){
- const email=$("email").value.trim();
- const password=$("password").value;
- if(!email||!password){say("authMsg","اكتب البريد الإلكتروني وكلمة المرور.");return}
- if(!client){say("authMsg","خدمة الدخول لم تُحمّل. حدّث الصفحة وحاول مرة أخرى.");return}
  say("authMsg","جاري تسجيل الدخول...");
- setBusy("loginBtn",true);
- try{
-  const {data,error}=await client.auth.signInWithPassword({email,password});
-  if(error)throw error;
-  if(!data.user)throw new Error("لم يتم العثور على الحساب.");
-  say("authMsg","تم تسجيل الدخول. جاري تحميل حسابك...");
-  await start(data.user);
- }catch(e){
-  console.error(e);
-  say("authMsg","تعذر الدخول: "+errText(e));
- }finally{setBusy("loginBtn",false)}
+ const email=$("email").value.trim(),password=$("password").value;
+ if(!email||!password)return say("authMsg","اكتب البريد الإلكتروني وكلمة المرور.");
+ const {data,error}=await client.auth.signInWithPassword({email,password});
+ if(error)return say("authMsg","تعذر الدخول: "+error.message);
+ say("authMsg","تم الدخول بنجاح.");
+ await start(data.user);
 }
-
 async function signup(){
- const email=$("email").value.trim();
- const password=$("password").value;
- if(!email||!password){say("authMsg","اكتب البريد الإلكتروني وكلمة المرور.");return}
- if(password.length<6){say("authMsg","كلمة المرور يجب أن تكون 6 أحرف على الأقل.");return}
- if(!client){say("authMsg","خدمة التسجيل لم تُحمّل. حدّث الصفحة.");return}
  say("authMsg","جاري إنشاء الحساب...");
- setBusy("signupBtn",true);
- try{
-  const {data,error}=await client.auth.signUp({email,password});
-  if(error)throw error;
-  if(data.session&&data.user){
-   say("authMsg","تم إنشاء الحساب.");
-   await start(data.user);
-  }else{
-   say("authMsg","تم إرسال طلب التسجيل. راجع بريدك لتأكيد الحساب، ثم سجّل الدخول.");
-  }
- }catch(e){
-  console.error(e);
-  say("authMsg","تعذر إنشاء الحساب: "+errText(e));
- }finally{setBusy("signupBtn",false)}
+ const email=$("email").value.trim(),password=$("password").value;
+ if(!email||!password)return say("authMsg","اكتب البريد الإلكتروني وكلمة المرور.");
+ if(password.length<6)return say("authMsg","كلمة المرور يجب أن تكون 6 أحرف على الأقل.");
+ const {data,error}=await client.auth.signUp({email,password});
+ if(error)return say("authMsg","تعذر إنشاء الحساب: "+error.message);
+ if(data.session&&data.user){say("authMsg","تم إنشاء الحساب.");await start(data.user)}
+ else say("authMsg","تم إرسال طلب التسجيل. راجع بريدك لتأكيد الحساب، ثم سجّل الدخول.");
 }
+$("loginBtn").onclick=()=>safe("loginBtn",login);
+$("signupBtn").onclick=()=>safe("signupBtn",signup);
+$("password").addEventListener("keydown",e=>{if(e.key==="Enter")login().catch(err=>say("authMsg",errorText(err)))});
+$("logoutBtn").onclick=async()=>{
+ try{await client.auth.signOut();location.reload()}
+ catch(e){say("roleMsg","تعذر تسجيل الخروج: "+errorText(e))}
+};
 
-$("loginBtn").addEventListener("click",login);
-$("signupBtn").addEventListener("click",signup);
-$("password").addEventListener("keydown",e=>{
- if(e.key==="Enter")login();
-});
-
-$("logoutBtn").addEventListener("click",async()=>{
- setBusy("logoutBtn",true);
- try{
-  if(presenceChannel)await client.removeChannel(presenceChannel);
-  if(notifyChannel)await client.removeChannel(notifyChannel);
-  if(chatChannel)await client.removeChannel(chatChannel);
-  if(refreshTimer)clearInterval(refreshTimer);
-  const {error}=await client.auth.signOut();
-  if(error)throw error;
-  location.reload();
- }catch(e){
-  say("roleMsg","تعذر تسجيل الخروج: "+errText(e));
-  setBusy("logoutBtn",false);
- }
-});
-
-$("saveProfile").addEventListener("click",async()=>{
+$("saveProfile").onclick=async()=>{
  if(!user)return;
- const p={
-  id:user.id,
-  display_name:$("displayName").value.trim(),
-  birth_date:$("birthDate").value||null,
-  gender:$("gender").value||null,
-  city:$("city").value.trim(),
-  bio:$("bio").value.trim()
- };
- if(!p.display_name){say("profileMsg","اكتب الاسم أولًا.");return}
- setBusy("saveProfile",true);
+ const p={id:user.id,display_name:$("displayName").value.trim(),birth_date:$("birthDate").value||null,gender:$("gender").value||null,city:$("city").value.trim(),bio:$("bio").value.trim()};
+ if(!p.display_name)return say("profileMsg","اكتب الاسم أولًا.");
+ $("saveProfile").disabled=true;
  try{
   const r=await client.from("profiles").upsert(p,{onConflict:"id"});
-  if(r.error)throw r.error;
-  say("profileMsg","تم حفظ البيانات. قد تحتاج إلى مراجعة الإدارة.");
- }catch(e){say("profileMsg","تعذر الحفظ: "+errText(e))}
- finally{setBusy("saveProfile",false)}
-});
-
-async function setupPresence(){
- try{
-  if(presenceChannel)await client.removeChannel(presenceChannel);
-  presenceChannel=client.channel("naseeb-presence",{
-   config:{presence:{key:user.id}}
-  });
-  presenceChannel.on("presence",{event:"sync"},()=>{
-   const state=presenceChannel.presenceState();
-   onlineIds=new Set(Object.keys(state));
-   setPresence(onlineIds.has(user.id)?"🟢 أنت متصل الآن.":"⚪ حالة اتصالك غير مؤكدة.");
-   updatePresenceLabels();
-  });
-  presenceChannel.subscribe(async status=>{
-   if(status==="SUBSCRIBED"){
-    try{await presenceChannel.track({user_id:user.id,online_at:new Date().toISOString()})}
-    catch(e){console.error("Presence track",e)}
-   }else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"){
-    setPresence("⚠️ تعذر الاتصال بخدمة الحضور.");
-   }
-  });
- }catch(e){
-  console.error(e);
-  setPresence("⚠️ تعذر تشغيل حالة الاتصال.");
- }
-}
-
-async function setupNotifications(){
- try{
-  if(notifyChannel)await client.removeChannel(notifyChannel);
-  notifyChannel=client.channel("naseeb-notify-"+user.id)
-   .on("postgres_changes",{event:"INSERT",schema:"public",table:"messages"},payload=>{
-    const m=payload.new;
-    if(!m||m.sender_id===user.id||m.match_id===activeMatch)return;
-    unread++;
-    say("unreadBadge",String(unread));
-    $("notice").classList.remove("hidden");
-    $("notice").textContent="💌 عندك رسالة جديدة! افتح تبويب الرسائل.";
-    if("Notification" in window&&Notification.permission==="granted"){
-     try{new Notification("رسالة جديدة في نصيب ❤️",{body:"افتح الموقع لقراءة رسالتك."})}catch(e){}
-    }
-   })
-   .subscribe(status=>{
-    if(status==="CHANNEL_ERROR"||status==="TIMED_OUT")console.error("Notifications",status);
-   });
- }catch(e){console.error(e)}
-}
+  say("profileMsg",r.error?"تعذر الحفظ: "+r.error.message:"تم حفظ البيانات. قد تحتاج إلى مراجعة الإدارة.");
+ }catch(e){say("profileMsg","تعذر الحفظ: "+errorText(e))}
+ finally{$("saveProfile").disabled=false}
+};
 
 async function loadMembers(){
- const box=$("membersList");
- box.textContent="جاري تحميل الأعضاء...";
+ const box=$("membersList");box.textContent="جاري التحميل...";
  try{
-  const r=await client.from("profiles")
-   .select("id,display_name,gender,city,bio")
-   .eq("approved",true).order("created_at",{ascending:false});
+  const r=await client.from("profiles").select("id,display_name,gender,city,bio").eq("approved",true).order("created_at",{ascending:false});
   if(r.error)throw r.error;
   const rows=(r.data||[]).filter(p=>p.id!==user.id);
   if(!rows.length){box.textContent="لا توجد ملفات معتمدة أخرى حاليًا.";return}
-  box.innerHTML=rows.map(p=>`
-   <article class="member">
-    <div class="member-head">
-     <h3>${esc(p.display_name||"عضو نصيب")}</h3>
-     <span data-presence-user="${esc(p.id)}">${onlineMarkup(p.id)}</span>
-    </div>
-    <p>المدينة: ${esc(p.city||"غير محددة")}</p>
-    <p>${esc(p.bio||"")}</p>
-    <button type="button" data-like="${esc(p.id)}">إعجاب ❤️</button>
-    <span id="like-${esc(p.id)}"></span>
-   </article>`).join("");
-  box.querySelectorAll("[data-like]").forEach(b=>{
-   b.addEventListener("click",async()=>{
-    b.disabled=true;
-    try{
-     const x=await client.from("likes").insert({sender_id:user.id,receiver_id:b.dataset.like});
-     if(x.error){
-      say("like-"+b.dataset.like,x.error.code==="23505"?"سبق إرسال الإعجاب.":errText(x.error));
-     }else{
-      say("like-"+b.dataset.like,"تم إرسال الإعجاب ❤️");
-      await drawMatches("matchesList");
-     }
-    }catch(e){say("like-"+b.dataset.like,errText(e))}
-    finally{b.disabled=false}
-   });
+  box.innerHTML=rows.map(p=>`<article class="member"><h3>${esc(p.display_name||"عضو نصيب")}</h3><p>المدينة: ${esc(p.city||"غير محددة")}</p><p>${esc(p.bio||"")}</p><button data-like="${esc(p.id)}">إعجاب ❤️</button><span id="like-${esc(p.id)}"></span></article>`).join("");
+  box.querySelectorAll("[data-like]").forEach(b=>b.onclick=async()=>{
+   b.disabled=true;
+   try{
+    const x=await client.from("likes").insert({sender_id:user.id,receiver_id:b.dataset.like});
+    say("like-"+b.dataset.like,x.error?(x.error.code==="23505"?"سبق إرسال الإعجاب.":x.error.message):"تم إرسال الإعجاب ❤️");
+    if(!x.error)await drawMatches("matchesList");
+   }catch(e){say("like-"+b.dataset.like,errorText(e))}
+   finally{b.disabled=false}
   });
-  updatePresenceLabels();
- }catch(e){box.textContent="تعذر تحميل الأعضاء: "+errText(e)}
+ }catch(e){box.textContent="تعذر تحميل الأعضاء: "+errorText(e)}
 }
-$("refreshMembers").addEventListener("click",loadMembers);
-
 async function myMatches(){
- const r=await client.from("matches").select("id,user_one,user_two")
-  .or(`user_one.eq.${user.id},user_two.eq.${user.id}`);
+ const r=await client.from("matches").select("id,user_one,user_two").or(`user_one.eq.${user.id},user_two.eq.${user.id}`);
  if(r.error)throw r.error;
  return r.data||[];
 }
 async function drawMatches(target){
- const box=$(target);
- box.textContent="جاري تحميل التطابقات...";
+ const box=$(target);box.textContent="جاري تحميل التطابقات...";
  try{
   const ms=await myMatches();
   if(!ms.length){box.textContent="لا توجد تطابقات بعد. يلزم إعجاب متبادل.";return}
@@ -417,120 +230,110 @@ async function drawMatches(target){
   const map={};(p.data||[]).forEach(x=>map[x.id]=x);
   box.innerHTML=ms.map(m=>{
    const other=m.user_one===user.id?m.user_two:m.user_one;
-   return `<article class="member">
-    <div class="member-head">
-     <b>${esc(map[other]?.display_name||"عضو متطابق")}</b>
-     <span data-presence-user="${esc(other)}">${onlineMarkup(other)}</span>
-    </div>
-    <p>${esc(map[other]?.city||"")}</p>
-    <button type="button" data-chat="${esc(m.id)}">فتح المحادثة 💬</button>
-   </article>`;
+   return `<article class="member"><b>${esc(map[other]?.display_name||"عضو متطابق")}</b><p>${esc(map[other]?.city||"")}</p><button data-chat="${esc(m.id)}">فتح المحادثة 💬</button></article>`;
   }).join("");
-  box.querySelectorAll("[data-chat]").forEach(b=>{
-   b.addEventListener("click",()=>openChat(b.dataset.chat));
-  });
-  updatePresenceLabels();
- }catch(e){box.textContent="تعذر تحميل التطابقات: "+errText(e)}
+  box.querySelectorAll("[data-chat]").forEach(b=>b.onclick=()=>openChat(b.dataset.chat));
+ }catch(e){box.textContent="تعذر تحميل التطابقات: "+errorText(e)}
 }
-$("refreshMatches").addEventListener("click",()=>drawMatches("matchesList"));
-
+async function setupNotifications(){
+ if(notifyChannel)await client.removeChannel(notifyChannel);
+ notifyChannel=client.channel("naseeb-notify-"+user.id)
+ .on("postgres_changes",{event:"INSERT",schema:"public",table:"messages"},payload=>{
+  if(payload.new.sender_id!==user.id&&payload.new.match_id!==activeMatch){
+   unread++;say("unreadBadge",unread);$("notice").classList.remove("hidden");
+   $("notice").textContent="💌 عندك رسالة جديدة! افتح تبويب الرسائل.";
+  }
+ }).subscribe();
+}
 function appendMessage(m){
  const box=$("chatMessages");
- if(!m||m.id==null)return;
- if([...box.querySelectorAll("[data-message-id]")].some(el=>el.dataset.messageId===String(m.id)))return;
- if(box.dataset.empty==="true"){box.innerHTML="";box.dataset.empty="false"}
+ if(box.querySelector(`[data-message-id="${m.id}"]`))return;
+ if(box.textContent.includes("لا توجد رسائل بعد"))box.textContent="";
  const el=document.createElement("div");
  el.className="bubble "+(m.sender_id===user.id?"mine":"");
- el.dataset.messageId=String(m.id);
- el.textContent=(m.content||"")+(m.created_at?" — "+new Date(m.created_at).toLocaleString("ar-EG"):"");
- box.appendChild(el);
- box.scrollTop=box.scrollHeight;
-}
-function emptyMessages(){
- const box=$("chatMessages");
- box.innerHTML="لا توجد رسائل بعد. ابدأ برسالة محترمة.";
- box.dataset.empty="true";
-}
-async function loadChatMessages(id){
- const r=await client.from("messages").select("id,match_id,sender_id,content,created_at")
-  .eq("match_id",id).order("created_at",{ascending:true}).limit(100);
- if(r.error)throw r.error;
- const box=$("chatMessages");
- box.innerHTML="";
- box.dataset.empty="false";
- if(!(r.data||[]).length){emptyMessages();return}
- r.data.forEach(appendMessage);
+ el.dataset.messageId=m.id;
+ el.textContent=(m.content||"")+" — "+new Date(m.created_at).toLocaleString("ar-EG");
+ box.appendChild(el);box.scrollTop=box.scrollHeight;
 }
 async function openChat(id){
- activeMatch=id;
- unread=0;
- say("unreadBadge","0");
- $("notice").classList.add("hidden");
- showTab("chat");
+ activeMatch=id;unread=0;say("unreadBadge","0");$("notice").classList.add("hidden");tab("chat");
  say("chatStatus","جاري تحميل المحادثة...");
- if(chatChannel){await client.removeChannel(chatChannel);chatChannel=null}
- if(refreshTimer){clearInterval(refreshTimer);refreshTimer=null}
+ if(chatChannel)await client.removeChannel(chatChannel);
  try{
-  await loadChatMessages(id);
+  const r=await client.from("messages").select("id,match_id,sender_id,content,created_at").eq("match_id",id).order("created_at",{ascending:true}).limit(100);
+  if(r.error)throw r.error;
+  const box=$("chatMessages");box.innerHTML="";
+  (r.data||[]).forEach(appendMessage);
+  if(!(r.data||[]).length)box.textContent="لا توجد رسائل بعد. ابدأ برسالة محترمة.";
   chatChannel=client.channel("naseeb-chat-"+id)
-   .on("postgres_changes",{
-    event:"INSERT",schema:"public",table:"messages",filter:"match_id=eq."+id
-   },payload=>{
-    if(payload.new){
-     appendMessage(payload.new);
-     if(payload.new.sender_id!==user.id)say("chatStatus","وصلت رسالة جديدة.");
-    }
-   }).subscribe(status=>{
-    if(status==="SUBSCRIBED")say("chatStatus","المحادثة مفتوحة.");
-    else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT")say("chatStatus","التحديث الفوري غير متصل؛ سيتم فحص الرسائل دوريًا.");
-   });
-
-  refreshTimer=setInterval(async()=>{
-   if(!user||activeMatch!==id||document.hidden)return;
-   try{
-    const r=await client.from("messages").select("id,match_id,sender_id,content,created_at")
-     .eq("match_id",id).order("created_at",{ascending:true}).limit(100);
-    if(r.error)throw r.error;
-    const box=$("chatMessages");
-    if(r.data&&r.data.length){
-     if(box.dataset.empty==="true"){box.innerHTML="";box.dataset.empty="false"}
-     r.data.forEach(appendMessage);
-    }
-   }catch(e){console.error("Chat refresh",e)}
-  },7000);
- }catch(e){say("chatStatus","تعذر تحميل الرسائل: "+errText(e))}
+   .on("postgres_changes",{event:"INSERT",schema:"public",table:"messages",filter:"match_id=eq."+id},payload=>appendMessage(payload.new))
+   .subscribe(status=>{if(status==="SUBSCRIBED")say("chatStatus","المحادثة مفتوحة.");});
+ }catch(e){say("chatStatus","تعذر تحميل الرسائل: "+errorText(e))}
 }
-$("sendMessage").addEventListener("click",async()=>{
+$("sendMessage").onclick=async()=>{
  if(!user)return;
- if(!activeMatch){say("chatStatus","افتح محادثة من تطابقاتك أولًا.");return}
+ if(!activeMatch)return say("chatStatus","افتح محادثة من تطابقاتك أولًا.");
  const content=$("messageText").value.trim();
- if(!content){say("chatStatus","اكتب الرسالة أولًا.");return}
- setBusy("sendMessage",true);
+ if(!content)return say("chatStatus","اكتب الرسالة أولًا.");
+ $("sendMessage").disabled=true;
  try{
   const r=await client.from("messages").insert({match_id:activeMatch,sender_id:user.id,content});
   if(r.error)throw r.error;
-  $("messageText").value="";
-  say("chatStatus","تم إرسال الرسالة.");
-  await loadChatMessages(activeMatch);
- }catch(e){say("chatStatus","تعذر الإرسال: "+errText(e))}
- finally{setBusy("sendMessage",false)}
-});
-
+  $("messageText").value="";say("chatStatus","تم إرسال الرسالة.");
+ }catch(e){say("chatStatus","تعذر الإرسال: "+errorText(e))}
+ finally{$("sendMessage").disabled=false}
+};
 async function loadProfiles(){
  if(!isAdmin)return;
- const box=$("adminList");
- box.textContent="جاري تحميل الملفات...";
+ const box=$("adminList");box.textContent="جاري تحميل الملفات...";
  try{
-  const r=await client.from("profiles").select("id,display_name,city,approved")
-   .order("created_at",{ascending:false});
+  const r=await client.from("profiles").select("id,display_name,city,approved").order("created_at",{ascending:false});
   if(r.error)throw r.error;
-  box.innerHTML=(r.data||[]).map(p=>`
-   <article class="member">
-    <b>${esc(p.display_name||"بدون اسم")}</b>
-    <p>${esc(p.city||"")}</p>
-    <p>${p.approved?"معتمد":"ينتظر المراجعة"}</p>
-    ${p.approved?"":`<button type="button" data-approve="${esc(p.id)}">اعتماد الملف</button>`}
-   </article>`).join("")||"لا توجد ملفات.";
-  box.querySelectorAll("[data-approve]").forEach(b=>{
-   b.addEventListener("click",async()=>{
-    b.disabled=tru
+  box.innerHTML=(r.data||[]).map(p=>`<article class="member"><b>${esc(p.display_name||"بدون اسم")}</b><p>${esc(p.city||"")}</p><p>${p.approved?"معتمد":"ينتظر المراجعة"}</p><button data-approve="${esc(p.id)}" data-value="${!p.approved}">${p.approved?"إلغاء الاعتماد":"اعتماد الملف"}</button></article>`).join("")||"لا توجد ملفات.";
+  box.querySelectorAll("[data-approve]").forEach(b=>b.onclick=async()=>{
+   try{
+    const x=await client.from("profiles").update({approved:b.dataset.value==="true"}).eq("id",b.dataset.approve);
+    say("adminMsg",x.error?x.error.message:"تم تحديث الاعتماد.");await loadProfiles();
+   }catch(e){say("adminMsg",errorText(e))}
+  });
+ }catch(e){box.textContent="تعذر التحميل: "+errorText(e)}
+}
+async function adminTable(t,columns){
+ if(!isAdmin)return;
+ const box=$("adminList");box.textContent="جاري التحميل...";
+ try{
+  const r=await client.from(t).select(columns).limit(50);
+  if(r.error)throw r.error;
+  box.innerHTML=(r.data||[]).map(x=>`<article class="member"><pre>${esc(JSON.stringify(x,null,2))}</pre></article>`).join("")||"لا توجد سجلات.";
+ }catch(e){box.textContent="تعذر التحميل: "+errorText(e)}
+}
+$("refreshMembers").onclick=loadMembers;
+$("refreshMatches").onclick=()=>drawMatches("matchesList");
+$("loadProfiles").onclick=loadProfiles;
+$("loadReports").onclick=()=>adminTable("reports","id,reporter_id,reported_user_id,reason,status,created_at");
+$("loadPayments").onclick=()=>adminTable("payments","id,user_name,user_phone,amount,status,created_at");
+
+if(!window.supabase){
+ say("authMsg","تعذر تحميل خدمة تسجيل الدخول. تأكد من الإنترنت ثم حدّث الصفحة.");
+ return;
+}
+try{
+ client=window.supabase.createClient(sbUrl,sbKey);
+}catch(e){
+ say("authMsg","تعذر تشغيل خدمة تسجيل الدخول: "+errorText(e));
+ return;
+}
+client.auth.onAuthStateChange((event,session)=>{
+ if(session?.user&&!user)start(session.user).catch(e=>say("authMsg",errorText(e)));
+});
+(async()=>{
+ try{
+  const r=await client.auth.getSession();
+  if(r.error)throw r.error;
+  if(r.data.session?.user)await start(r.data.session.user);
+ }catch(e){say("authMsg","تعذر فحص جلسة الدخول: "+errorText(e))}
+})();
+})();
+</script>
+</body>
+</html>
