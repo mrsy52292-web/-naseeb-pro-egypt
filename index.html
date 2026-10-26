@@ -4,89 +4,243 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#741c45">
+<meta name="theme-color" content="#681638">
+<meta name="description" content="نصيب منصة للتعارف الجاد للزواج بموافقة الطرفين والاهتمام بالخصوصية.">
 <title>نصيب | نصيبك في الحلال</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --wine:#741c45;
+  --wine-dark:#51112f;
+  --gold:#c5a15c;
+  --cream:#fffaf6;
+  --pink:#f8edf2;
+  --text:#30242b;
+  --muted:#756773;
+  --border:#eee2e9;
+  --white:#fff;
+  --shadow:0 8px 28px rgba(72,22,48,.07);
+}
 *{box-sizing:border-box}
-body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#fff7fa;color:#30212a}
-header{background:#741c45;color:white;padding:22px 16px;text-align:center}
-header h1{margin:0;font-size:30px}
-header p{margin:8px 0 0}
-main{max-width:760px;margin:auto;padding:16px}
-.card{background:white;border-radius:16px;padding:18px;margin:14px 0;box-shadow:0 3px 14px #0000000d}
-h2{color:#741c45;margin-top:0}
-input,select,textarea,button{font:inherit;width:100%;padding:12px;margin:6px 0;border-radius:9px}
-input,select,textarea{border:1px solid #ddd}
-button{background:#741c45;color:white;border:0;cursor:pointer}
-button.secondary{background:#eee;color:#741c45}
-.small{font-size:13px;color:#75636d}
-.notice{padding:12px;border-radius:10px;background:#fff0f5;margin:10px 0}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:'Cairo',Tahoma,Arial,sans-serif;
+  font-size:16px;
+  line-height:1.9;
+  color:var(--text);
+  background:var(--cream);
+}
+header{
+  position:relative;
+  overflow:hidden;
+  padding:28px 16px 32px;
+  text-align:center;
+  color:white;
+  background:linear-gradient(135deg,#48102b,#741c45 65%,#87365d);
+  border-bottom:4px solid var(--gold);
+}
+.brand-mark{
+  width:54px;height:54px;
+  margin:0 auto 7px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(255,255,255,.5);
+  border-radius:18px;
+  color:#f5dca4;
+  font-size:30px;
+  font-weight:800;
+}
+header h1{
+  margin:0;
+  font-size:clamp(36px,8vw,46px);
+  font-weight:800;
+  line-height:1.4;
+}
+header p{
+  margin:8px 0 0;
+  font-size:16px;
+  color:#fff3f7;
+}
+main{
+  width:min(100% - 24px,780px);
+  margin:22px auto 36px;
+}
+.card{
+  margin:17px 0;
+  padding:clamp(17px,4vw,25px);
+  border:1px solid var(--border);
+  border-radius:20px;
+  background:var(--white);
+  box-shadow:var(--shadow);
+}
+h2{
+  margin:0 0 15px;
+  color:var(--wine);
+  font-size:23px;
+  line-height:1.6;
+  font-weight:800;
+}
+h3{
+  margin:0 0 8px;
+  color:var(--wine);
+  font-size:19px;
+  font-weight:800;
+}
+p{overflow-wrap:anywhere}
+input,select,textarea,button{
+  width:100%;
+  min-height:52px;
+  margin:7px 0;
+  padding:12px 14px;
+  border-radius:12px;
+  font:inherit;
+  font-size:16px;
+}
+input,select,textarea{
+  color:var(--text);
+  background:#fff;
+  border:1px solid #dfd2da;
+  outline:none;
+}
+input::placeholder,textarea::placeholder{
+  color:#847681;
+  opacity:1;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--wine);
+  box-shadow:0 0 0 3px rgba(116,28,69,.10);
+}
+textarea{min-height:110px;resize:vertical}
+button{
+  border:1px solid transparent;
+  background:var(--wine);
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 3px 8px rgba(116,28,69,.10);
+  transition:background .2s ease;
+}
+button:hover{background:var(--wine-dark)}
+button.secondary{
+  color:var(--wine);
+  background:var(--pink);
+  border-color:#ead7e1;
+  box-shadow:none;
+}
+button.secondary:hover{background:#f0dfe7}
+.small{
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.9;
+}
+.notice{
+  margin:0 0 18px;
+  padding:14px 16px;
+  border:1px solid #ead6e0;
+  border-right:5px solid var(--gold);
+  border-radius:13px;
+  color:var(--wine-dark);
+  background:#fff;
+  font-weight:600;
+  overflow-wrap:anywhere;
+}
+.member{
+  margin:13px 0;
+  padding:16px;
+  border:1px solid var(--border);
+  border-radius:16px;
+  background:linear-gradient(145deg,#fff,#fffafd);
+}
+.member p{margin:5px 0;line-height:1.9}
 .hidden{display:none!important}
-.member{border:1px solid #eee;border-radius:12px;padding:12px;margin:10px 0}
-footer{text-align:center;padding:20px;color:#75636d}
+footer{
+  padding:24px 12px;
+  border-top:1px solid var(--border);
+  text-align:center;
+  color:var(--muted);
+  font-size:14px;
+}
+@media(max-width:480px){
+  body{font-size:16px}
+  header{padding:23px 14px 27px}
+  header p{font-size:15px}
+  main{width:calc(100% - 20px);margin-top:15px}
+  .card{padding:16px;margin:14px 0;border-radius:16px}
+  h2{font-size:21px}
+  .member{padding:14px}
+}
 </style>
 </head>
 <body>
+
 <header>
-<h1>نصيب</h1>
-<p>تعارف جاد للزواج بموافقة الطرفين</p>
+  <div class="brand-mark" aria-hidden="true">ن</div>
+  <h1>نصيب</h1>
+  <p>تعارف جاد للزواج بموافقة الطرفين</p>
 </header>
+
 <main>
-<div id="status" class="notice">أهلًا بك في نصيب</div>
+  <div id="status" class="notice" role="status" aria-live="polite">أهلًا بك في نصيب</div>
 
-<section class="card" id="auth">
-<h2>إنشاء حساب أو تسجيل الدخول</h2>
-<input id="email" type="email" placeholder="البريد الإلكتروني">
-<input id="password" type="password" placeholder="كلمة المرور (6 أحرف على الأقل)">
-<button id="signup">إنشاء حساب جديد</button>
-<button id="login" class="secondary">تسجيل الدخول</button>
-<button id="logout" class="secondary hidden">تسجيل الخروج</button>
-<p class="small">لو طلب منك تأكيد البريد الإلكتروني، افتح رسالة التأكيد أولًا.</p>
-</section>
+  <section class="card" id="auth">
+    <h2>أهلًا بك في نصيب</h2>
+    <p class="small">مساحة للتعارف الجاد باحترام وخصوصية.</p>
+    <input id="email" type="email" autocomplete="email" placeholder="البريد الإلكتروني">
+    <input id="password" type="password" autocomplete="current-password" placeholder="كلمة المرور (6 أحرف على الأقل)">
+    <button id="signup">إنشاء حساب جديد</button>
+    <button id="login" class="secondary">تسجيل الدخول</button>
+    <button id="logout" class="secondary hidden">تسجيل الخروج</button>
+    <p class="small">لو طُلب منك تأكيد البريد الإلكتروني، افتح رسالة التأكيد أولًا.</p>
+  </section>
 
-<section class="card hidden" id="profile">
-<h2>ملفي الشخصي</h2>
-<input id="display_name" placeholder="الاسم المعروض">
-<input id="birth_date" type="date">
-<select id="gender">
-<option value="">النوع</option>
-<option value="male">ذكر</option>
-<option value="female">أنثى</option>
-</select>
-<input id="city" placeholder="المحافظة أو المدينة">
-<textarea id="bio" placeholder="نبذة مختصرة عنك" rows="3"></textarea>
-<button id="saveProfile">حفظ الملف الشخصي</button>
-</section>
+  <section class="card hidden" id="profile">
+    <h2>ملفي الشخصي</h2>
+    <p class="small">أكمل بياناتك الأساسية حتى يتمكن المسؤول من مراجعة ملفك.</p>
+    <input id="display_name" autocomplete="name" placeholder="الاسم المعروض">
+    <input id="birth_date" type="date" aria-label="تاريخ الميلاد">
+    <select id="gender" aria-label="النوع">
+      <option value="">النوع</option>
+      <option value="male">ذكر</option>
+      <option value="female">أنثى</option>
+    </select>
+    <input id="city" autocomplete="address-level2" placeholder="المحافظة أو المدينة">
+    <textarea id="bio" placeholder="نبذة مختصرة عنك" rows="3"></textarea>
+    <button id="saveProfile">حفظ الملف الشخصي</button>
+  </section>
 
-<section class="card hidden" id="membersSection">
-<h2>التعارف الجاد</h2>
-<p class="small">تظهر الملفات التي وافق المسؤول على مراجعتها فقط.</p>
-<div id="members"></div>
-</section>
+  <section class="card hidden" id="membersSection">
+    <h2>التعارف الجاد</h2>
+    <p class="small">تظهر الملفات التي وافقت الإدارة على مراجعتها فقط.</p>
+    <div id="members"></div>
+  </section>
 
-<section class="card hidden" id="matchesSection">
-<h2>التوافق المتبادل</h2>
-<div id="matches"></div>
-</section>
+  <section class="card hidden" id="matchesSection">
+    <h2>التوافق المتبادل</h2>
+    <p class="small">يظهر التوافق عندما يبدي الطرفان الإعجاب ببعضهما.</p>
+    <div id="matches"></div>
+  </section>
 
-<section class="card hidden" id="messagesSection">
-<h2>الرسائل</h2>
-<div id="messageList"></div>
-<input id="messageText" placeholder="اكتب رسالتك">
-<button id="sendMessage">إرسال الرسالة</button>
-</section>
+  <section class="card hidden" id="messagesSection">
+    <h2>الرسائل</h2>
+    <div id="messageList"></div>
+    <input id="messageText" maxlength="2000" placeholder="اكتب رسالتك">
+    <button id="sendMessage">إرسال الرسالة</button>
+  </section>
 
-<section class="card hidden" id="adminSection">
-<h2>لوحة الإدارة</h2>
-<div id="adminMembers"></div>
-</section>
+  <section class="card hidden" id="adminSection">
+    <h2>لوحة الإدارة</h2>
+    <p class="small">مراجعة ملفات الأعضاء المسجلين.</p>
+    <div id="adminMembers"></div>
+  </section>
 
-<footer>نصيب © 2026 — احترم خصوصية الآخرين</footer>
+  <footer>نصيب © 2026 — الاحترام والخصوصية أساس التعارف</footer>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
- 
 "use strict";
 
 const SUPABASE_URL = "https://gdavyferkvekaprdgcft.supabase.co";
@@ -149,7 +303,8 @@ async function login() {
 }
 
 async function logout() {
-  await db.auth.signOut();
+  const { error } = await db.auth.signOut();
+  if (error) return status("تعذر تسجيل الخروج: " + error.message);
   currentUser = null;
   activeMatch = null;
   location.reload();
@@ -158,6 +313,7 @@ async function logout() {
 async function startApp() {
   if (!currentUser) return;
 
+  show("auth", true);
   show("logout", true);
   show("profile", true);
   show("membersSection", true);
@@ -191,7 +347,7 @@ async function startApp() {
 
   show("adminSection", role?.role === "admin");
 
-  status("تم تسجيل الدخول. أكمل ملفك الشخصي.");
+  status("تم تسجيل الدخول. يمكنك مراجعة ملفك الشخصي.");
   await loadMembers();
   await loadMatches();
   if (role?.role === "admin") await loadAdminMembers();
@@ -208,9 +364,18 @@ async function saveProfile() {
     return status("أكمل الاسم وتاريخ الميلاد والنوع.");
   }
 
-  const age = (Date.now() - new Date(birth).getTime()) /
-    (365.2425 * 24 * 60 * 60 * 1000);
+  const birthDate = new Date(birth + "T00:00:00");
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
 
+  if (!Number.isFinite(birthDate.getTime()) || birthDate > today) {
+    return status("تأكد من صحة تاريخ الميلاد.");
+  }
   if (age < 18) return status("التسجيل متاح لمن بلغوا 18 عامًا فأكثر.");
 
   const { error } = await db.from("profiles").upsert({
@@ -263,6 +428,9 @@ async function loadMembers() {
 }
 
 async function sendLike(receiverId) {
+  if (!currentUser) return status("سجّل الدخول أولًا.");
+  if (receiverId === currentUser.id) return;
+
   const { error } = await db.from("likes").insert({
     sender_id: currentUser.id,
     receiver_id: receiverId
@@ -297,10 +465,9 @@ async function loadMatches() {
   }
 
   $("matches").innerHTML = data.map(m => {
-    const other = m.user_one === currentUser.id ? m.user_two : m.user_one;
     return `<div class="member">
       <p>يوجد توافق متبادل</p>
-      <button data-match="${esc(m.id)}" data-other="${esc(other)}">فتح الرسائل</button>
+      <button data-match="${esc(m.id)}">فتح الرسائل</button>
     </div>`;
   }).join("");
 
@@ -335,6 +502,7 @@ async function loadMessages() {
 }
 
 async function sendMessage() {
+  if (!currentUser) return status("سجّل الدخول أولًا.");
   const content = $("messageText").value.trim();
 
   if (!activeMatch) return status("افتح محادثة من قائمة التوافق أولًا.");
