@@ -5,239 +5,128 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#681638">
-<meta name="description" content="نصيب منصة للتعارف الجاد للزواج بموافقة الطرفين والاهتمام بالخصوصية.">
+<meta name="description" content="نصيب - منصة للتعارف الجاد للزواج بموافقة الطرفين.">
 <title>نصيب | نصيبك في الحلال</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap');
-
-:root{
-  --wine:#741c45;
-  --wine-dark:#51112f;
-  --gold:#c5a15c;
-  --cream:#fffaf6;
-  --pink:#f8edf2;
-  --text:#30242b;
-  --muted:#756773;
-  --border:#eee2e9;
-  --white:#fff;
-  --shadow:0 8px 28px rgba(72,22,48,.07);
-}
+:root{--wine:#741c45;--dark:#51112f;--gold:#c5a15c;--bg:#fff8f5;--pink:#f8edf2;--text:#30242b;--muted:#756773;--border:#eee2e9;--white:#fff;--shadow:0 5px 20px #51112f0d}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{
-  margin:0;
-  font-family:'Cairo',Tahoma,Arial,sans-serif;
-  font-size:16px;
-  line-height:1.9;
-  color:var(--text);
-  background:var(--cream);
-}
-header{
-  position:relative;
-  overflow:hidden;
-  padding:28px 16px 32px;
-  text-align:center;
-  color:white;
-  background:linear-gradient(135deg,#48102b,#741c45 65%,#87365d);
-  border-bottom:4px solid var(--gold);
-}
-.brand-mark{
-  width:54px;height:54px;
-  margin:0 auto 7px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border:1px solid rgba(255,255,255,.5);
-  border-radius:18px;
-  color:#f5dca4;
-  font-size:30px;
-  font-weight:800;
-}
-header h1{
-  margin:0;
-  font-size:clamp(36px,8vw,46px);
-  font-weight:800;
-  line-height:1.4;
-}
-header p{
-  margin:8px 0 0;
-  font-size:16px;
-  color:#fff3f7;
-}
-main{
-  width:min(100% - 24px,780px);
-  margin:22px auto 36px;
-}
-.card{
-  margin:17px 0;
-  padding:clamp(17px,4vw,25px);
-  border:1px solid var(--border);
-  border-radius:20px;
-  background:var(--white);
-  box-shadow:var(--shadow);
-}
-h2{
-  margin:0 0 15px;
-  color:var(--wine);
-  font-size:23px;
-  line-height:1.6;
-  font-weight:800;
-}
-h3{
-  margin:0 0 8px;
-  color:var(--wine);
-  font-size:19px;
-  font-weight:800;
-}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Cairo,Tahoma,sans-serif;font-size:15px;line-height:1.8}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+header{padding:22px 15px 25px;text-align:center;color:#fff;background:linear-gradient(135deg,#48102b,#741c45 70%,#87365d);border-bottom:4px solid var(--gold)}
+.logo{display:flex;align-items:center;justify-content:center;gap:10px}
+.logo-mark{width:48px;height:48px;display:grid;place-items:center;border:1px solid #ffffff80;border-radius:16px;color:#f5dca4;font-size:27px;font-weight:800}
+header h1{font-size:34px;line-height:1.3;margin:0;font-weight:800}
+header p{margin:8px 0 0;color:#fff1f6;font-size:14px}
+main{width:min(100% - 22px,780px);margin:16px auto 100px}
+.notice{padding:12px 14px;margin:0 0 15px;background:white;border:1px solid var(--border);border-right:4px solid var(--gold);border-radius:13px;color:var(--dark);font-weight:600;overflow-wrap:anywhere}
+.card{padding:19px;margin:14px 0;background:#fff;border:1px solid var(--border);border-radius:19px;box-shadow:var(--shadow)}
+h2{font-size:21px;color:var(--wine);margin:0 0 10px;font-weight:800}
+h3{margin:0;color:var(--wine);font-size:18px}
 p{overflow-wrap:anywhere}
-input,select,textarea,button{
-  width:100%;
-  min-height:52px;
-  margin:7px 0;
-  padding:12px 14px;
-  border-radius:12px;
-  font:inherit;
-  font-size:16px;
-}
-input,select,textarea{
-  color:var(--text);
-  background:#fff;
-  border:1px solid #dfd2da;
-  outline:none;
-}
-input::placeholder,textarea::placeholder{
-  color:#847681;
-  opacity:1;
-}
-input:focus,select:focus,textarea:focus{
-  border-color:var(--wine);
-  box-shadow:0 0 0 3px rgba(116,28,69,.10);
-}
-textarea{min-height:110px;resize:vertical}
-button{
-  border:1px solid transparent;
-  background:var(--wine);
-  color:white;
-  font-weight:700;
-  cursor:pointer;
-  box-shadow:0 3px 8px rgba(116,28,69,.10);
-  transition:background .2s ease;
-}
-button:hover{background:var(--wine-dark)}
-button.secondary{
-  color:var(--wine);
-  background:var(--pink);
-  border-color:#ead7e1;
-  box-shadow:none;
-}
+.small{font-size:13px;color:var(--muted);margin:4px 0 12px}
+input,select,textarea{display:block;width:100%;min-height:48px;padding:11px 13px;margin:8px 0;border:1px solid #dfd2da;border-radius:11px;background:white;color:var(--text);outline:none}
+textarea{min-height:95px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--wine);box-shadow:0 0 0 3px #741c4514}
+button{border:0;border-radius:12px;padding:11px 14px;min-height:45px;background:var(--wine);color:white;font-weight:700}
+button:hover{background:var(--dark)}
+button:disabled{opacity:.6;cursor:wait}
+button.secondary{background:var(--pink);color:var(--wine);border:1px solid #ead7e1}
 button.secondary:hover{background:#f0dfe7}
-.small{
-  color:var(--muted);
-  font-size:14px;
-  line-height:1.9;
-}
-.notice{
-  margin:0 0 18px;
-  padding:14px 16px;
-  border:1px solid #ead6e0;
-  border-right:5px solid var(--gold);
-  border-radius:13px;
-  color:var(--wine-dark);
-  background:#fff;
-  font-weight:600;
-  overflow-wrap:anywhere;
-}
-.member{
-  margin:13px 0;
-  padding:16px;
-  border:1px solid var(--border);
-  border-radius:16px;
-  background:linear-gradient(145deg,#fff,#fffafd);
-}
-.member p{margin:5px 0;line-height:1.9}
+button.danger{background:#fff0f0;color:#a12828;border:1px solid #f1d4d4}
 .hidden{display:none!important}
-footer{
-  padding:24px 12px;
-  border-top:1px solid var(--border);
-  text-align:center;
-  color:var(--muted);
-  font-size:14px;
-}
-@media(max-width:480px){
-  body{font-size:16px}
-  header{padding:23px 14px 27px}
-  header p{font-size:15px}
-  main{width:calc(100% - 20px);margin-top:15px}
-  .card{padding:16px;margin:14px 0;border-radius:16px}
-  h2{font-size:21px}
-  .member{padding:14px}
-}
+.full{width:100%}
+.row{display:flex;gap:8px;align-items:center}
+.row>*{flex:1;min-width:0}
+.section-head{display:flex;align-items:center;gap:10px;margin-bottom:13px}
+.section-icon{width:43px;height:43px;display:grid;place-items:center;flex-shrink:0;border-radius:14px;background:var(--pink);color:var(--wine);font-size:22px}
+.section-head h2{margin:0}
+.member{padding:15px;margin:11px 0;border:1px solid var(--border);border-radius:15px;background:linear-gradient(145deg,#fff,#fffafd)}
+.member p{margin:5px 0;font-size:14px}
+.member-actions{display:flex;gap:8px;margin-top:10px}
+.member-actions button{flex:1}
+.tag{display:inline-block;padding:3px 9px;border-radius:30px;background:var(--pink);color:var(--wine);font-size:12px;font-weight:700}
+.empty{text-align:center;color:var(--muted);padding:18px 8px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:10;display:flex;justify-content:space-around;gap:3px;padding:8px 4px calc(8px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--border);box-shadow:0 -4px 20px #51112f0b}
+.nav-item{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:5px 2px;min-height:55px;border-radius:10px;background:transparent;color:var(--muted);font-size:10px;box-shadow:none}
+.nav-item .ico{font-size:21px;line-height:1.3}
+.nav-item.active{background:var(--pink);color:var(--wine)}
+.nav-item:hover{background:var(--pink)}
+footer{text-align:center;padding:20px 10px;color:var(--muted);font-size:12px}
+@media(min-width:600px){.bottom-nav{left:50%;right:auto;transform:translateX(-50%);width:min(100%,780px);border:1px solid var(--border);border-bottom:0;border-radius:16px 16px 0 0}.card{padding:23px}header h1{font-size:40px}}
 </style>
 </head>
 <body>
-
 <header>
-  <div class="brand-mark" aria-hidden="true">ن</div>
-  <h1>نصيب</h1>
-  <p>تعارف جاد للزواج بموافقة الطرفين</p>
+  <div class="logo">
+    <div class="logo-mark">ن</div>
+    <div><h1>نصيب</h1><p>تعارف جاد للزواج بموافقة الطرفين</p></div>
+  </div>
 </header>
 
 <main>
   <div id="status" class="notice" role="status" aria-live="polite">أهلًا بك في نصيب</div>
 
   <section class="card" id="auth">
-    <h2>أهلًا بك في نصيب</h2>
-    <p class="small">مساحة للتعارف الجاد باحترام وخصوصية.</p>
+    <div class="section-head"><div class="section-icon">🔐</div><div><h2>حسابك في نصيب</h2><p class="small">ابدأ رحلتك نحو تعارف جاد ومحترم.</p></div></div>
     <input id="email" type="email" autocomplete="email" placeholder="البريد الإلكتروني">
     <input id="password" type="password" autocomplete="current-password" placeholder="كلمة المرور (6 أحرف على الأقل)">
-    <button id="signup">إنشاء حساب جديد</button>
-    <button id="login" class="secondary">تسجيل الدخول</button>
-    <button id="logout" class="secondary hidden">تسجيل الخروج</button>
-    <p class="small">لو طُلب منك تأكيد البريد الإلكتروني، افتح رسالة التأكيد أولًا.</p>
+    <button id="signup" class="full">✨ إنشاء حساب جديد</button>
+    <button id="login" class="secondary full">🔑 تسجيل الدخول</button>
+    <p class="small">قد تحتاج إلى تأكيد بريدك الإلكتروني قبل تسجيل الدخول.</p>
+  </section>
+
+  <section class="card hidden" id="accountCard">
+    <div class="section-head"><div class="section-icon">👋</div><div><h2>أهلًا بك</h2><p class="small" id="accountEmail"></p></div></div>
+    <button id="logout" class="danger full">تسجيل الخروج</button>
   </section>
 
   <section class="card hidden" id="profile">
-    <h2>ملفي الشخصي</h2>
-    <p class="small">أكمل بياناتك الأساسية حتى يتمكن المسؤول من مراجعة ملفك.</p>
+    <div class="section-head"><div class="section-icon">👤</div><div><h2>ملفي الشخصي</h2><p class="small">أكمل بياناتك لمراجعتها قبل عرضها.</p></div></div>
     <input id="display_name" autocomplete="name" placeholder="الاسم المعروض">
+    <label for="birth_date" class="small">تاريخ الميلاد</label>
     <input id="birth_date" type="date" aria-label="تاريخ الميلاد">
-    <select id="gender" aria-label="النوع">
-      <option value="">النوع</option>
-      <option value="male">ذكر</option>
-      <option value="female">أنثى</option>
-    </select>
-    <input id="city" autocomplete="address-level2" placeholder="المحافظة أو المدينة">
-    <textarea id="bio" placeholder="نبذة مختصرة عنك" rows="3"></textarea>
-    <button id="saveProfile">حفظ الملف الشخصي</button>
+    <select id="gender" aria-label="النوع"><option value="">النوع</option><option value="male">ذكر</option><option value="female">أنثى</option></select>
+    <input id="city" placeholder="المحافظة أو المدينة">
+    <textarea id="bio" placeholder="نبذة مختصرة عنك"></textarea>
+    <button id="saveProfile" class="full">💾 حفظ الملف الشخصي</button>
   </section>
 
   <section class="card hidden" id="membersSection">
-    <h2>التعارف الجاد</h2>
-    <p class="small">تظهر الملفات التي وافقت الإدارة على مراجعتها فقط.</p>
-    <div id="members"></div>
+    <div class="section-head"><div class="section-icon">💗</div><div><h2>التعارف الجاد</h2><p class="small">ملفات الأعضاء المعتمدة.</p></div></div>
+    <div id="members"><div class="empty">جارٍ تحميل الأعضاء...</div></div>
   </section>
 
   <section class="card hidden" id="matchesSection">
-    <h2>التوافق المتبادل</h2>
-    <p class="small">يظهر التوافق عندما يبدي الطرفان الإعجاب ببعضهما.</p>
-    <div id="matches"></div>
+    <div class="section-head"><div class="section-icon">🤝</div><div><h2>التوافق المتبادل</h2><p class="small">التوافقات المسجلة في قاعدة البيانات.</p></div></div>
+    <div id="matches"><div class="empty">لا توجد توافقات حتى الآن.</div></div>
   </section>
 
   <section class="card hidden" id="messagesSection">
-    <h2>الرسائل</h2>
-    <div id="messageList"></div>
-    <input id="messageText" maxlength="2000" placeholder="اكتب رسالتك">
-    <button id="sendMessage">إرسال الرسالة</button>
+    <div class="section-head"><div class="section-icon">💬</div><div><h2>الرسائل</h2><p class="small">افتح محادثة من قسم التوافق أولًا.</p></div></div>
+    <div id="activeChat" class="tag">لم تُحدد محادثة</div>
+    <div id="messageList"><div class="empty">اختر محادثة لعرض الرسائل.</div></div>
+    <textarea id="messageText" maxlength="2000" placeholder="اكتب رسالتك..." rows="2"></textarea>
+    <button id="sendMessage" class="full">📨 إرسال الرسالة</button>
   </section>
 
   <section class="card hidden" id="adminSection">
-    <h2>لوحة الإدارة</h2>
-    <p class="small">مراجعة ملفات الأعضاء المسجلين.</p>
-    <div id="adminMembers"></div>
+    <div class="section-head"><div class="section-icon">🛡️</div><div><h2>لوحة الإدارة</h2><p class="small">مراجعة ملفات الأعضاء.</p></div></div>
+    <div id="adminMembers"><div class="empty">جارٍ تحميل الملفات...</div></div>
   </section>
 
   <footer>نصيب © 2026 — الاحترام والخصوصية أساس التعارف</footer>
 </main>
+
+<nav class="bottom-nav hidden" id="bottomNav" aria-label="التنقل الرئيسي">
+  <button class="nav-item active" data-target="profile"><span class="ico">👤</span><span>ملفي</span></button>
+  <button class="nav-item" data-target="membersSection"><span class="ico">💗</span><span>التعارف</span></button>
+  <button class="nav-item" data-target="matchesSection"><span class="ico">🤝</span><span>التوافق</span></button>
+  <button class="nav-item" data-target="messagesSection"><span class="ico">💬</span><span>الرسائل</span></button>
+  <button class="nav-item hidden" id="adminNav" data-target="adminSection"><span class="ico">🛡️</span><span>الإدارة</span></button>
+</nav>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -245,328 +134,217 @@ footer{
 
 const SUPABASE_URL = "https://gdavyferkvekaprdgcft.supabase.co";
 const SUPABASE_KEY = "sb_publishable_QJnnLMv9pltgpeKQgmPGuw_c4CAyG7K";
-
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
 const $ = id => document.getElementById(id);
+
 let currentUser = null;
 let activeMatch = null;
+let isAdmin = false;
 
-function status(message) {
-  $("status").textContent = message;
+function status(message){$("status").textContent=message}
+function show(id,visible=true){$(id).classList.toggle("hidden",!visible)}
+function esc(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+function setBusy(id,busy){$(id).disabled=busy}
+
+function showSection(id){
+  if(!currentUser){status("سجّل الدخول أولًا.");return}
+  const allowed=["profile","membersSection","matchesSection","messagesSection","adminSection"];
+  if(!allowed.includes(id))return;
+  if(id==="adminSection"&&!isAdmin){status("هذا القسم مخصص للمسؤول.");return}
+  allowed.forEach(s=>show(s,s===id));
+  document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.target===id));
+  $(id).scrollIntoView({behavior:"smooth",block:"start"});
 }
 
-function show(id, visible = true) {
-  $(id).classList.toggle("hidden", !visible);
+document.querySelectorAll(".nav-item").forEach(b=>{
+  b.addEventListener("click",()=>showSection(b.dataset.target));
+});
+
+async function signup(){
+  const email=$("email").value.trim(),password=$("password").value;
+  if(!email||password.length<6){status("اكتب البريد الإلكتروني وكلمة مرور من 6 أحرف على الأقل.");return}
+  setBusy("signup",true);
+  try{
+    const {error}=await db.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}});
+    if(error)throw error;
+    status("تم إرسال طلب التسجيل. راجع بريدك الإلكتروني لتأكيد الحساب.");
+  }catch(e){status("تعذر إنشاء الحساب: "+e.message)}
+  finally{setBusy("signup",false)}
 }
 
-function esc(value) {
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;",
-    '"': "&quot;", "'": "&#39;"
-  })[c]);
+async function login(){
+  const email=$("email").value.trim(),password=$("password").value;
+  if(!email||!password){status("اكتب البريد الإلكتروني وكلمة المرور.");return}
+  setBusy("login",true);
+  try{
+    const {data,error}=await db.auth.signInWithPassword({email,password});
+    if(error)throw error;
+    currentUser=data.user;
+    await startApp();
+  }catch(e){status("تعذر تسجيل الدخول: "+e.message)}
+  finally{setBusy("login",false)}
 }
 
-async function signup() {
-  const email = $("email").value.trim();
-  const password = $("password").value;
-
-  if (!email || password.length < 6) {
-    status("اكتب البريد الإلكتروني وكلمة مرور من 6 أحرف على الأقل.");
-    return;
-  }
-
-  const { error } = await db.auth.signUp({
-    email,
-    password,
-    options: {
-      emailRedirectTo: location.origin + location.pathname
-    }
-  });
-
-  if (error) return status("تعذر إنشاء الحساب: " + error.message);
-  status("تم إرسال طلب التسجيل. راجع بريدك الإلكتروني لتأكيد الحساب.");
-}
-
-async function login() {
-  const email = $("email").value.trim();
-  const password = $("password").value;
-
-  const { data, error } = await db.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  if (error) return status("تعذر تسجيل الدخول: " + error.message);
-  currentUser = data.user;
-  await startApp();
-}
-
-async function logout() {
-  const { error } = await db.auth.signOut();
-  if (error) return status("تعذر تسجيل الخروج: " + error.message);
-  currentUser = null;
-  activeMatch = null;
+async function logout(){
+  const {error}=await db.auth.signOut();
+  if(error){status("تعذر تسجيل الخروج: "+error.message);return}
+  currentUser=null;activeMatch=null;isAdmin=false;
   location.reload();
 }
 
-async function startApp() {
-  if (!currentUser) return;
-
-  show("auth", true);
-  show("logout", true);
-  show("profile", true);
-  show("membersSection", true);
-  show("matchesSection", true);
-  show("messagesSection", true);
-
-  const { data: profile, error } = await db
-    .from("profiles")
-    .select("*")
-    .eq("id", currentUser.id)
-    .maybeSingle();
-
-  if (error) {
-    status("تعذر قراءة الملف الشخصي: " + error.message);
-    return;
+async function startApp(){
+  if(!currentUser)return;
+  show("auth",false);show("accountCard",true);show("bottomNav",true);
+  $("accountEmail").textContent=currentUser.email||"تم تسجيل الدخول";
+  show("profile",true);show("membersSection",false);show("matchesSection",false);show("messagesSection",false);show("adminSection",false);
+  const {data:profile,error}=await db.from("profiles").select("*").eq("id",currentUser.id).maybeSingle();
+  if(error){status("تعذر قراءة الملف الشخصي: "+error.message);return}
+  if(profile){
+    $("display_name").value=profile.display_name||"";
+    $("birth_date").value=profile.birth_date||"";
+    $("gender").value=profile.gender||"";
+    $("city").value=profile.city||"";
+    $("bio").value=profile.bio||"";
   }
-
-  if (profile) {
-    $("display_name").value = profile.display_name || "";
-    $("birth_date").value = profile.birth_date || "";
-    $("gender").value = profile.gender || "";
-    $("city").value = profile.city || "";
-    $("bio").value = profile.bio || "";
-  }
-
-  const { data: role } = await db
-    .from("admin_roles")
-    .select("role")
-    .eq("user_id", currentUser.id)
-    .maybeSingle();
-
-  show("adminSection", role?.role === "admin");
-
+  const {data:role,error:roleError}=await db.from("admin_roles").select("role").eq("user_id",currentUser.id).maybeSingle();
+  isAdmin=!roleError&&role?.role==="admin";
+  show("adminNav",isAdmin);
   status("تم تسجيل الدخول. يمكنك مراجعة ملفك الشخصي.");
   await loadMembers();
   await loadMatches();
-  if (role?.role === "admin") await loadAdminMembers();
+  if(isAdmin)await loadAdminMembers();
 }
 
-async function saveProfile() {
-  if (!currentUser) return status("سجّل الدخول أولًا.");
-
-  const name = $("display_name").value.trim();
-  const birth = $("birth_date").value;
-  const gender = $("gender").value;
-
-  if (!name || !birth || !gender) {
-    return status("أكمل الاسم وتاريخ الميلاد والنوع.");
-  }
-
-  const birthDate = new Date(birth + "T00:00:00");
-  const today = new Date();
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDiff = today.getMonth() - birthDate.getMonth();
-  if (monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
-
-  if (!Number.isFinite(birthDate.getTime()) || birthDate > today) {
-    return status("تأكد من صحة تاريخ الميلاد.");
-  }
-  if (age < 18) return status("التسجيل متاح لمن بلغوا 18 عامًا فأكثر.");
-
-  const { error } = await db.from("profiles").upsert({
-    id: currentUser.id,
-    display_name: name,
-    birth_date: birth,
-    gender,
-    city: $("city").value.trim(),
-    bio: $("bio").value.trim()
-  }, { onConflict: "id" });
-
-  if (error) return status("تعذر حفظ الملف: " + error.message);
-
+async function saveProfile(){
+  if(!currentUser)return status("سجّل الدخول أولًا.");
+  const name=$("display_name").value.trim(),birth=$("birth_date").value,gender=$("gender").value;
+  if(!name||!birth||!gender)return status("أكمل الاسم وتاريخ الميلاد والنوع.");
+  const d=new Date(birth+"T00:00:00"),today=new Date();
+  let age=today.getFullYear()-d.getFullYear();
+  if(today.getMonth()<d.getMonth()||(today.getMonth()===d.getMonth()&&today.getDate()<d.getDate()))age--;
+  if(!Number.isFinite(d.getTime())||d>today)return status("تأكد من صحة تاريخ الميلاد.");
+  if(age<18)return status("التسجيل متاح لمن بلغوا 18 عامًا فأكثر.");
+  const {error}=await db.from("profiles").upsert({
+    id:currentUser.id,display_name:name,birth_date:birth,gender,
+    city:$("city").value.trim(),bio:$("bio").value.trim()
+  },{onConflict:"id"});
+  if(error){status("تعذر حفظ الملف: "+error.message);return}
   status("تم حفظ الملف. سيظهر للآخرين بعد موافقة الإدارة.");
   await loadMembers();
 }
 
-async function loadMembers() {
-  if (!currentUser) return;
-
-  const { data, error } = await db
-    .from("profiles")
-    .select("id,display_name,birth_date,gender,city,bio")
-    .eq("approved", true)
-    .neq("id", currentUser.id)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    $("members").textContent = "تعذر تحميل الأعضاء: " + error.message;
-    return;
-  }
-
-  if (!data?.length) {
-    $("members").textContent = "لا توجد ملفات معتمدة للعرض حاليًا.";
-    return;
-  }
-
-  $("members").innerHTML = data.map(p => `
+async function loadMembers(){
+  if(!currentUser)return;
+  const {data,error}=await db.from("profiles")
+    .select("id,display_name,gender,city,bio,approved")
+    .eq("approved",true).neq("id",currentUser.id)
+    .order("created_at",{ascending:false});
+  if(error){$("members").textContent="تعذر تحميل الأعضاء: "+error.message;return}
+  if(!data?.length){$("members").innerHTML='<div class="empty">لا توجد ملفات معتمدة للعرض حاليًا.</div>';return}
+  $("members").innerHTML=data.map(p=>`
     <article class="member">
-      <h3>${esc(p.display_name || "عضو")}</h3>
-      <p>${esc(p.city || "")}</p>
-      <p>${esc(p.bio || "")}</p>
-      <button data-like="${esc(p.id)}">إرسال إعجاب</button>
-    </article>
-  `).join("");
-
-  $("members").querySelectorAll("[data-like]").forEach(button => {
-    button.addEventListener("click", () => sendLike(button.dataset.like));
-  });
+      <h3>${esc(p.display_name||"عضو")}</h3>
+      <p>📍 ${esc(p.city||"لم تُحدد المدينة")}</p>
+      <p>${esc(p.bio||"لا توجد نبذة بعد.")}</p>
+      <span class="tag">ملف معتمد</span>
+      <div class="member-actions"><button data-like="${esc(p.id)}">💗 إعجاب</button></div>
+    </article>`).join("");
+  $("members").querySelectorAll("[data-like]").forEach(b=>b.addEventListener("click",()=>sendLike(b.dataset.like)));
 }
 
-async function sendLike(receiverId) {
-  if (!currentUser) return status("سجّل الدخول أولًا.");
-  if (receiverId === currentUser.id) return;
-
-  const { error } = await db.from("likes").insert({
-    sender_id: currentUser.id,
-    receiver_id: receiverId
-  });
-
-  if (error) {
-    status("تعذر إرسال الإعجاب. ربما أرسلته من قبل: " + error.message);
+async function sendLike(receiverId){
+  if(!currentUser)return status("سجّل الدخول أولًا.");
+  if(receiverId===currentUser.id)return;
+  const {error}=await db.from("likes").insert({sender_id:currentUser.id,receiver_id:receiverId});
+  if(error){
+    if(error.code==="23505"||String(error.message).includes("likes_sender_id_receiver_id_key")){
+      status("💗 أنت أرسلت إعجابًا لهذا العضو من قبل.");
+    }else{
+      status("تعذر إرسال الإعجاب. قد تكون هناك مشكلة في الصلاحيات أو الاتصال.");
+    }
     return;
   }
-
   status("تم إرسال الإعجاب. يظهر التوافق بعد إعجاب الطرف الآخر أيضًا.");
   await loadMatches();
 }
 
-async function loadMatches() {
-  if (!currentUser) return;
-
-  const { data, error } = await db
-    .from("matches")
-    .select("id,user_one,user_two")
+async function loadMatches(){
+  if(!currentUser)return;
+  const {data,error}=await db.from("matches").select("id,user_one,user_two")
     .or(`user_one.eq.${currentUser.id},user_two.eq.${currentUser.id}`);
-
-  if (error) {
-    $("matches").textContent = "تعذر تحميل التوافق: " + error.message;
-    return;
-  }
-
-  if (!data?.length) {
-    $("matches").textContent = "لا يوجد توافق متبادل حتى الآن.";
-    $("messageList").innerHTML = "";
-    return;
-  }
-
-  $("matches").innerHTML = data.map(m => {
-    return `<div class="member">
-      <p>يوجد توافق متبادل</p>
-      <button data-match="${esc(m.id)}">فتح الرسائل</button>
-    </div>`;
-  }).join("");
-
-  $("matches").querySelectorAll("[data-match]").forEach(button => {
-    button.addEventListener("click", () => {
-      activeMatch = button.dataset.match;
-      loadMessages();
-    });
-  });
+  if(error){$("matches").textContent="تعذر تحميل التوافق: "+error.message;return}
+  if(!data?.length){$("matches").innerHTML='<div class="empty">💗 لا يوجد توافق متبادل مسجل حتى الآن.</div>';return}
+  $("matches").innerHTML=data.map(m=>`
+    <article class="member"><h3>🤝 توافق متبادل</h3>
+    <p>يمكنك فتح المحادثة المرتبطة بهذا التوافق.</p>
+    <button class="full" data-match="${esc(m.id)}">💬 فتح الرسائل</button></article>`).join("");
+  $("matches").querySelectorAll("[data-match]").forEach(b=>b.addEventListener("click",()=>{
+    activeMatch=b.dataset.match;
+    $("activeChat").textContent="محادثة التوافق المحدد";
+    showSection("messagesSection");
+    loadMessages();
+  }));
 }
 
-async function loadMessages() {
-  if (!activeMatch) return;
-
-  const { data, error } = await db
-    .from("messages")
-    .select("id,sender_id,content,created_at")
-    .eq("match_id", activeMatch)
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    $("messageList").textContent = "تعذر تحميل الرسائل: " + error.message;
-    return;
-  }
-
-  $("messageList").innerHTML = (data || []).map(m => `
+async function loadMessages(){
+  if(!currentUser||!activeMatch)return;
+  const {data,error}=await db.from("messages")
+    .select("id,sender_id,content,created_at").eq("match_id",activeMatch)
+    .order("created_at",{ascending:true});
+  if(error){$("messageList").textContent="تعذر تحميل الرسائل. تحقق من صلاحيات قاعدة البيانات.";return}
+  $("messageList").innerHTML=(data||[]).map(m=>`
     <div class="member">
-      <b>${m.sender_id === currentUser.id ? "أنت" : "الطرف الآخر"}</b>
+      <b>${m.sender_id===currentUser.id?"أنت":"الطرف الآخر"}</b>
       <p>${esc(m.content)}</p>
-    </div>
-  `).join("") || "لا توجد رسائل بعد.";
+    </div>`).join("")||'<div class="empty">لا توجد رسائل بعد. ابدأ المحادثة برسالة محترمة.</div>';
 }
 
-async function sendMessage() {
-  if (!currentUser) return status("سجّل الدخول أولًا.");
-  const content = $("messageText").value.trim();
-
-  if (!activeMatch) return status("افتح محادثة من قائمة التوافق أولًا.");
-  if (!content) return status("اكتب الرسالة أولًا.");
-
-  const { error } = await db.from("messages").insert({
-    match_id: activeMatch,
-    sender_id: currentUser.id,
-    content
-  });
-
-  if (error) return status("تعذر إرسال الرسالة: " + error.message);
-
-  $("messageText").value = "";
+async function sendMessage(){
+  if(!currentUser)return status("سجّل الدخول أولًا.");
+  const content=$("messageText").value.trim();
+  if(!activeMatch)return status("افتح محادثة من قائمة التوافق أولًا.");
+  if(!content)return status("اكتب الرسالة أولًا.");
+  const {error}=await db.from("messages").insert({match_id:activeMatch,sender_id:currentUser.id,content});
+  if(error){status("تعذر إرسال الرسالة. تحقق من صلاحيات المحادثة.");return}
+  $("messageText").value="";
   await loadMessages();
+  status("تم إرسال الرسالة.");
 }
 
-async function loadAdminMembers() {
-  const { data, error } = await db
-    .from("profiles")
-    .select("id,display_name,city,approved")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    $("adminMembers").textContent = "تعذر تحميل الملفات: " + error.message;
-    return;
-  }
-
-  $("adminMembers").innerHTML = (data || []).map(p => `
+async function loadAdminMembers(){
+  if(!currentUser||!isAdmin)return;
+  const {data,error}=await db.from("profiles")
+    .select("id,display_name,city,approved").order("created_at",{ascending:false});
+  if(error){$("adminMembers").textContent="تعذر تحميل الملفات. تحقق من صلاحيات الإدارة.";return}
+  $("adminMembers").innerHTML=(data||[]).map(p=>`
     <article class="member">
-      <b>${esc(p.display_name || "بدون اسم")}</b>
-      <p>${esc(p.city || "")}</p>
-      <p>${p.approved ? "معتمد" : "ينتظر المراجعة"}</p>
-      ${p.approved ? "" :
-        `<button data-approve="${esc(p.id)}">اعتماد الملف</button>`}
-    </article>
-  `).join("") || "لا توجد ملفات.";
-
-  $("adminMembers").querySelectorAll("[data-approve]").forEach(button => {
-    button.addEventListener("click", async () => {
-      const { error } = await db
-        .from("profiles")
-        .update({ approved: true })
-        .eq("id", button.dataset.approve);
-
-      if (error) return status("تعذر اعتماد الملف: " + error.message);
-
-      status("تم اعتماد الملف.");
-      await loadAdminMembers();
-      await loadMembers();
-    });
-  });
+      <h3>${esc(p.display_name||"بدون اسم")}</h3>
+      <p>📍 ${esc(p.city||"")}</p>
+      <p>${p.approved?"معتمد":"ينتظر المراجعة"}</p>
+      ${p.approved?"":`<button class="full" data-approve="${esc(p.id)}">✓ اعتماد الملف</button>`}
+    </article>`).join("")||'<div class="empty">لا توجد ملفات.</div>';
+  $("adminMembers").querySelectorAll("[data-approve]").forEach(b=>b.addEventListener("click",()=>approveMember(b.dataset.approve)));
 }
 
-$("signup").addEventListener("click", signup);
-$("login").addEventListener("click", login);
-$("logout").addEventListener("click", logout);
-$("saveProfile").addEventListener("click", saveProfile);
-$("sendMessage").addEventListener("click", sendMessage);
+async function approveMember(id){
+  if(!currentUser||!isAdmin)return status("هذا الإجراء مخصص للمسؤول.");
+  const {error}=await db.from("profiles").update({approved:true}).eq("id",id);
+  if(error){status("تعذر اعتماد الملف. تحقق من صلاحيات الإدارة في قاعدة البيانات.");return}
+  status("تم اعتماد الملف.");
+  await loadAdminMembers();await loadMembers();
+}
 
-db.auth.getSession().then(({ data, error }) => {
-  if (error) return status("تعذر التحقق من الجلسة.");
-  currentUser = data.session?.user || null;
-  if (currentUser) startApp();
+$("signup").addEventListener("click",signup);
+$("login").addEventListener("click",login);
+$("logout").addEventListener("click",logout);
+$("saveProfile").addEventListener("click",saveProfile);
+$("sendMessage").addEventListener("click",sendMessage);
+
+db.auth.getSession().then(({data,error})=>{
+  if(error){status("تعذر التحقق من جلسة الدخول.");return}
+  currentUser=data.session?.user||null;
+  if(currentUser)startApp();
 });
 </script>
 </body>
