@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#741c45">
+<meta name="description" content="نصيب - تعارف جاد للزواج بموافقة الطرفين.">
 <title>نصيب | نصيبك في الحلال</title>
 <style>
 *{box-sizing:border-box}
@@ -19,6 +20,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #d9c4ce;border-ra
 textarea{min-height:90px}
 button{border:0;border-radius:10px;padding:12px 14px;background:#741c45;color:white;font:inherit;font-weight:bold;cursor:pointer;margin:5px 2px}
 button.secondary{background:#f1e3e9;color:#741c45}
+button.danger{background:#8b2525;color:#fff}
 button:disabled{opacity:.55}
 .actions,nav{display:flex;gap:6px;flex-wrap:wrap}
 nav{justify-content:center}
@@ -38,7 +40,7 @@ footer{text-align:center;padding:20px;color:#806b75;font-size:13px}
 <p>نصيبك في الحلال — تعارف جاد بموافقة الطرفين</p>
 </header>
 <main>
-<div id="status" class="status">أهلًا بك في نصيب.</div>
+<div id="status" class="status" role="status" aria-live="polite">أهلًا بك في نصيب.</div>
 
 <section id="authSection" class="card">
 <h2>🔐 حسابك في نصيب</h2>
@@ -60,6 +62,7 @@ footer{text-align:center;padding:20px;color:#806b75;font-size:13px}
 <button type="button" onclick="showSection('profileSection')"><span class="icon">👤</span>ملفي الشخصي</button>
 <button type="button" onclick="showSection('membersSection')"><span class="icon">💗</span>الأعضاء</button>
 <button type="button" onclick="showSection('messagesSection')"><span class="icon">💬</span>رسائلي</button>
+<button type="button" onclick="showSection('blockedSection')"><span class="icon">🚫</span>المحظورون</button>
 <button id="adminNav" class="hidden" type="button" onclick="showSection('adminSection')"><span class="icon">🛡️</span>الإدارة</button>
 <button type="button" class="secondary" onclick="logout()"><span class="icon">🚪</span>تسجيل الخروج</button>
 </nav>
@@ -98,6 +101,13 @@ footer{text-align:center;padding:20px;color:#806b75;font-size:13px}
 <div id="membersList">اضغط تحديث الأعضاء.</div>
 </section>
 
+<section id="blockedSection" class="card hidden">
+<h2>🚫 الأعضاء المحظورون</h2>
+<p class="small">إلغاء الحظر يعيد إظهار العضو في قائمتك إذا كان ملفه معتمدًا.</p>
+<button type="button" onclick="loadBlockedMembers()">🔄 تحديث القائمة</button>
+<div id="blockedList">اضغط تحديث القائمة.</div>
+</section>
+
 <section id="messagesSection" class="card hidden">
 <h2>💬 رسائلي</h2>
 <p class="small">تحتاج إلى معرّف التطابق لإرسال الرسائل أو عرضها.</p>
@@ -118,13 +128,16 @@ footer{text-align:center;padding:20px;color:#806b75;font-size:13px}
 <h3>📋 طلبات مراجعة الأعضاء</h3>
 <button type="button" onclick="loadAdminMembers()">🔄 تحديث الطلبات</button>
 <div id="adminMembers"></div>
+<h3>⚠️ البلاغات</h3>
+<button type="button" onclick="loadAdminReports()">🔄 تحديث البلاغات</button>
+<div id="adminReports"></div>
 </section>
 </section>
 </main>
 <footer>نصيب 💗 — تعارف جاد بموافقة الطرفين</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  
 "use strict";
 
 const SUPABASE_URL="https://gdavyferkvekaprdgcft.supabase.co";
@@ -137,7 +150,6 @@ let currentUser=null,isAdmin=false,registrationOpen=true;
 let currentPhotoPath=null,previewUrl=null;
 
 function status(msg){$("status").textContent=msg}
-
 function esc(v){
  return String(v??"").replace(/[&<>"']/g,c=>({
   "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
@@ -145,13 +157,15 @@ function esc(v){
 }
 
 function showSection(id){
- ["profileSection","membersSection","messagesSection","adminSection"]
+ ["profileSection","membersSection","messagesSection","blockedSection","adminSection"]
  .forEach(s=>$(s).classList.toggle("hidden",s!==id));
  if(id==="membersSection")loadMembers();
  if(id==="messagesSection")loadMessages();
+ if(id==="blockedSection")loadBlockedMembers();
  if(id==="adminSection"&&isAdmin){
   loadRegistrationSetting();
   loadAdminMembers();
+  loadAdminReports();
  }
 }
 
@@ -215,9 +229,16 @@ async function startApp(){
  isAdmin=false;
 
  const {data:p,error}=await db.from("profiles")
-  .select("id,display_name,birth_date,gender,city,bio,photo_url,approved")
+  .select("id,display_name,birth_date,gender,city,bio,photo_url,approved,is_banned")
   .eq("id",currentUser.id).maybeSingle();
  if(error)return status("تعذر قراءة الملف الشخصي: "+error.message);
+ if(p?.is_banned){
+  await db.auth.signOut();
+  currentUser=null;
+  $("appSection").classList.add("hidden");
+  $("authSection").classList.remove("hidden");
+  return status("هذا الحساب موقوف. تواصل مع إدارة نصيب.");
+ }
 
  if(p){
   $("display_name").value=p.display_name||"";
@@ -287,6 +308,7 @@ $("profileForm").addEventListener("submit",async e=>{
   if(error)throw error;
   currentPhotoPath=photoPath;
   $("photo_file").value="";
+  
   $("profileState").textContent="تم الحفظ. سيظل الملف مخفيًا حتى اعتماده.";
   await showMyPhoto();
   status("تم حفظ بياناتك.");
@@ -305,8 +327,7 @@ $("photo_file").addEventListener("change",()=>{
 
 async function showMyPhoto(){
  if(!currentPhotoPath){$("photoPreview").classList.add("hidden");return}
- const {data,error}=await db.storage.from(PHOTO_BUCKET)
-  .createSignedUrl(currentPhotoPath,300);
+ const {data,error}=await db.storage.from(PHOTO_BUCKET).createSignedUrl(currentPhotoPath,300);
  if(!error&&data?.signedUrl){
   $("photoPreview").src=data.signedUrl;
   $("photoPreview").classList.remove("hidden");
@@ -315,44 +336,120 @@ async function showMyPhoto(){
 
 async function loadMembers(){
  if(!currentUser)return;
- $("membersList").textContent="جارٍ تحميل الأعضاء...";
- const {data,error}=await db.from("profiles")
-  .select("id,display_name,city,bio,photo_url,approved")
-  .eq("approved",true).neq("id",currentUser.id);
- if(error){$("membersList").textContent="تعذر التحميل: "+error.message;return}
- if(!data?.length){$("membersList").textContent="لا توجد ملفات معتمدة ظاهرة حاليًا.";return}
+ const box=$("membersList");
+ box.textContent="جارٍ تحميل الأعضاء...";
+ try{
+  const [profilesRes,blocksRes]=await Promise.all([
+   db.from("profiles").select("id,display_name,city,bio,photo_url,approved,is_banned")
+    .eq("approved",true).neq("id",currentUser.id),
+   db.from("member_blocks").select("blocked_id").eq("blocker_id",currentUser.id)
+  ]);
+  if(profilesRes.error)throw profilesRes.error;
+  if(blocksRes.error)throw blocksRes.error;
+  const blocked=new Set((blocksRes.data||[]).map(x=>x.blocked_id));
+  const members=(profilesRes.data||[]).filter(p=>!p.is_banned&&!blocked.has(p.id));
+  if(!members.length){box.textContent="لا توجد ملفات معتمدة ظاهرة حاليًا.";return}
+  box.innerHTML=members.map(p=>`
+   <article class="member">
+    <h3>💗 ${esc(p.display_name||"عضو")}</h3>
+    <p>📍 ${esc(p.city||"لم يحدد المدينة")}</p>
+    <p>${esc(p.bio||"")}</p>
+    <div id="photo-${esc(p.id)}"></div>
+    <button type="button" data-like="${esc(p.id)}">💗 إعجاب</button>
+    <button type="button" class="secondary" data-block="${esc(p.id)}" data-name="${esc(p.display_name||"عضو")}">🚫 حظر</button>
+    <button type="button" class="secondary" data-report="${esc(p.id)}" data-name="${esc(p.display_name||"عضو")}">⚠️ إبلاغ</button>
+   </article>`).join("");
+  members.forEach(async p=>{
+   if(!p.photo_url)return;
+   const {data:signed}=await db.storage.from(PHOTO_BUCKET).createSignedUrl(p.photo_url,300);
+   const photoBox=$("photo-"+p.id);
+   if(signed?.signedUrl&&photoBox){
+    const img=document.createElement("img");
+    img.src=signed.signedUrl;img.alt="صورة العضو";img.loading="lazy";
+    photoBox.appendChild(img);
+   }
+  });
+  box.querySelectorAll("[data-like]").forEach(b=>b.addEventListener("click",()=>sendLike(b.dataset.like)));
+  box.querySelectorAll("[data-block]").forEach(b=>b.addEventListener("click",()=>blockMember(b.dataset.block,b.dataset.name)));
+  box.querySelectorAll("[data-report]").forEach(b=>b.addEventListener("click",()=>reportMember(b.dataset.report,b.dataset.name)));
+ }catch(e){box.textContent="تعذر تحميل الأعضاء: "+e.message}
+}
 
- $("membersList").innerHTML=data.map(p=>`
- <article class="member">
- <h3>💗 ${esc(p.display_name||"عضو")}</h3>
- <p>📍 ${esc(p.city||"لم يحدد المدينة")}</p>
- <p>${esc(p.bio||"")}</p>
- <div id="photo-${esc(p.id)}"></div>
- <button type="button" data-like="${esc(p.id)}">💗 إعجاب</button>
- </article>`).join("");
-
- data.forEach(async p=>{
-  if(!p.photo_url)return;
-  const {data:signed}=await db.storage.from(PHOTO_BUCKET)
-   .createSignedUrl(p.photo_url,300);
-  const box=$("photo-"+p.id);
-  if(signed?.signedUrl&&box){
-   const img=document.createElement("img");
-   img.src=signed.signedUrl;img.alt="صورة العضو";img.loading="lazy";
-   box.appendChild(img);
+async function blockMember(id,name){
+ if(!currentUser||id===currentUser.id)return;
+ if(!confirm("هل تريد حظر "+name+"؟"))return;
+ try{
+  const {error}=await db.from("member_blocks").insert({blocker_id:currentUser.id,blocked_id:id});
+  if(error){
+   if(error.code==="23505")return status("هذا العضو محظور بالفعل.");
+   throw error;
   }
- });
- $("membersList").querySelectorAll("[data-like]").forEach(b=>{
-  b.addEventListener("click",()=>sendLike(b.dataset.like));
- });
+  status("تم حظر العضو وإخفاؤه من قائمتك.");
+  await loadMembers();
+ }catch(e){status("تعذر الحظر: "+e.message)}
+}
+
+async function reportMember(id,name){
+ if(!currentUser||id===currentUser.id)return;
+ const reason=prompt("سبب الإبلاغ عن "+name+":\n1- إساءة أو تحرش\n2- حساب مزيف\n3- محتوى غير مناسب\n4- سبب آخر");
+ if(!reason||!reason.trim())return;
+ try{
+  const {error}=await db.from("reports").insert({
+   reporter_id:currentUser.id,reported_user_id:id,reason:reason.trim(),status:"pending"
+  });
+  if(error)throw error;
+  status("تم إرسال البلاغ للمراجعة.");
+ }catch(e){status("تعذر إرسال البلاغ: "+e.message)}
+}
+
+async function loadBlockedMembers(){
+ if(!currentUser)return;
+ const box=$("blockedList");
+ box.textContent="جارٍ تحميل قائمة الحظر...";
+ try{
+  const {data:blocks,error}=await db.from("member_blocks")
+   .select("id,blocked_id,created_at").eq("blocker_id",currentUser.id)
+   .order("created_at",{ascending:false});
+  if(error)throw error;
+  if(!blocks?.length){box.textContent="لا يوجد أعضاء محظورون.";return}
+  const ids=blocks.map(b=>b.blocked_id);
+  const {data:profiles,error:profileError}=await db.from("profiles")
+   .select("id,display_name,city").in("id",ids);
+  if(profileError)throw profileError;
+  const byId=new Map((profiles||[]).map(p=>[p.id,p]));
+  box.innerHTML=blocks.map(b=>{
+   const p=byId.get(b.blocked_id);
+   return `<article class="member">
+    <b>${esc(p?.display_name||"عضو غير متاح")}</b>
+    <p>${esc(p?.city||"")}</p>
+    <button type="button" data-unblock="${esc(b.blocked_id)}">إلغاء الحظر</button>
+   </article>`;
+  }).join("");
+  box.querySelectorAll("[data-unblock]").forEach(btn=>{
+   btn.addEventListener("click",()=>unblockMember(btn.dataset.unblock));
+  });
+ }catch(e){box.textContent="تعذر تحميل قائمة الحظر: "+e.message}
+}
+
+async function unblockMember(id){
+ if(!currentUser)return;
+ try{
+  const {error}=await db.from("member_blocks").delete()
+   .eq("blocker_id",currentUser.id).eq("blocked_id",id);
+  if(error)throw error;
+  status("تم إلغاء الحظر.");
+  await loadBlockedMembers();
+ }catch(e){status("تعذر إلغاء الحظر: "+e.message)}
 }
 
 async function sendLike(receiverId){
  if(!currentUser)return status("سجّل الدخول أولًا.");
  try{
-  const {error}=await db.from("likes").insert({
-   sender_id:currentUser.id,receiver_id:receiverId
-  });
+  const {data:blocked,error:blockedError}=await db.from("member_blocks")
+   .select("id").eq("blocker_id",receiverId).eq("blocked_id",currentUser.id).maybeSingle();
+  if(blockedError)throw blockedError;
+  if(blocked)return status("لا يمكن إرسال الإعجاب لهذا العضو.");
+  const {error}=await db.from("likes").insert({sender_id:currentUser.id,receiver_id:receiverId});
   if(error)throw error;
   status("تم إرسال الإعجاب.");
  }catch(e){status("تعذر إرسال الإعجاب: "+e.message)}
@@ -364,16 +461,13 @@ async function loadMessages(){
  if(!matchId){$("messagesList").textContent="أدخل معرّف التطابق أولًا.";return}
  $("messagesList").textContent="جارٍ تحميل الرسائل...";
  try{
-  const {data,error}=await db.from("messages")
-   .select("id,match_id,sender_id,content,created_at")
+  const {data,error}=await db.from("messages").select("id,match_id,sender_id,content,created_at")
    .eq("match_id",matchId).order("created_at",{ascending:true});
   if(error)throw error;
   if(!data?.length){$("messagesList").textContent="لا توجد رسائل ظاهرة.";return}
   $("messagesList").innerHTML=data.map(m=>`
-   <article class="member">
-   <p>${esc(m.content)}</p>
-   <p class="small">${m.sender_id===currentUser.id?"أنت":"الطرف الآخر"} — ${esc(m.created_at)}</p>
-   </article>`).join("");
+   <article class="member"><p>${esc(m.content)}</p>
+   <p class="small">${m.sender_id===currentUser.id?"أنت":"الطرف الآخر"} — ${esc(m.created_at)}</p></article>`).join("");
  }catch(e){$("messagesList").textContent="تعذر تحميل الرسائل: "+e.message}
 }
 
@@ -384,9 +478,11 @@ async function sendMessage(){
  if(!matchId||!content)return status("أدخل معرّف التطابق واكتب الرسالة.");
  $("sendMessageBtn").disabled=true;
  try{
-  const {error}=await db.from("messages").insert({
-   match_id:matchId,sender_id:currentUser.id,content
-  });
+  const {data:match,error:matchError}=await db.from("matches").select("id")
+   .eq("id",matchId).maybeSingle();
+  if(matchError)throw matchError;
+  if(!match)return status("معرّف التطابق غير موجود أو لا يمكنك استخدامه.");
+  const {error}=await db.from("messages").insert({match_id:matchId,sender_id:currentUser.id,content});
   if(error)throw error;
   $("messageText").value="";
   status("تم إرسال الرسالة.");
@@ -399,21 +495,17 @@ async function loadAdminMembers(){
  if(!isAdmin)return status("هذه الصفحة للمسؤول المصرح له فقط.");
  $("adminMembers").textContent="جارٍ تحميل الطلبات...";
  const {data,error}=await db.from("profiles")
-  .select("id,display_name,city,approved,created_at")
+  .select("id,display_name,city,approved,created_at,is_banned,banned_reason")
   .eq("approved",false).order("created_at",{ascending:false});
  if(error){$("adminMembers").textContent="تعذر تحميل الطلبات: "+error.message;return}
  if(!data?.length){$("adminMembers").textContent="لا توجد طلبات تنتظر المراجعة.";return}
-
  $("adminMembers").innerHTML=data.map(p=>`
- <article class="member">
- <h3>${esc(p.display_name||"بدون اسم")}</h3>
- <p>${esc(p.city||"لم يحدد المدينة")}</p>
- <p class="small">معرّف الحساب: ${esc(p.id)}</p>
- <button type="button" data-approve="${esc(p.id)}">✅ اعتماد الملف</button>
- </article>`).join("");
- $("adminMembers").querySelectorAll("[data-approve]").forEach(b=>{
-  b.addEventListener("click",()=>approveMember(b.dataset.approve));
- });
+  <article class="member"><h3>${esc(p.display_name||"بدون اسم")}</h3>
+  <p>${esc(p.city||"لم يحدد المدينة")}</p><p class="small">معرّف الحساب: ${esc(p.id)}</p>
+  <button type="button" data-approve="${esc(p.id)}">✅ اعتماد الملف</button>
+  <button type="button" class="danger" data-ban="${esc(p.id)}">⛔ إيقاف الحساب</button></article>`).join("");
+ $("adminMembers").querySelectorAll("[data-approve]").forEach(b=>b.addEventListener("click",()=>approveMember(b.dataset.approve)));
+ $("adminMembers").querySelectorAll("[data-ban]").forEach(b=>b.addEventListener("click",()=>banMember(b.dataset.ban)));
 }
 
 async function approveMember(id){
@@ -424,6 +516,49 @@ async function approveMember(id){
   status("تم اعتماد الملف.");
   await loadAdminMembers();
  }catch(e){status("تعذر اعتماد الملف: "+e.message)}
+}
+
+async function banMember(id){
+ if(!isAdmin)return status("غير مصرح لك.");
+ const reason=prompt("اكتب سبب إيقاف الحساب:");
+ if(!reason||!reason.trim())return;
+ try{
+  const {error}=await db.from("profiles").update({
+   is_banned:true,banned_at:new Date().toISOString(),banned_reason:reason.trim()
+  }).eq("id",id);
+  if(error)throw error;
+  status("تم إرسال طلب إيقاف الحساب إلى قاعدة البيانات.");
+  await loadAdminMembers();
+ }catch(e){status("تعذر إيقاف الحساب: "+e.message)}
+}
+
+async function loadAdminReports(){
+ if(!isAdmin)return;
+ const box=$("adminReports");
+ box.textContent="جارٍ تحميل البلاغات...";
+ try{
+  const {data,error}=await db.from("reports")
+   .select("id,reporter_id,reported_user_id,reason,status,created_at")
+   .order("created_at",{ascending:false}).limit(50);
+  if(error)throw error;
+  if(!data?.length){box.textContent="لا توجد بلاغات.";return}
+  box.innerHTML=data.map(r=>`
+   <article class="member"><p><b>بلاغ رقم:</b> ${esc(r.id)}</p>
+   <p><b>سبب البلاغ:</b> ${esc(r.reason)}</p>
+   <p class="small">المبلّغ: ${esc(r.reporter_id)}<br>الحساب المبلّغ عنه: ${esc(r.reported_user_id)}<br>الحالة: ${esc(r.status||"غير محددة")}</p>
+   <button type="button" data-report-status="${esc(r.id)}">وضع علامة تمت المراجعة</button></article>`).join("");
+  box.querySelectorAll("[data-report-status]").forEach(b=>b.addEventListener("click",()=>markReportReviewed(b.dataset.reportStatus)));
+ }catch(e){box.textContent="تعذر تحميل البلاغات: "+e.message}
+}
+
+async function markReportReviewed(id){
+ if(!isAdmin)return status("غير مصرح لك.");
+ try{
+  const {error}=await db.from("reports").update({status:"reviewed"}).eq("id",id);
+  if(error)throw error;
+  status("تم تحديث حالة البلاغ.");
+  await loadAdminReports();
+ }catch(e){status("تعذر تحديث البلاغ: "+e.message)}
 }
 
 async function loadRegistrationSetting(){
@@ -443,8 +578,7 @@ $("toggleRegistration").addEventListener("click",async()=>{
  if(!isAdmin)return status("غير مصرح لك.");
  $("toggleRegistration").disabled=true;
  try{
-  const {error}=await db.from("app_settings")
-   .update({registration_open:!registrationOpen}).eq("id",1);
+  const {error}=await db.from("app_settings").update({registration_open:!registrationOpen}).eq("id",1);
   if(error)throw error;
   registrationOpen=!registrationOpen;
   await loadRegistrationSetting();
