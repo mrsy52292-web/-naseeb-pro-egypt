@@ -422,7 +422,8 @@ const {error}=await db.from("likes").insert({sender_id:currentUser.id,receiver_i
 if(error)throw error;
 status("تم إرسال الإعجاب.");
 }catch(e){status("تعذر إرسال الإعجاب: "+e.message)}
-}HTML
+}
+
 async function loadMessages(){
 if(!currentUser)return;
 const mid=$("recipientId").value.trim(),box=$("messagesList");
