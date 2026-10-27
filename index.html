@@ -40,10 +40,8 @@ hr{border:0;border-top:1px solid #eee;margin:18px 0}
   <h1>💗 نصيب</h1>
   <p>نصيبك في الحلال — تعارف جاد بموافقة الطرفين</p>
 </header>
-
 <main>
   <div id="status" class="status" role="status">أهلًا بك في نصيب.</div>
-
   <section id="authSection" class="card">
     <h2>🔐 حسابك في نصيب</h2>
     <label for="email">البريد الإلكتروني</label>
@@ -54,9 +52,8 @@ hr{border:0;border-top:1px solid #eee;margin:18px 0}
       <button id="signupBtn" type="button">إنشاء حساب جديد</button>
       <button id="loginBtn" type="button" class="secondary">تسجيل الدخول</button>
     </div>
-    <p class="small">استخدم بريدك الإلكتروني وكلمة مرور من 6 أحرف على الأقل. لا تشارك كلمة المرور مع أي شخص.</p>
+    <p class="small">استخدم بريدك الإلكتروني وكلمة مرور من 6 أحرف على الأقل.</p>
   </section>
-
   <section id="appSection" class="hidden">
     <div class="card">
       <h2 id="welcome">أهلًا بك</h2>
@@ -68,80 +65,61 @@ hr{border:0;border-top:1px solid #eee;margin:18px 0}
         <button type="button" class="secondary" onclick="logout()">تسجيل الخروج</button>
       </nav>
     </div>
-
     <section id="profileSection" class="card">
       <h2>ملفي الشخصي</h2>
-      <p class="small">املأ بياناتك الصحيحة. يجب أن يكون عمرك 18 عامًا على الأقل. لن يظهر ملفك للأعضاء قبل موافقة الإدارة.</p>
+      <p class="small">يجب أن يكون عمرك 18 عامًا على الأقل. لن يظهر ملفك قبل موافقة الإدارة.</p>
       <form id="profileForm">
-        <label for="display_name">الاسم الذي سيظهر للأعضاء</label>
-        <input id="display_name" maxlength="60" required placeholder="اكتب اسمك">
-
+        <label for="display_name">الاسم</label>
+        <input id="display_name" maxlength="60" required>
         <label for="birth_date">تاريخ الميلاد</label>
         <input id="birth_date" type="date" required>
-
         <label for="gender">النوع</label>
         <select id="gender" required>
           <option value="">اختر</option>
           <option value="male">ذكر</option>
           <option value="female">أنثى</option>
         </select>
-
         <label for="city">المحافظة أو المدينة</label>
         <input id="city" maxlength="100" placeholder="مثال: طنطا">
-
         <label for="bio">نبذة عنك</label>
-        <textarea id="bio" maxlength="1000" placeholder="اكتب نبذة محترمة عن نفسك وما تبحث عنه"></textarea>
-
+        <textarea id="bio" maxlength="1000"></textarea>
         <label for="photo_file">الصورة الشخصية (اختياري)</label>
         <input id="photo_file" type="file" accept="image/jpeg,image/png,image/webp">
-        <p class="small">الصور المقبولة JPG أو PNG أو WebP، بحد أقصى 5 ميجابايت. اختر صورة مناسبة ولا ترفع صورًا لا تملك حق استخدامها.</p>
+        <p class="small">JPG أو PNG أو WebP، بحد أقصى 5 ميجابايت.</p>
         <img id="photoPreview" class="my-photo hidden" alt="معاينة الصورة">
-
-        <div class="actions">
-          <button id="saveProfileBtn" type="submit">حفظ بياناتي</button>
-        </div>
+        <button id="saveProfileBtn" type="submit">حفظ بياناتي</button>
       </form>
       <div id="profileState" class="status"></div>
     </section>
-
     <section id="membersSection" class="card hidden">
       <h2>الأعضاء المعتمدون</h2>
-      <p class="small">التواصل والإعجاب يكونان باحترام وموافقة الطرفين.</p>
-      <button type="button" onclick="loadMembers()">تحديث قائمة الأعضاء</button>
-      <div id="membersList">اضغط تحديث لعرض الأعضاء.</div>
+      <button type="button" onclick="loadMembers()">تحديث الأعضاء</button>
+      <div id="membersList"></div>
     </section>
-
     <section id="messagesSection" class="card hidden">
       <h2>رسائلي</h2>
-      <p class="small">يمكنك مراسلة عضو بعد معرفة معرّفه من قائمة الأعضاء. لا ترسل بياناتك السرية أو معلومات الدفع في الرسائل.</p>
-      <label for="recipientId">معرّف العضو المستلم</label>
-      <input id="recipientId" placeholder="معرّف العضو">
-      <label for="messageText">نص الرسالة</label>
-      <textarea id="messageText" maxlength="2000" placeholder="اكتب رسالتك"></textarea>
-      <button id="sendMessageBtn" type="button" onclick="sendMessage()">إرسال الرسالة</button>
-      <hr>
-      <button type="button" class="secondary" onclick="loadMessages()">عرض رسائلي</button>
+      <label for="recipientId">معرّف العضو</label>
+      <input id="recipientId">
+      <label for="messageText">الرسالة</label>
+      <textarea id="messageText" maxlength="2000"></textarea>
+      <button id="sendMessageBtn" type="button" onclick="sendMessage()">إرسال</button>
+      <button type="button" class="secondary" onclick="loadMessages()">عرض الرسائل</button>
       <div id="messagesList"></div>
     </section>
-
     <section id="adminSection" class="card hidden">
       <h2>🛡️ لوحة الإدارة</h2>
-      <div class="card">
-        <h3>التحكم في التسجيل</h3>
-        <p id="registrationStatus">جارٍ تحميل حالة التسجيل...</p>
-        <button id="toggleRegistration" type="button" disabled>تحميل الإعدادات...</button>
-        <p class="small">إغلاق التسجيل يمنع إنشاء حسابات جديدة من واجهة الموقع، ولا يمنع الأعضاء الحاليين من الدخول.</p>
-      </div>
+      <h3>التحكم في التسجيل</h3>
+      <p id="registrationStatus">جارٍ تحميل حالة التسجيل...</p>
+      <button id="toggleRegistration" type="button" disabled>تحميل الإعدادات...</button>
       <h3>طلبات مراجعة الأعضاء</h3>
       <button type="button" onclick="loadAdminMembers()">تحديث الطلبات</button>
       <div id="adminMembers"></div>
     </section>
   </section>
 </main>
-
 <footer>نصيب 💗 — تعارف جاد بموافقة الطرفين</footer>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 "use strict";
 
@@ -173,8 +151,10 @@ function showSection(id) {
   ["profileSection","membersSection","messagesSection","adminSection"].forEach(sectionId => {
     $(sectionId).classList.toggle("hidden", sectionId !== id);
   });
+
   if (id === "membersSection") loadMembers();
   if (id === "messagesSection") loadMessages();
+
   if (id === "adminSection" && isAdmin) {
     loadRegistrationSetting();
     loadAdminMembers();
@@ -191,6 +171,7 @@ async function getRegistrationSetting() {
   if (error || !data) {
     throw new Error("تعذر قراءة إعداد التسجيل. راجع جدول app_settings.");
   }
+
   return data.registration_open;
 }
 
@@ -204,14 +185,20 @@ async function signup() {
   }
 
   $("signupBtn").disabled = true;
+
   try {
     registrationOpen = await getRegistrationSetting();
+
     if (!registrationOpen) {
       status("التسجيل مغلق مؤقتًا. يمكنك المحاولة لاحقًا.");
       return;
     }
 
-    const { data, error } = await db.auth.signUp({ email, password });
+    const { data, error } = await db.auth.signUp({
+      email,
+      password
+    });
+
     if (error) throw error;
 
     if (data.session && data.user) {
@@ -219,7 +206,7 @@ async function signup() {
       await startApp();
       status("تم إنشاء الحساب بنجاح. أكمل بياناتك الشخصية.");
     } else {
-      status("تم إرسال طلب إنشاء الحساب. إذا طُلب تأكيد البريد، افتح رسالة التأكيد ثم سجّل الدخول. وللدخول مباشرة، عطّل تأكيد البريد من إعدادات Auth في Supabase.");
+      status("تم إنشاء طلب التسجيل. قد تحتاج إلى تأكيد البريد الإلكتروني قبل تسجيل الدخول.");
     }
   } catch (error) {
     status("تعذر إنشاء الحساب: " + error.message);
@@ -238,9 +225,15 @@ async function login() {
   }
 
   $("loginBtn").disabled = true;
+
   try {
-    const { data, error } = await db.auth.signInWithPassword({ email, password });
+    const { data, error } = await db.auth.signInWithPassword({
+      email,
+      password
+    });
+
     if (error) throw error;
+
     currentUser = data.user;
     await startApp();
     status("تم تسجيل الدخول بنجاح.");
@@ -253,16 +246,20 @@ async function login() {
 
 async function logout() {
   const { error } = await db.auth.signOut();
+
   if (error) {
     status("تعذر تسجيل الخروج: " + error.message);
     return;
   }
+
   currentUser = null;
   isAdmin = false;
   currentPhotoPath = null;
+
   $("appSection").classList.add("hidden");
   $("authSection").classList.remove("hidden");
   $("adminNav").classList.add("hidden");
+
   status("تم تسجيل الخروج.");
 }
 
@@ -292,10 +289,13 @@ async function startApp() {
     $("gender").value = profile.gender || "";
     $("city").value = profile.city || "";
     $("bio").value = profile.bio || "";
+
     currentPhotoPath = profile.photo_url || null;
+
     $("profileState").textContent = profile.approved
       ? "ملفك معتمد ويظهر للأعضاء."
-      : "تم حفظ ملفك، وهو قيد مراجعة الإدارة ولن يظهر للأعضاء قبل اعتماده.";
+      : "ملفك قيد مراجعة الإدارة ولن يظهر للأعضاء قبل اعتماده.";
+
     await showMyPhoto();
   } else {
     currentPhotoPath = null;
@@ -317,293 +317,21 @@ async function startApp() {
   showSection("profileSection");
 }
 
-async function showMyPhoto() {
-  if (!currentPhotoPath) {
-    $("photoPreview").classList.add("hidden");
+$("signupBtn").addEventListener("click", signup);
+$("loginBtn").addEventListener("click", login);
+
+(async function init() {
+  const { data, error } = await db.auth.getSession();
+
+  if (error) {
+    status("تعذر التحقق من الجلسة: " + error.message);
     return;
   }
 
-  const { data, error } = await db.storage
-    .from(PHOTO_BUCKET)
-    .createSignedUrl(currentPhotoPath, 3600);
-
-  if (!error && data && data.signedUrl) {
-    $("photoPreview").src = data.signedUrl;
-    $("photoPreview").classList.remove("hidden");
-  }
-}
-
-$("photo_file").addEventListener("change", () => {
-  const file = $("photo_file").files[0];
-  if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
-
-  if (!file) {
-    previewObjectUrl = null;
-    if (currentPhotoPath) showMyPhoto();
-    else $("photoPreview").classList.add("hidden");
-    return;
-  }
-
-  const allowedTypes = ["image/jpeg","image/png","image/webp"];
-  if (!allowedTypes.includes(file.type) || file.size > 5 * 1024 * 1024) {
-    $("photo_file").value = "";
-    status("الصورة يجب أن تكون JPG أو PNG أو WebP وبحجم لا يتجاوز 5 ميجابايت.");
-    return;
-  }
-
-  previewObjectUrl = URL.createObjectURL(file);
-  $("photoPreview").src = previewObjectUrl;
-  $("photoPreview").classList.remove("hidden");
-});
-
-async function uploadPhotoIfSelected() {
-  const file = $("photo_file").files[0];
-  if (!file) return currentPhotoPath;
-
-  const allowedTypes = ["image/jpeg","image/png","image/webp"];
-  if (!allowedTypes.includes(file.type) || file.size > 5 * 1024 * 1024) {
-    throw new Error("نوع الصورة أو حجمها غير مقبول.");
-  }
-
-  const extension = ({
-    "image/jpeg":"jpg",
-    "image/png":"png",
-    "image/webp":"webp"
-  })[file.type];
-
-  const path = currentUser.id + "/" + crypto.randomUUID() + "." + extension;
-
-  const { error: uploadError } = await db.storage
-    .from(PHOTO_BUCKET)
-    .upload(path, file, {
-      upsert: false,
-      contentType: file.type
-    });
-
-  if (uploadError) throw uploadError;
-
-  if (currentPhotoPath && currentPhotoPath !== path) {
-    const { error: removeError } = await db.storage
-      .from(PHOTO_BUCKET)
-      .remove([currentPhotoPath]);
-
-    if (removeError) {
-      console.warn("تعذر حذف الصورة القديمة:", removeError.message);
-    }
-  }
-
-  currentPhotoPath = path;
-  return path;
-}
-
-$("profileForm").addEventListener("submit", async event => {
-  event.preventDefault();
-  if (!currentUser) {
-    status("سجّل الدخول أولًا.");
-    return;
-  }
-
-  const name = $("display_name").value.trim();
-  const birthDate = $("birth_date").value;
-  const gender = $("gender").value;
-
-  if (!name || !birthDate || !gender) {
-    status("أكمل الاسم وتاريخ الميلاد والنوع.");
-    return;
-  }
-
-  const birth = new Date(birthDate + "T00:00:00");
-  const today = new Date();
-  let age = today.getFullYear() - birth.getFullYear();
-  const monthDiff = today.getMonth() - birth.getMonth();
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) age--;
-
-  if (!Number.isFinite(birth.getTime()) || age < 18 || birth > today) {
-    status("يجب أن يكون عمرك 18 عامًا على الأقل.");
-    return;
-  }
-
-  $("saveProfileBtn").disabled = true;
-  try {
-    const photoPath = await uploadPhotoIfSelected();
-
-    const payload = {
-      id: currentUser.id,
-      display_name: name,
-      birth_date: birthDate,
-      gender,
-      city: $("city").value.trim(),
-      bio: $("bio").value.trim(),
-      photo_url: photoPath,
-      approved: false
-    };
-
-    const { error } = await db.from("profiles").upsert(payload, { onConflict: "id" });
-    if (error) throw error;
-
-    $("photo_file").value = "";
-    $("profileState").textContent =
-      "تم استلام طلبك بنجاح، حسابك قيد مراجعة الإدارة. لن يظهر ملفك للأعضاء قبل الموافقة.";
-    status("تم حفظ بياناتك. طلبك الآن قيد مراجعة الإدارة.");
+  if (data.session && data.session.user) {
+    currentUser = data.session.user;
     await startApp();
-    $("profileState").textContent =
-      "تم استلام طلبك بنجاح، حسابك قيد مراجعة الإدارة. لن يظهر ملفك للأعضاء قبل الموافقة.";
-  } catch (error) {
-    status("تعذر حفظ الملف الشخصي: " + error.message);
-  } finally {
-    $("saveProfileBtn").disabled = false;
   }
-});
-
-async function signedPhotoUrl(path) {
-  if (!path) return "";
-  const { data, error } = await db.storage
-    .from(PHOTO_BUCKET)
-    .createSignedUrl(path, 3600);
-  if (error || !data) return "";
-  return data.signedUrl;
-}
-
-async function loadMembers() {
-  const box = $("membersList");
-  box.textContent = "جارٍ تحميل الأعضاء...";
-
-  const { data, error } = await db
-    .from("profiles")
-    .select("id,display_name,city,bio,photo_url")
-    .eq("approved", true)
-    .neq("id", currentUser.id)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    box.textContent = "تعذر تحميل الأعضاء: " + error.message;
-    return;
-  }
-
-  if (!data || data.length === 0) {
-    box.textContent = "لا يوجد أعضاء معتمدون للعرض حاليًا.";
-    return;
-  }
-
-  box.replaceChildren();
-
-  for (const member of data) {
-    const article = document.createElement("article");
-    article.className = "member";
-
-    const photoUrl = await signedPhotoUrl(member.photo_url);
-    article.innerHTML = `
-      ${photoUrl ? `<img src="${escapeHTML(photoUrl)}" alt="الصورة الشخصية" loading="lazy">` : ""}
-      <h3>${escapeHTML(member.display_name || "عضو")}</h3>
-      <p>${escapeHTML(member.city || "")}</p>
-      <p>${escapeHTML(member.bio || "")}</p>
-      <p class="small">معرّف العضو: ${escapeHTML(member.id)}</p>
-      <div class="actions">
-        <button type="button" data-like="${escapeHTML(member.id)}">إرسال إعجاب</button>
-        <button type="button" class="secondary" data-message="${escapeHTML(member.id)}">مراسلة</button>
-      </div>
-    `;
-
-    article.querySelector("[data-like]").addEventListener("click", () => sendLike(member.id));
-    article.querySelector("[data-message]").addEventListener("click", () => {
-      $("recipientId").value = member.id;
-      showSection("messagesSection");
-      status("اكتب رسالتك للعضو المختار.");
-    });
-    box.appendChild(article);
-  }
-}
-
-async function sendLike(receiverId) {
-  if (!currentUser || receiverId === currentUser.id) return;
-
-  const { error } = await db.from("likes").upsert({
-    sender_id: currentUser.id,
-    receiver_id: receiverId
-  }, { onConflict: "sender_id,receiver_id" });
-
-  if (error) {
-    status("تعذر إرسال الإعجاب: " + error.message);
-    return;
-  }
-  status("تم إرسال الإعجاب.");
-}
-
-async function sendMessage() {
-  const receiverId = $("recipientId").value.trim();
-  const content = $("messageText").value.trim();
-
-  if (!receiverId || !content) {
-    status("اكتب معرّف المستلم والرسالة.");
-    return;
-  }
-  if (receiverId === currentUser.id) {
-    status("لا يمكنك إرسال رسالة لنفسك.");
-    return;
-  }
-
-  $("sendMessageBtn").disabled = true;
-  try {
-    const { error } = await db.from("messages").insert({
-      sender_id: currentUser.id,
-      receiver_id: receiverId,
-      content
-    });
-    if (error) throw error;
-
-    $("messageText").value = "";
-    status("تم إرسال الرسالة.");
-    await loadMessages();
-  } catch (error) {
-    status("تعذر إرسال الرسالة: " + error.message);
-  } finally {
-    $("sendMessageBtn").disabled = false;
-  }
-}
-
-async function loadMessages() {
-  const box = $("messagesList");
-  box.textContent = "جارٍ تحميل الرسائل...";
-
-  const { data, error } = await db.from("messages")
-    .select("id,sender_id,receiver_id,content,created_at")
-    .or(`sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`)
-    .order("created_at", { ascending: false })
-    .limit(100);
-
-  if (error) {
-    box.textContent = "تعذر تحميل الرسائل: " + error.message;
-    return;
-  }
-
-  box.replaceChildren();
-  if (!data || data.length === 0) {
-    box.textContent = "لا توجد رسائل حتى الآن.";
-    return;
-  }
-
-  for (const message of data) {
-    const item = document.createElement("article");
-    item.className = "member";
-    const direction = message.sender_id === currentUser.id ? "أنت أرسلت" : "وصلك من عضو";
-    item.innerHTML = `
-      <p><b>${direction}</b></p>
-      <p>${escapeHTML(message.content)}</p>
-      <p class="small">معرّف الطرف الآخر: ${escapeHTML(
-        message.sender_id === currentUser.id ? message.receiver_id : message.sender_id
-      )}</p>
-      <p class="small">${escapeHTML(message.created_at || "")}</p>
-    `;
-    box.appendChild(item);
-  }
-}
-
-async function loadRegistrationSetting() {
-  if (!isAdmin) return;
-
-  const button = $("toggleRegistration");
-  button.disabled = true;
-  $("registrationStatus").textContent = "جارٍ قراءة الإعدادات...";
-
-  try {
- 
+})();
+    </script>
+    
