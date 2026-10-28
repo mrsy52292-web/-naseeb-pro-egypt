@@ -1,4 +1,167 @@
-HTML
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#741c45">
+<meta name="description" content="نصيب - تعارف جاد للزواج بموافقة الطرفين">
+<title>نصيب | نصيبك في الحلال</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#fff7fa;color:#30212a}
+header{background:#741c45;color:#fff;padding:22px 14px;text-align:center}
+header h1{margin:0 0 8px;font-size:30px}
+main{max-width:850px;margin:18px auto;padding:0 12px}
+.card{background:#fff;border:1px solid #f0dce5;border-radius:16px;padding:17px;margin-bottom:15px;box-shadow:0 3px 14px #741c450d}
+h2,h3{color:#741c45;margin-top:0}
+label{display:block;margin:12px 0 6px;font-weight:bold}
+input,select,textarea{width:100%;padding:12px;border:1px solid #d9c4ce;border-radius:10px;font:inherit;background:#fff}
+textarea{min-height:90px}
+button{border:0;border-radius:10px;padding:12px 14px;background:#741c45;color:#fff;font:inherit;font-weight:bold;cursor:pointer;margin:5px 2px}
+button.secondary{background:#f1e3e9;color:#741c45}
+button.danger{background:#8b2525}
+button:disabled{opacity:.55;cursor:not-allowed}
+.actions,nav{display:flex;gap:6px;flex-wrap:wrap}
+nav{justify-content:center}
+nav button{font-size:14px;flex:1;min-width:120px}
+.hidden{display:none!important}
+.small{font-size:13px;color:#705c66;line-height:1.8}
+.status{padding:10px;border-radius:10px;background:#fff0f5;margin:10px 0;line-height:1.8;overflow-wrap:anywhere}
+.member{border:1px solid #ead6e0;border-radius:13px;padding:13px;margin:12px 0}
+.member img,.my-photo{width:100%;max-width:220px;max-height:260px;object-fit:cover;border-radius:12px;display:block;margin:10px auto}
+footer{text-align:center;padding:20px;color:#806b75;font-size:13px}
+.price{font-size:23px;color:#741c45;font-weight:bold}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+#messagesList{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.message{padding:11px 13px;border-radius:13px;background:#f7e8ef;max-width:92%;overflow-wrap:anywhere}
+.message.mine{background:#741c45;color:#fff;align-self:flex-start}
+#messageComposer{border-top:1px solid #f0dce5;padding-top:12px;margin-top:12px}
+</style>
+</head>
+<body>
+<header>
+<h1>💗 نصيب</h1>
+<p>نصيبك في الحلال — تعارف جاد بموافقة الطرفين</p>
+</header>
+<main>
+<div id="status" class="status" role="status" aria-live="polite">أهلًا بك في نصيب.</div>
+
+<section id="authSection" class="card">
+<h2>🔐 حسابك في نصيب</h2>
+<label for="email">البريد الإلكتروني</label>
+<input id="email" type="email" autocomplete="email" placeholder="name@example.com">
+<label for="password">كلمة المرور</label>
+<input id="password" type="password" minlength="6" autocomplete="current-password" placeholder="6 أحرف على الأقل">
+<div class="actions">
+<button id="signupBtn" type="button">✨ إنشاء حساب مجاني</button>
+<button id="loginBtn" type="button" class="secondary">🔑 تسجيل الدخول</button>
+</div>
+<p class="small">التسجيل مجاني لمن بلغ 18 عامًا. إذا طُلب تأكيد البريد الإلكتروني، افتح رسالة التأكيد قبل تسجيل الدخول.</p>
+</section>
+
+<section id="appSection" class="hidden">
+<div class="card">
+<h2 id="welcome">أهلًا بك في نصيب</h2>
+<nav>
+<button type="button" onclick="showSection('profileSection')">👤 ملفي الشخصي</button>
+<button type="button" onclick="showSection('membersSection')">💗 الأعضاء</button>
+<button type="button" onclick="showSection('messagesSection')">💬 رسائلي</button>
+<button type="button" onclick="showSection('callsSection')">📞 المكالمات</button>
+<button type="button" onclick="showSection('blockedSection')">🚫 المحظورون</button>
+<button type="button" onclick="showSection('plansSection')">⭐ الباقات</button>
+<button id="adminNav" class="hidden" type="button" onclick="showSection('adminSection')">🛡️ الإدارة</button>
+<button class="secondary" type="button" onclick="logout()">🚪 خروج</button>
+</nav>
+</div>
+
+<section id="profileSection" class="card">
+<h2>👤 ملفي الشخصي</h2>
+<p class="small">لن يظهر ملفك للأعضاء قبل موافقة الإدارة.</p>
+<form id="profileForm">
+<label for="display_name">الاسم</label>
+<input id="display_name" maxlength="60" required>
+<label for="birth_date">تاريخ الميلاد</label>
+<input id="birth_date" type="date" required>
+<label for="gender">النوع</label>
+<select id="gender" required>
+<option value="">اختر</option>
+<option value="male">ذكر</option>
+<option value="female">أنثى</option>
+</select>
+<label for="city">المحافظة أو المدينة</label>
+<input id="city" maxlength="100" placeholder="مثال: طنطا">
+<label for="bio">نبذة عنك</label>
+<textarea id="bio" maxlength="1000"></textarea>
+<label for="photo_file">📷 الصورة الشخصية (اختياري)</label>
+<input id="photo_file" type="file" accept="image/jpeg,image/png,image/webp">
+<p class="small">JPG أو PNG أو WebP، بحد أقصى 5 ميجابايت.</p>
+<img id="photoPreview" class="my-photo hidden" alt="الصورة الشخصية">
+<button id="saveProfileBtn" type="submit">💾 حفظ بياناتي</button>
+</form>
+<div id="profileState" class="status">أكمل بياناتك الشخصية.</div>
+</section>
+
+<section id="membersSection" class="card hidden">
+<h2>💗 الأعضاء المعتمدون</h2>
+<button type="button" onclick="loadMembers()">🔄 تحديث الأعضاء</button>
+<div id="membersList"></div>
+</section>
+
+<section id="blockedSection" class="card hidden">
+<h2>🚫 الأعضاء المحظورون</h2>
+<button type="button" onclick="loadBlockedMembers()">🔄 تحديث القائمة</button>
+<div id="blockedList"></div>
+</section>
+
+<section id="messagesSection" class="card hidden">
+<h2>💬 رسائلي</h2>
+<label for="matchPicker">المحادثة</label>
+<select id="matchPicker" onchange="selectMatch()">
+<option value="">اختر محادثة</option>
+</select>
+<div id="messagesList"><p class="small">اختر محادثة لعرض الرسائل.</p></div>
+<div id="messageComposer">
+<label for="messageText">اكتب رسالتك</label>
+<textarea id="messageText" maxlength="2000" placeholder="اكتب رسالتك هنا"></textarea>
+<button id="sendMessageBtn" type="button" onclick="sendMessage()">📨 إرسال الرسالة</button>
+<button class="secondary" type="button" onclick="loadMessages()">🔄 تحديث الرسائل</button>
+</div>
+</section>
+
+<section id="callsSection" class="card hidden">
+<h2>📞 طلبات المكالمات</h2>
+<p class="small">هذه النسخة تعرض طلبات المكالمات فقط؛ الاتصال الصوتي الفعلي يحتاج تنفيذ WebRTC واختباره.</p>
+<label for="callMatchId">معرّف التطابق</label>
+<input id="callMatchId" placeholder="UUID الخاص بالتطابق">
+<label for="callReceiverId">معرّف الطرف الآخر</label>
+<input id="callReceiverId" placeholder="UUID للطرف الآخر">
+<button type="button" onclick="requestCall()">📞 طلب مكالمة</button>
+<button class="secondary" type="button" onclick="loadCalls()">🔄 تحديث الطلبات</button>
+<div id="callsList"></div>
+</section>
+
+<section id="plansSection" class="card hidden">
+<h2>⭐ باقات نصيب</h2>
+<p class="small">التسجيل الأساسي مجاني. لن يتم تفعيل أي اشتراك مدفوع قبل إعداد الدفع والتحقق منه بأمان.</p>
+<div id="plansList" class="grid"></div>
+</section>
+
+<section id="adminSection" class="card hidden">
+<h2>🛡️ لوحة الإدارة</h2>
+<h3>📋 طلبات مراجعة الأعضاء</h3>
+<button type="button" onclick="loadAdminMembers()">🔄 تحديث الطلبات</button>
+<div id="adminMembers"></div>
+<h3>⚠️ البلاغات</h3>
+<button type="button" onclick="loadAdminReports()">🔄 تحديث البلاغات</button>
+<div id="adminReports"></div>
+</section>
+</section>
+</main>
+<footer>نصيب 💗 — تعارف جاد بموافقة الطرفين</footer>
+
+<!-- ألصق الجزء الثاني هنا أسفل هذا السطر -->
+ HTML
 
 <!doctype html>
 <html lang="ar" dir="rtl">
