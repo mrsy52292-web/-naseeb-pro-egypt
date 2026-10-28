@@ -65,23 +65,20 @@ function el(id){return document.getElementById(id)}
 function safe(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function say(id,msg){el(id).textContent=msg}
 function section(id){
+
+function section(id){
   const pages = [
-    "profile",
-    "members",
-    "likes",
-    "matches",
-    "inbox",
-    "calls",
-    "ads",
-    "plans",
-    "admin"
+    "profile","members","likes","matches",
+    "inbox","calls","ads","plans","admin"
   ];
 
-  pages.forEach(page => {
-  
+  pages.forEach(function(page){
+    el(page).classList.add("hidden");
+  });
 
   el(id).classList.remove("hidden");
-  }classList.remove("hidden")}
+    }
+  
 async function signup(){const email=el("email").value.trim(),password=el("password").value;if(!email||password.length<6)return say("authStatus","اكتب بريدًا صحيحًا وكلمة مرور من 6 أحرف على الأقل.");say("authStatus","جارٍ إنشاء الحساب...");const r=await db.auth.signUp({email,password});if(r.error)return say("authStatus","تعذر إنشاء الحساب: "+r.error.message);say("authStatus",r.data.session?"تم إنشاء الحساب.":"تم الطلب. راجع بريدك لتأكيد الحساب إن طُلب منك ذلك.");if(r.data.session)startApp(r.data.session.user)}
 async function login(){const email=el("email").value.trim(),password=el("password").value;say("authStatus","جارٍ تسجيل الدخول...");const r=await db.auth.signInWithPassword({email,password});if(r.error)return say("authStatus","تعذر تسجيل الدخول: "+r.error.message);startApp(r.data.user)}
 async function logout(){await db.auth.signOut();user=null;el("app").classList.add("hidden");el("auth").classList.remove("hidden")}
