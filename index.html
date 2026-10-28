@@ -60,8 +60,13 @@ const SUPABASE_URL="https://gdavyferkvekaprdgcft.supabase.co";
 const SUPABASE_KEY="sb_publishable_QJnnLMv9pltgpeKQgmPGuw_c4CAyG7K";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let user=null, currentMatch=null, allMembers=[];
-function el(id){return document.getElementById(id)}
-function safe(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+String(v??"").replace(/[&<>"']/g,c=>
+function section(id){
+  document.querySelectorAll("#app>section:not(:first-child)")
+    .forEach(s=>s.classList.add("hidden"));
+  el(id).classList.remove("hidden");
+} 
+ ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function say(id,msg){el(id).textContent=msg}
 function section(id){document.querySelectorAll("#app>section").forEach(s=>s.classList.add("hidden"));el(id).classList.remove("hidden")}
 async function signup(){const email=el("email").value.trim(),password=el("password").value;if(!email||password.length<6)return say("authStatus","اكتب بريدًا صحيحًا وكلمة مرور من 6 أحرف على الأقل.");say("authStatus","جارٍ إنشاء الحساب...");const r=await db.auth.signUp({email,password});if(r.error)return say("authStatus","تعذر إنشاء الحساب: "+r.error.message);say("authStatus",r.data.session?"تم إنشاء الحساب.":"تم الطلب. راجع بريدك لتأكيد الحساب إن طُلب منك ذلك.");if(r.data.session)startApp(r.data.session.user)}
