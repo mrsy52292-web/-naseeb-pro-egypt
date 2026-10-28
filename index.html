@@ -178,6 +178,40 @@ footer{text-align:center;padding:20px;color:#765c69}
     <button class="secondary" onclick="signOut()" style="margin-top:10px">
       تسجيل الخروج
     </button>
+   
+<section id="paymentSection">
+  <h2>💳 اشتراكات نصيب</h2>
+  <p>اختر الباقة، وحوّل المبلغ عبر فودافون كاش، ثم أرسل رقم العملية للمراجعة.</p>
+
+  <label for="paymentPackage">الباقة</label>
+  <select id="paymentPackage">
+    <option value="monthly">عضوية شهرية — 100 جنيه</option>
+    <option value="vip">عضوية VIP — 200 جنيه</option>
+  </select>
+
+  <label for="paymentAmount">المبلغ بالجنيه</label>
+  <input id="paymentAmount" type="number" readonly value="100">
+
+  <div class="notice">
+    <b>فودافون كاش</b>
+    <p>رقم المحفظة سيُضاف بعد تحديد رقم الاستقبال الذي تريد استخدامه.</p>
+    <p class="small">لا تحوّل أي مبلغ قبل التأكد من رقم المحفظة الصحيح.</p>
+  </div>
+
+  <label for="transactionRef">رقم العملية بعد التحويل</label>
+  <input id="transactionRef" maxlength="100"
+    placeholder="اكتب رقم العملية">
+
+  <label for="senderPhone">رقم المحفظة المحوِّلة (اختياري)</label>
+  <input id="senderPhone" type="tel" maxlength="20"
+    placeholder="رقم الهاتف الذي أرسل التحويل">
+
+  <button onclick="submitPaymentRequest()">إرسال طلب الدفع</button>
+  <div id="paymentStatus" class="notice" aria-live="polite">
+    الطلبات الجديدة تنتظر مراجعة الإدارة.
+  </div>
+</section>
+    
     <p class="small">استخدم بريدك الإلكتروني وكلمة مرور لا تقل عن 6 أحرف.</p>
   </section>
 
