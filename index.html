@@ -1,449 +1,84 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#741c45">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#741c45"><meta name="description" content="نصيب - تعارف جاد للزواج بموافقة الطرفين">
 <title>نصيب | نصيبك في الحلال</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font:16px Tahoma,Arial,sans-serif;background:#fff8fb;color:#351323;line-height:1.7}
-header{background:#741c45;color:white;text-align:center;padding:16px}
-header h1{margin:0}
-nav{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;position:sticky;top:0;background:white;padding:10px;box-shadow:0 2px 8px #0001;z-index:5}
-button{border:0;border-radius:10px;background:#741c45;color:white;padding:11px 14px;font-size:15px;cursor:pointer}
-button.secondary{background:#c5a15c;color:#271522}
-main{max-width:760px;margin:auto;padding:12px}
-section{background:white;border:1px solid #f0dce5;border-radius:14px;padding:15px;margin:13px 0;box-shadow:0 3px 12px #741c450c}
-h2{color:#741c45;margin-top:0}
-label{display:block;margin:10px 0 4px}
-input,select,textarea{display:block;width:100%;padding:11px;border:1px solid #d9c5ce;border-radius:9px;font:inherit;background:white}
-textarea{min-height:80px}
-.row{display:flex;gap:8px;flex-wrap:wrap}
-.row>*{flex:1;min-width:0}
-.hidden{display:none!important}
-.small{font-size:12px;color:#765c69}
-.notice{background:#fff2d9;padding:10px;border-radius:9px;margin:10px 0;overflow-wrap:anywhere}
-.member{border:1px solid #ead8e1;border-radius:12px;padding:12px;margin:10px 0}
-.ad-box{background:#fff6df;border:1px dashed #c5a15c;text-align:center;padding:12px;border-radius:12px}
-.message{padding:10px;margin:8px 0;border-radius:12px;background:#f3e5ec;overflow-wrap:anywhere}
-.mine{background:#741c45;color:white;margin-right:15%}
-#messagesList{height:280px;overflow:auto;padding:8px;background:#fff8fb;border:1px solid #ead8e1;border-radius:10px}
-footer{text-align:center;padding:20px;color:#765c69}
-@media(max-width:480px){main{padding:7px}section{padding:12px}nav button{padding:9px;font-size:13px}}
-</style>
-</head>
-<body>
-<header>
-<h1>نصيب 💗</h1>
-<p>نصيبك في الحلال — تعارف جاد بموافقة الطرفين</p>
-</header>
-
-<nav id="mainNav" class="hidden">
-<button onclick="showSection('profileSection')">ملفي الشخصي</button>
-<button onclick="showSection('membersSection')">الأعضاء</button>
-<button onclick="showSection('messagesSection')">الرسائل</button>
-<button onclick="showSection('callsSection')">📞 المكالمات</button>
-<button onclick="showSection('paymentSection')">الاشتراكات والدفع</button>
-<button onclick="showSection('adsSection')">الإعلانات</button>
-<button onclick="showSection('adminSection')">الإدارة</button>
-<button class="secondary" onclick="signOut()">تسجيل الخروج</button>
-</nav>
-
-<main>
-<div id="statusBox" class="notice" aria-live="polite">أهلًا بك في نصيب 💗</div>
-
-<section id="authSection">
-<h2>🔐 حسابك في نصيب</h2>
-<label for="email">البريد الإلكتروني</label>
-<input id="email" type="email" autocomplete="email" placeholder="name@example.com">
-<label for="password">كلمة المرور</label>
-<input id="password" type="password" autocomplete="current-password" placeholder="6 أحرف على الأقل">
-<div class="row">
-<button onclick="signUp()">إنشاء حساب</button>
-<button class="secondary" onclick="signIn()">تسجيل الدخول</button>
-</div>
-<p class="small">قد تحتاج إلى تأكيد بريدك الإلكتروني بعد التسجيل.</p>
-</section>
-
-<section id="profileSection" class="hidden">
-<h2>👤 ملفي الشخصي</h2>
-<label for="displayName">الاسم المعروض</label>
-<input id="displayName" maxlength="60">
-<label for="birthDate">تاريخ الميلاد</label>
-<input id="birthDate" type="date">
-<label for="gender">النوع</label>
-<select id="gender"><option value="">اختر</option><option value="male">رجل</option><option value="female">امرأة</option></select>
-<label for="city">المحافظة أو المدينة</label>
-<input id="city" maxlength="80" placeholder="مثال: طنطا">
-<label for="bio">نبذة مختصرة</label>
-<textarea id="bio" maxlength="500"></textarea>
-<label for="photo">الصورة الشخصية</label>
-<input id="photo" type="file" accept="image/jpeg,image/png,image/webp">
-<button onclick="saveProfile()">حفظ الملف الشخصي</button>
-<p class="small">التسجيل متاح لمن يبلغ 18 سنة أو أكثر. لا تشارك بياناتك الخاصة علنًا.</p>
-</section>
-
-<section id="membersSection" class="hidden">
-<h2>💗 الأعضاء</h2>
-<button onclick="loadMembers()">تحديث الأعضاء</button>
-<div id="membersList">سجّل الدخول لعرض الأعضاء.</div>
-</section>
-
-<section id="messagesSection" class="hidden">
-<h2>💬 المحادثات</h2>
-<label for="matchPicker">اختر المحادثة</label>
-<select id="matchPicker" onchange="loadMessages()"><option value="">اختر محادثة</option></select>
-<button onclick="loadMyMatches()">تحديث المحادثات</button>
-<button class="secondary" onclick="enableNotifications()">تفعيل التنبيهات</button>
-<div id="messageStatus" class="notice" aria-live="polite">اختر محادثة لعرض الرسائل.</div>
-<div id="messagesList">اختر محادثة لعرض الرسائل.</div>
-<label for="messageInput">اكتب رسالتك</label>
-<div class="row">
-<input id="messageInput" maxlength="2000" placeholder="اكتب رسالة محترمة">
-<button onclick="sendMessage()">إرسال</button>
-</div>
-</section>
-
-<section id="callsSection" class="hidden">
-<h2>📞 المكالمات الصوتية</h2>
-<p>الاتصال الصوتي الفعلي غير مفعّل بعد، ويحتاج استكمال ربط WebRTC وسياسات الإشارات على Supabase.</p>
-<label for="callMatchPicker">اختر المحادثة</label>
-<select id="callMatchPicker"><option value="">حدّث المحادثات أولًا</option></select>
-<button onclick="prepareCalls()">تحديث المحادثات</button>
-<div id="callStatus" class="notice">لم يتم بدء مكالمة.</div>
-</section>
-
-<section id="paymentSection" class="hidden">
-<h2>💳 اشتراكات نصيب</h2>
-<p>لا تحوّل أي مبلغ قبل التأكد من رقم محفظة الاستقبال؛ رقم المحفظة لم يُضف بعد.</p>
-<label for="paymentPackage">الباقة</label>
-<select id="paymentPackage">
-<option value="monthly">عضوية شهرية — 100 جنيه</option>
-<option value="vip">عضوية VIP — 200 جنيه</option>
-</select>
-<label for="paymentAmount">المبلغ بالجنيه</label>
-<input id="paymentAmount" type="number" readonly value="100">
-<label for="transactionRef">رقم العملية بعد التحويل</label>
-<input id="transactionRef" maxlength="100" placeholder="رقم العملية">
-<label for="senderPhone">رقم المحفظة المحوِّلة (اختياري)</label>
-<input id="senderPhone" type="tel" maxlength="20">
-<button onclick="submitPaymentRequest()">إرسال طلب الدفع</button>
-<div id="paymentStatus" class="notice" aria-live="polite">إرسال الطلب لا يفعّل العضوية تلقائيًا؛ يلزم مراجعة الإدارة.</div>
-<p class="small">الأسعار مبدئية وقابلة للتغيير.</p>
-</section>
-
-<section id="adsSection" class="hidden">
-<h2>📢 الإعلانات التجارية</h2>
-<div class="ad-box">للأنشطة التجارية الراغبة في الإعلان، أرسل طلبك للمراجعة.</div>
-<label for="advertiserName">اسم النشاط التجاري</label>
-<input id="advertiserName" maxlength="100">
-<label for="advertiserContact">وسيلة التواصل</label>
-<input id="advertiserContact" maxlength="150">
-<label for="adDescription">تفاصيل الإعلان</label>
-<textarea id="adDescription" maxlength="1000"></textarea>
-<button onclick="submitAdRequest()">إرسال طلب الإعلان</button>
-<div id="adStatus" class="small"></div>
-</section>
-
-<section id="adminSection" class="hidden">
-<h2>🛡️ لوحة الإدارة</h2>
-<button onclick="loadAdmin()">تحديث لوحة الإدارة</button>
-<div id="adminContent">سجّل الدخول بحساب الإدارة.</div>
-</section>
-
-<footer>نصيب 💗 — تعارف جاد للزواج بموافقة الطرفين</footer>
-</main>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#fff7fa;color:#30212a}
+header{background:#741c45;color:#fff;padding:22px 14px;text-align:center}header h1{margin:0 0 8px;font-size:30px}
+main{max-width:850px;margin:18px auto;padding:0 12px}.card{background:#fff;border:1px solid #f0dce5;border-radius:16px;padding:17px;margin-bottom:15px;box-shadow:0 3px 14px #741c450d}
+h2,h3{color:#741c45;margin-top:0}label{display:block;margin:12px 0 6px;font-weight:bold}
+input,select,textarea{width:100%;padding:12px;border:1px solid #d9c4ce;border-radius:10px;font:inherit;background:#fff}textarea{min-height:90px}
+button{border:0;border-radius:10px;padding:12px 14px;background:#741c45;color:#fff;font:inherit;font-weight:bold;cursor:pointer;margin:5px 2px}
+button.secondary{background:#f1e3e9;color:#741c45}button.danger{background:#8b2525}button:disabled{opacity:.55}
+.actions,nav{display:flex;gap:6px;flex-wrap:wrap}nav{justify-content:center}nav button{font-size:14px;flex:1;min-width:120px}
+.hidden{display:none!important}.small{font-size:13px;color:#705c66;line-height:1.8}.status{padding:10px;border-radius:10px;background:#fff0f5;margin:10px 0;line-height:1.8;overflow-wrap:anywhere}
+.member{border:1px solid #ead6e0;border-radius:13px;padding:13px;margin:12px 0}.member img,.my-photo{width:100%;max-width:220px;max-height:260px;object-fit:cover;border-radius:12px;display:block;margin:10px auto}
+footer{text-align:center;padding:20px;color:#806b75;font-size:13px}.price{font-size:23px;color:#741c45;font-weight:bold}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+</style></head><body>
+<header><h1>💗 نصيب</h1><p>نصيبك في الحلال — تعارف جاد بموافقة الطرفين</p></header><main>
+<div id="status" class="status" role="status" aria-live="polite">أهلًا بك في نصيب.</div>
+<section id="authSection" class="card"><h2>🔐 حسابك في نصيب</h2>
+<label for="email">البريد الإلكتروني</label><input id="email" type="email" autocomplete="email" placeholder="name@example.com">
+<label for="password">كلمة المرور</label><input id="password" type="password" minlength="6" autocomplete="current-password" placeholder="6 أحرف على الأقل">
+<div class="actions"><button id="signupBtn" type="button">✨ إنشاء حساب</button><button id="loginBtn" type="button" class="secondary">🔑 تسجيل الدخول</button></div>
+<p class="small">استخدم بريدك الإلكتروني وكلمة مرور من 6 أحرف على الأقل. إذا كان تأكيد البريد مفعّلًا، افتح رسالة التأكيد أولًا.</p></section>
+<section id="appSection" class="hidden"><div class="card"><h2 id="welcome">أهلًا بك في نصيب</h2><nav>
+<button type="button" onclick="showSection('profileSection')">👤 ملفي الشخصي</button><button type="button" onclick="showSection('membersSection')">💗 الأعضاء</button>
+<button type="button" onclick="showSection('messagesSection')">💬 رسائلي</button><button type="button" onclick="showSection('callsSection')">📞 المكالمات</button>
+<button type="button" onclick="showSection('blockedSection')">🚫 المحظورون</button><button type="button" onclick="showSection('plansSection')">⭐ الباقات</button>
+<button id="adminNav" class="hidden" type="button" onclick="showSection('adminSection')">🛡️ الإدارة</button><button class="secondary" type="button" onclick="logout()">🚪 خروج</button></nav></div>
+<section id="profileSection" class="card"><h2>👤 ملفي الشخصي</h2><p class="small">متاح لمن بلغ 18 عامًا على الأقل. لن يظهر ملفك قبل موافقة الإدارة.</p>
+<form id="profileForm"><label for="display_name">الاسم</label><input id="display_name" maxlength="60" required>
+<label for="birth_date">تاريخ الميلاد</label><input id="birth_date" type="date" required>
+<label for="gender">النوع</label><select id="gender" required><option value="">اختر</option><option value="male">ذكر</option><option value="female">أنثى</option></select>
+<label for="city">المحافظة أو المدينة</label><input id="city" maxlength="100" placeholder="مثال: طنطا"><label for="bio">نبذة عنك</label><textarea id="bio" maxlength="1000"></textarea>
+<label for="photo_file">📷 الصورة الشخصية (اختياري)</label><input id="photo_file" type="file" accept="image/jpeg,image/png,image/webp"><p class="small">JPG أو PNG أو WebP، بحد أقصى 5 ميجابايت.</p>
+<img id="photoPreview" class="my-photo hidden" alt="الصورة الشخصية المحفوظة"><p class="small">ستظهر الصورة هنا بعد اختيارها، وتُحمّل من التخزين عند فتح الملف.</p><button id="saveProfileBtn" type="submit">💾 حفظ بياناتي</button></form><div id="profileState" class="status">أكمل بياناتك الشخصية.</div></section>
+<section id="membersSection" class="card hidden"><h2>💗 الأعضاء المعتمدون</h2><button type="button" onclick="loadMembers()">🔄 تحديث الأعضاء</button><div id="membersList"></div></section>
+<section id="blockedSection" class="card hidden"><h2>🚫 الأعضاء المحظورون</h2><button type="button" onclick="loadBlockedMembers()">🔄 تحديث القائمة</button><div id="blockedList"></div></section>
+<section id="messagesSection" class="card hidden"><h2>💬 رسائلي</h2><p class="small">اختر محادثة من تطابقاتك لعرض الرسائل وإرسال رسالة جديدة.</p><label for="matchPicker">المحادثة</label><select id="matchPicker" onchange="selectMatch()"><option value="">جارٍ تحميل التطابقات...</option></select><label for="messageText">الرسالة</label><textarea id="messageText" maxlength="2000" placeholder="اكتب رسالتك هنا"></textarea><button id="sendMessageBtn" type="button" onclick="sendMessage()">📨 إرسال</button><button class="secondary" type="button" onclick="loadMessages()">🔄 تحديث الرسائل</button><div id="messagesList"></div></section>
+<section id="callsSection" class="card hidden"><h2>📞 طلب مكالمة</h2><p class="small">هذه الواجهة تسجل طلب المكالمة فقط؛ الصوت والفيديو الفعليان غير مفعّلين بعد.</p><label for="callMatchId">معرّف التطابق</label><input id="callMatchId" placeholder="UUID الخاص بالتطابق"><label for="callReceiverId">معرّف الطرف الآخر</label><input id="callReceiverId" placeholder="UUID للمستخدم"><button type="button" onclick="requestCall()">📞 إرسال طلب مكالمة</button><button class="secondary" type="button" onclick="loadCalls()">🔄 طلباتي</button><div id="callsList"></div></section>
+<section id="plansSection" class="card hidden"><h2>⭐ باقات نصيب</h2><p class="small">عرض الأسعار فقط؛ الدفع وتفعيل VIP غير متاحين حتى ربط بوابة دفع والتحقق من العملية على الخادم.</p><div id="plansList" class="grid"></div></section>
+<section id="adminSection" class="card hidden"><h2>🛡️ لوحة الإدارة</h2><h3>⚙️ التسجيل</h3><p id="registrationStatus">جارٍ تحميل الإعدادات...</p><button id="toggleRegistration" type="button" disabled>تحميل الإعدادات...</button><h3>💰 إدارة الباقات والأسعار (جنيه مصري)</h3><div id="adminPlans"></div><h3>📋 طلبات مراجعة الأعضاء</h3><button type="button" onclick="loadAdminMembers()">🔄 تحديث الطلبات</button><div id="adminMembers"></div><h3>⚠️ البلاغات</h3><button type="button" onclick="loadAdminReports()">🔄 تحديث البلاغات</button><div id="adminReports"></div></section>
+</section></main><footer>نصيب 💗 — تعارف جاد بموافقة الطرفين</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
 "use strict";
-const db=window.supabase.createClient(
- "https://gdavyferkvekaprdgcft.supabase.co",
- "sb_publishable_QJnnLMv9pltgpeKQgmPGuw_c4CAyG7K"
-);
-let currentUser=null,currentProfile=null,messageChannel=null,presenceChannel=null;
-const $=id=>document.getElementById(id);
-
-function esc(v){
- return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-}
-function status(t){$("statusBox").textContent=t;}
-
-function showSection(id){
- const ids=["authSection","profileSection","membersSection","messagesSection","callsSection","paymentSection","adsSection","adminSection"];
- if(!ids.includes(id))id="authSection";
- if(id!=="authSection"&&!currentUser){
-  status("سجّل الدخول أولًا.");
-  id="authSection";
- }
- ids.forEach(x=>$(x).classList.toggle("hidden",x!==id));
- if(id==="membersSection")loadMembers();
- if(id==="messagesSection")loadMyMatches();
- if(id==="callsSection")prepareCalls();
- if(id==="adminSection")loadAdmin();
-}
-
-async function signUp(){
- const email=$("email").value.trim(),password=$("password").value;
- if(!email||password.length<6)return status("اكتب بريدًا صحيحًا وكلمة مرور من 6 أحرف على الأقل.");
- const {data,error}=await db.auth.signUp({email,password});
- if(error)return status("تعذر إنشاء الحساب: "+error.message);
- if(data.session){currentUser=data.user;await startApp();}
- else status("تم طلب التسجيل. افتح بريدك للتأكيد إذا طُلب منك ذلك، ثم سجّل الدخول.");
-}
-
-async function signIn(){
- const email=$("email").value.trim(),password=$("password").value;
- if(!email||!password)return status("اكتب البريد وكلمة المرور.");
- const {data,error}=await db.auth.signInWithPassword({email,password});
- if(error)return status("تعذر تسجيل الدخول: "+error.message);
- currentUser=data.user;
- await startApp();
-}
-
-async function signOut(){
- stopRealtime();
- const {error}=await db.auth.signOut();
- if(error)return status("تعذر تسجيل الخروج: "+error.message);
- currentUser=null;
- currentProfile=null;
- $("mainNav").classList.add("hidden");
- showSection("authSection");
- status("تم تسجيل الخروج بنجاح.");
-}
-
-async function startApp(){
- if(!currentUser)return;
- $("mainNav").classList.remove("hidden");
- status("أهلًا بك في نصيب 💗");
- await loadProfile();
- startPresence();
- showSection("profileSection");
-}
-
-async function loadProfile(){
- if(!currentUser)return;
- const {data,error}=await db.from("profiles").select("*").eq("id",currentUser.id).maybeSingle();
- if(error){status("تعذر تحميل الملف الشخصي: "+error.message);return;}
- currentProfile=data;
- if(data){
-  $("displayName").value=data.display_name||"";
-  $("birthDate").value=data.birth_date||"";
-  $("gender").value=data.gender||"";
-  $("city").value=data.city||"";
-  $("bio").value=data.bio||"";
- }
-}
-  
-function ageFromDate(value){
- if(!value)return 0;
- const d=new Date(value),now=new Date();
- let age=now.getFullYear()-d.getFullYear();
- if(now.getMonth()<d.getMonth()||(now.getMonth()===d.getMonth()&&now.getDate()<d.getDate()))age--;
- return age;
-}
-
-async function saveProfile(){
- if(!currentUser)return status("سجّل الدخول أولًا.");
- const name=$("displayName").value.trim(),birth=$("birthDate").value,gender=$("gender").value;
- if(!name||!birth||!gender)return status("أكمل الاسم وتاريخ الميلاد والنوع.");
- if(ageFromDate(birth)<18)return status("التسجيل متاح لمن يبلغ 18 سنة أو أكثر.");
- let photoUrl=currentProfile?.photo_url||null;
- const file=$("photo").files[0];
- if(file){
-  if(file.size>5*1024*1024)return status("حجم الصورة يجب ألا يتجاوز 5 ميجابايت.");
-  if(!["image/jpeg","image/png","image/webp"].includes(file.type))return status("اختر صورة JPG أو PNG أو WEBP.");
-  const path=currentUser.id+"/"+Date.now()+"_"+file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
-  const up=await db.storage.from("member-photos").upload(path,file,{upsert:true});
-  if(up.error)return status("تعذر رفع الصورة: "+up.error.message);
-  photoUrl=db.storage.from("member-photos").getPublicUrl(path).data.publicUrl;
- }
- const row={id:currentUser.id,display_name:name,birth_date:birth,gender,city:$("city").value.trim(),bio:$("bio").value.trim(),photo_url:photoUrl};
- const {data,error}=await db.from("profiles").upsert(row,{onConflict:"id"}).select().single();
- if(error)return status("تعذر حفظ الملف: "+error.message);
- currentProfile=data;
- status("تم حفظ الملف. سيظهر للآخرين بعد اعتماد الإدارة.");
-}
-
-async function loadMembers(){
- if(!currentUser)return $("membersList").textContent="سجّل الدخول أولًا.";
- $("membersList").textContent="جارٍ تحميل الأعضاء...";
- const {data,error}=await db.from("profiles").select("id,display_name,birth_date,gender,city,bio,photo_url").eq("approved",true).neq("id",currentUser.id).limit(50);
- if(error)return $("membersList").textContent="تعذر تحميل الأعضاء: "+error.message;
- if(!data?.length)return $("membersList").textContent="لا توجد ملفات معتمدة للعرض حاليًا.";
- $("membersList").innerHTML=data.map(p=>`<article class="member">${p.photo_url?`<img src="${esc(p.photo_url)}" alt="الصورة الشخصية" style="width:90px;height:90px;object-fit:cover;border-radius:50%">`:""}<h3>${esc(p.display_name)}</h3><p>${esc(p.city||"")}</p><p>${esc(p.bio||"")}</p><button onclick="sendLike('${p.id}')">💗 إعجاب</button> <button class="secondary" onclick="reportMember('${p.id}')">إبلاغ</button></article>`).join("");
-}
-
-async function sendLike(target){
- if(!currentUser)return status("سجّل الدخول أولًا.");
- if(target===currentUser.id)return;
- const {error}=await db.from("likes").insert({sender_id:currentUser.id,receiver_id:target});
- if(error)return status("تعذر إرسال الإعجاب. ربما أرسلته من قبل: "+error.message);
- status("تم إرسال الإعجاب.");
- const {data}=await db.from("likes").select("sender_id").eq("sender_id",target).eq("receiver_id",currentUser.id).maybeSingle();
- if(data){
-  const a=currentUser.id,b=target,one=a<b?a:b,two=a<b?b:a;
-  const existing=await db.from("matches").select("id").eq("user_one",one).eq("user_two",two).maybeSingle();
-  if(!existing.data){
-   const made=await db.from("matches").insert({user_one:one,user_two:two});
-   if(made.error)status("تم الإعجاب، لكن تعذر إنشاء التطابق: "+made.error.message);
-   else status("مبروك! الإعجاب متبادل وتم إنشاء تطابق.");
-  }
- }
-}
-
-async function reportMember(target){
- if(!currentUser)return status("سجّل الدخول أولًا.");
- const reason=prompt("اكتب سبب الإبلاغ:");
- if(!reason?.trim())return;
- const {error}=await db.from("reports").insert({reporter_id:currentUser.id,reported_user_id:target,reason:reason.trim()});
- status(error?"تعذر إرسال البلاغ: "+error.message:"تم إرسال البلاغ للإدارة.");
-}
-
-async function loadMyMatches(){
- if(!currentUser)return;
- $("matchPicker").innerHTML='<option value="">اختر محادثة</option>';
- $("callMatchPicker").innerHTML='<option value="">اختر محادثة</option>';
- const {data,error}=await db.from("matches").select("*").or("user_one.eq."+currentUser.id+",user_two.eq."+currentUser.id).order("created_at",{ascending:false});
- if(error){
-  $("messageStatus").textContent="تعذر تحميل المحادثات: "+error.message;
-  return status("تعذر تحميل المحادثات: "+error.message);
- }
- for(const m of data||[]){
-  const other=m.user_one===currentUser.id?m.user_two:m.user_one;
-  const prof=await db.from("profiles").select("display_name").eq("id",other).maybeSingle();
-  const opt=document.createElement("option");
-  opt.value=m.id;opt.textContent=prof.data?.display_name||"عضو";
-  $("matchPicker").appendChild(opt);
-  $("callMatchPicker").appendChild(opt.cloneNode(true));
- }
- if(!data?.length){
-  $("messageStatus").textContent="لا توجد محادثات بعد. يلزم وجود تطابق متبادل.";
- }else{
-  $("messageStatus").textContent="تم تحميل المحادثات.";
- }
-}
-
-async function loadMessages(){
- if(!currentUser)return;
- const matchId=$("matchPicker").value;
- if(!matchId){
-  $("messagesList").textContent="اختر محادثة لعرض الرسائل.";
-  $("messageStatus").textContent="اختر محادثة أولًا.";
-  return;
- }
- $("messagesList").textContent="جارٍ تحميل الرسائل...";
- const {data,error}=await db.from("messages").select("*").eq("match_id",matchId).order("created_at",{ascending:true}).limit(200);
- if(error){
-  $("messagesList").textContent="تعذر تحميل الرسائل: "+error.message;
-  $("messageStatus").textContent="تحقق من صلاحيات جدول messages في Supabase.";
-  return;
- }
- $("messagesList").innerHTML=(data||[]).map(m=>`<div class="message ${m.sender_id===currentUser.id?"mine":""}">${esc(m.content)}<div class="small">${esc(new Date(m.created_at).toLocaleString("ar-EG"))}</div></div>`).join("")||"لا توجد رسائل بعد.";
- $("messagesList").scrollTop=$("messagesList").scrollHeight;
- $("messageStatus").textContent="تم تحميل الرسائل.";
-}
-
-async function sendMessage(){
- if(!currentUser)return status("سجّل الدخول أولًا.");
- const matchId=$("matchPicker").value,content=$("messageInput").value.trim();
- if(!matchId)return $("messageStatus").textContent="اختر محادثة أولًا.";
- if(!content)return $("messageStatus").textContent="اكتب الرسالة أولًا.";
- $("messageStatus").textContent="جارٍ إرسال الرسالة...";
- const {error}=await db.from("messages").insert({match_id:matchId,sender_id:currentUser.id,content});
- if(error){
-  $("messageStatus").textContent="تعذر إرسال الرسالة: "+error.message;
-  status("تعذر إرسال الرسالة. راجع رسالة الخطأ داخل قسم الرسائل.");
-  return;
- }
- $("messageInput").value="";
- $("messageStatus").textContent="تم إرسال الرسالة.";
- await loadMessages();
-}
-
-async function prepareCalls(){
- if(!currentUser)return;
- await loadMyMatches();
- $("callStatus").textContent="الاتصال الصوتي الفعلي غير مفعّل بعد.";
-}
-
-async function submitPaymentRequest(){
- if(!currentUser)return status("سجّل الدخول أولًا.");
- const pack=$("paymentPackage").value,amount=pack==="vip"?200:100,ref=$("transactionRef").value.trim();
- if(!ref)return $("paymentStatus").textContent="أدخل رقم العملية. لا تحوّل أي مبلغ قبل معرفة رقم المحفظة الرسمي.";
- const {error}=await db.from("manual_payment_requests").insert({user_id:currentUser.id,package_name:pack,amount_egp:amount,transaction_ref:ref,sender_phone:$("senderPhone").value.trim()||null,status:"pending"});
- $("paymentStatus").textContent=error?"تعذر إرسال الطلب: "+error.message:"تم إرسال طلبك للمراجعة. لم يتم تفعيل العضوية تلقائيًا.";
-}
-$("paymentPackage").addEventListener("change",()=>{$("paymentAmount").value=$("paymentPackage").value==="vip"?200:100;});
-
-async function submitAdRequest(){
- const name=$("advertiserName").value.trim(),contact=$("advertiserContact").value.trim(),desc=$("adDescription").value.trim();
- if(!name||!contact||!desc)return $("adStatus").textContent="أكمل بيانات النشاط ووسيلة التواصل وتفاصيل الإعلان.";
- const subject=encodeURIComponent("طلب إعلان تجاري - نصيب");
- const body=encodeURIComponent("اسم النشاط: "+name+"\nوسيلة التواصل: "+contact+"\nالتفاصيل: "+desc);
- $("adStatus").innerHTML='افتح البريد لإرسال الطلب: <a href="mailto:?subject='+subject+'&body='+body+'">إرسال طلب الإعلان</a>';
-}
-
-async function loadAdmin(){
- if(!currentUser)return $("adminContent").textContent="سجّل الدخول بحساب الإدارة.";
- const {data,error}=await db.from("admin_roles").select("role").eq("user_id",currentUser.id).maybeSingle();
- if(error)return $("adminContent").textContent="تعذر التحقق من صلاحيات الإدارة: "+error.message;
- if(data?.role!=="admin")return $("adminContent").textContent="هذا القسم مخصص لحسابات الإدارة المعتمدة.";
- $("adminContent").innerHTML='<p>تم التحقق من دور الإدارة.</p><button onclick="loadPendingProfiles()">عرض الملفات المنتظرة</button><div id="pendingProfiles"></div>';
-}
-
-async function loadPendingProfiles(){
- const {data,error}=await db.from("admin_roles").select("role").eq("user_id",currentUser.id).maybeSingle();
- if(error||data?.role!=="admin")return status("ليس لديك صلاحية.");
- const res=await db.from("profiles").select("id,display_name,city").eq("approved",false).limit(100);
- if(res.error)return $("pendingProfiles").textContent="تعذر التحميل: "+res.error.message;
- $("pendingProfiles").innerHTML=(res.data||[]).map(p=>`<div class="member"><b>${esc(p.display_name)}</b> — ${esc(p.city||"")} <button onclick="approveProfile('${p.id}')">اعتماد</button></div>`).join("")||"لا توجد ملفات تنتظر الاعتماد.";
-}
-
-async function approveProfile(id){
- const check=await db.from("admin_roles").select("role").eq("user_id",currentUser.id).maybeSingle();
- if(check.error||check.data?.role!=="admin")return status("ليس لديك صلاحية.");
- const {error}=await db.from("profiles").update({approved:true}).eq("id",id);
- if(error)return status("تعذر اعتماد الملف: "+error.message);
- status("تم اعتماد الملف.");
- await loadPendingProfiles();
-}
-
-async function enableNotifications(){
- if(!("Notification" in window))return status("المتصفح لا يدعم التنبيهات.");
- const result=await Notification.requestPermission();
- status(result==="granted"?"تم تفعيل إذن التنبيهات.":"لم يتم منح إذن التنبيهات.");
-}
-
-function startPresence(){}
-function stopRealtime(){
- if(messageChannel)db.removeChannel(messageChannel);
- if(presenceChannel)db.removeChannel(presenceChannel);
- messageChannel=null;presenceChannel=null;
-}
-
-db.auth.getSession().then(async({data,error})=>{
- if(error){status("تعذر التحقق من الجلسة: "+error.message);return;}
- if(data?.session){
-  currentUser=data.session.user;
-  await startApp();
- }else{
-  $("mainNav").classList.add("hidden");
-  showSection("authSection");
- }
-});
-
-db.auth.onAuthStateChange(async(event,session)=>{
- if(session?.user){
-  currentUser=session.user;
- }else{
-  currentUser=null;
-  currentProfile=null;
-  $("mainNav").classList.add("hidden");
- }
-});
-</script>
-</body>
-</html>
+const SUPABASE_URL="https://gdavyferkvekaprdgcft.supabase.co";
+const SUPABASE_KEY="sb_publishable_QJnnLMv9pltgpeKQgmPGuw_c4CAyG7K";
+const PHOTO_BUCKET="member-photos",db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY),$=id=>document.getElementById(id);
+let currentUser=null,isAdmin=false,currentPhotoPath=null,previewUrl=null,registrationOpen=true;
+function status(m){$("status").textContent=m}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function showSection(id){["profileSection","membersSection","messagesSection","callsSection","blockedSection","plansSection","adminSection"].forEach(s=>$(s).classList.toggle("hidden",s!==id));if(id==="membersSection")loadMembers();if(id==="messagesSection")loadMyMatches();if(id==="callsSection")loadCalls();if(id==="blockedSection")loadBlockedMembers();if(id==="plansSection")loadPlans();if(id==="adminSection"&&isAdmin){loadRegistrationSetting();loadAdminMembers();loadAdminReports();loadAdminPlans()}}
+async function getRegistrationSetting(){const {data,error}=await db.from("app_settings").select("registration_open").eq("id",1).maybeSingle();if(error)throw error;if(!data)throw Error("إعداد التسجيل غير موجود.");return data.registration_open}
+async function signup(){const email=$("email").value.trim(),password=$("password").value;if(!email||password.length<6)return status("اكتب بريدًا صحيحًا وكلمة مرور من 6 أحرف على الأقل.");$("signupBtn").disabled=true;try{if(!await getRegistrationSetting())return status("التسجيل مغلق مؤقتًا.");const {data,error}=await db.auth.signUp({email,password});if(error)throw error;if(data.session&&data.user){currentUser=data.user;await startApp();status("تم إنشاء الحساب. أكمل بياناتك.")}else status("تم إنشاء طلب الحساب. افتح رسالة تأكيد البريد الإلكتروني ثم سجّل الدخول.")}catch(e){status("تعذر إنشاء الحساب: "+e.message)}finally{$("signupBtn").disabled=false}}
+async function login(){const email=$("email").value.trim(),password=$("password").value;if(!email||!password)return status("اكتب البريد الإلكتروني وكلمة المرور.");$("loginBtn").disabled=true;try{const {data,error}=await db.auth.signInWithPassword({email,password});if(error)throw error;currentUser=data.user;await startApp();status("تم تسجيل الدخول.")}catch(e){status("تعذر تسجيل الدخول: "+e.message)}finally{$("loginBtn").disabled=false}}
+async function logout(){const {error}=await db.auth.signOut();if(error)return status("تعذر تسجيل الخروج: "+error.message);currentUser=null;isAdmin=false;currentPhotoPath=null;$("appSection").classList.add("hidden");$("authSection").classList.remove("hidden");$("adminNav").classList.add("hidden");status("تم تسجيل الخروج.")}
+async function startApp(){if(!currentUser)return;$("authSection").classList.add("hidden");$("appSection").classList.remove("hidden");$("welcome").textContent="أهلًا بك في نصيب";try{const {data,error}=await db.from("admin_roles").select("role").eq("user_id",currentUser.id).maybeSingle();if(error)throw error;isAdmin=data?.role==="admin";$("adminNav").classList.toggle("hidden",!isAdmin);await loadProfile()}catch(e){status("تم الدخول، لكن تعذر تحميل بيانات الحساب: "+e.message)}}
+async function loadProfile(){if(!currentUser)return;try{const {data,error}=await db.from("profiles").select("display_name,birth_date,gender,city,bio,photo_url,approved").eq("id",currentUser.id).maybeSingle();if(error)throw error;if(data){$("display_name").value=data.display_name||"";$("birth_date").value=data.birth_date||"";$("gender").value=data.gender||"";$("city").value=data.city||"";$("bio").value=data.bio||"";currentPhotoPath=data.photo_url||null;$("profileState").textContent=data.approved?"ملفك معتمد.":"ملفك ينتظر مراجعة الإدارة.";await showMyPhoto()}else{$("profileState").textContent="أكمل بياناتك واحفظها لإرسالها للمراجعة."}}catch(e){$("profileState").textContent="تعذر تحميل الملف: "+e.message}}
+$("profileForm").addEventListener("submit",async ev=>{ev.preventDefault();if(!currentUser)return status("سجّل الدخول أولًا.");const name=$("display_name").value.trim(),birth=$("birth_date").value,gender=$("gender").value;if(!name||!birth||!gender)return status("أكمل الاسم وتاريخ الميلاد والنوع.");const age=(Date.now()-new Date(birth).getTime())/(365.2425*86400000);if(age<18)return status("التسجيل متاح لمن بلغ 18 عامًا فقط.");const btn=$("saveProfileBtn");btn.disabled=true;try{let photoPath=currentPhotoPath;const file=$("photo_file").files[0];if(file){if(file.size>5*1024*1024)throw Error("حجم الصورة أكبر من 5 ميجابايت.");if(!["image/jpeg","image/png","image/webp"].includes(file.type))throw Error("نوع الصورة غير مدعوم.");const ext=file.type==="image/png"?"png":file.type==="image/webp"?"webp":"jpg";const path=`${currentUser.id}/${Date.now()}.${ext}`;const {error:ue}=await db.storage.from(PHOTO_BUCKET).upload(path,file,{upsert:false,contentType:file.type});if(ue)throw ue;photoPath=path}const {error}=await db.from("profiles").upsert({id:currentUser.id,display_name:name,birth_date:birth,gender,city:$("city").value.trim(),bio:$("bio").value.trim(),photo_url:photoPath},{onConflict:"id"});if(error)throw error;currentPhotoPath=photoPath;$("photo_file").value="";$("profileState").textContent="تم الحفظ. سيظل الملف مخفيًا حتى اعتماده.";await showMyPhoto();status("تم حفظ بياناتك.")}catch(e){status("تعذر الحفظ: "+e.message)}finally{$("saveProfileBtn").disabled=false}});async function showMyPhoto(){const img=$("photoPreview");if(previewUrl&&previewUrl.startsWith("blob:"))URL.revokeObjectURL(previewUrl);previewUrl=null;if(!currentPhotoPath){img.src="";img.classList.add("hidden");return}try{let url=currentPhotoPath;if(!/^https?:\/\//i.test(url)){const {data,error}=await db.storage.from(PHOTO_BUCKET).createSignedUrl(url,3600);if(error)throw error;url=data.signedUrl}img.src=url;img.classList.remove("hidden")}catch(e){img.src="";img.classList.add("hidden");$("profileState").textContent="تعذر عرض الصورة. تأكد من إعدادات تخزين الصور وصلاحياته."}}
+$("photo_file").addEventListener("change",()=>{const file=$("photo_file").files[0];if(!file)return;const img=$("photoPreview");if(previewUrl&&previewUrl.startsWith("blob:"))URL.revokeObjectURL(previewUrl);previewUrl=URL.createObjectURL(file);img.src=previewUrl;img.classList.remove("hidden")});
+async function loadMembers(){const box=$("membersList");box.textContent="جارٍ تحميل الأعضاء...";try{const {data,error}=await db.from("profiles").select("id,display_name,gender,city,bio,photo_url").eq("approved",true).neq("id",currentUser.id).order("created_at",{ascending:false}).limit(50);if(error)throw error;if(!data?.length){box.textContent="لا يوجد أعضاء معتمدون للعرض حاليًا.";return}box.innerHTML="";for(const p of data){const article=document.createElement("article");article.className="member";article.innerHTML=`<b>${esc(p.display_name||"عضو")}</b><p>${esc(p.city||"")}</p><p>${esc(p.bio||"")}</p><div class="actions"><button type="button" data-like="${esc(p.id)}">💗 إبداء اهتمام</button><button type="button" class="secondary" data-report="${esc(p.id)}">⚠️ إبلاغ</button><button type="button" class="secondary" data-block="${esc(p.id)}">🚫 حظر</button></div>`;if(p.photo_url){const img=document.createElement("img");img.className="my-photo";img.alt="صورة العضو";try{if(/^https?:\/\//i.test(p.photo_url))img.src=p.photo_url;else{const {data:s,error:e}=await db.storage.from(PHOTO_BUCKET).createSignedUrl(p.photo_url,3600);if(!e)img.src=s.signedUrl}if(img.src)article.prepend(img)}catch{}}box.appendChild(article)}box.querySelectorAll("[data-like]").forEach(b=>b.onclick=()=>likeMember(b.dataset.like));box.querySelectorAll("[data-report]").forEach(b=>b.onclick=()=>reportMember(b.dataset.report));box.querySelectorAll("[data-block]").forEach(b=>b.onclick=()=>blockMember(b.dataset.block))}catch(e){box.textContent="تعذر تحميل الأعضاء: "+e.message}}
+async function likeMember(id){try{const {error}=await db.from("likes").insert({sender_id:currentUser.id,receiver_id:id});if(error&&error.code!=="23505")throw error;status("تم إرسال اهتمامك، بشرط سماح سياسات قاعدة البيانات.");}catch(e){status("تعذر إرسال الاهتمام: "+e.message)}}
+async function reportMember(id){const reason=prompt("اكتب سبب البلاغ:");if(!reason?.trim())return;try{const {error}=await db.from("reports").insert({reporter_id:currentUser.id,reported_id:id,reason:reason.trim()});if(error)throw error;status("تم إرسال البلاغ للمراجعة.")}catch(e){status("تعذر إرسال البلاغ: "+e.message)}}
+async function blockMember(id){if(!confirm("هل تريد حظر هذا العضو؟"))return;try{const {error}=await db.from("member_blocks").insert({blocker_id:currentUser.id,blocked_id:id});if(error)throw error;status("تم الحظر.");await loadMembers()}catch(e){status("تعذر الحظر. قد يحتاج جدول member_blocks إلى الإنشاء: "+e.message)}}
+async function loadBlockedMembers(){const box=$("blockedList");box.textContent="جارٍ التحميل...";try{const {data,error}=await db.from("member_blocks").select("blocked_id").eq("blocker_id",currentUser.id);if(error)throw error;if(!data?.length){box.textContent="لا يوجد أعضاء محظورون.";return}box.innerHTML="";for(const row of data){const b=document.createElement("button");b.className="secondary";b.textContent="إلغاء حظر "+row.blocked_id;b.onclick=async()=>{const {error}=await db.from("member_blocks").delete().eq("blocker_id",currentUser.id).eq("blocked_id",row.blocked_id);if(error)status("تعذر إلغاء الحظر: "+error.message);else loadBlockedMembers()};box.appendChild(b)}}catch(e){box.textContent="تعذر عرض المحظورين: "+e.message}}
+async function loadMyMatches(){const sel=$("matchPicker");sel.innerHTML='<option value="">جارٍ التحميل...</option>';try{const {data,error}=await db.from("matches").select("*");if(error)throw error;const rows=(data||[]).filter(m=>m.user_one===currentUser.id||m.user_two===currentUser.id||m.user1_id===currentUser.id||m.user2_id===currentUser.id);sel.innerHTML='<option value="">اختر محادثة</option>';rows.forEach(m=>{const o=document.createElement("option");o.value=m.id;o.textContent="تطابق "+m.id;sel.appendChild(o)});if(!rows.length)sel.innerHTML='<option value="">لا توجد تطابقات بعد</option>'}catch(e){sel.innerHTML='<option value="">تعذر تحميل التطابقات</option>';status("مشكلة في جدول التطابقات: "+e.message)}}
+function selectMatch(){loadMessages()}
+async function loadMessages(){const box=$("messagesList"),matchId=$("matchPicker").value;if(!matchId){box.textContent="اختر محادثة أولًا.";return}box.textContent="جارٍ تحميل الرسائل...";try{const {data,error}=await db.from("messages").select("*").eq("match_id",matchId).order("created_at",{ascending:true}).limit(100);if(error)throw error;box.innerHTML="";(data||[]).forEach(m=>{const p=document.createElement("p");p.className="status";p.textContent=(m.sender_id===currentUser.id?"أنت: ":"الطرف الآخر: ")+(m.content||m.body||"");box.appendChild(p)});if(!data?.length)box.textContent="لا توجد رسائل في هذه المحادثة."}catch(e){box.textContent="تعذر تحميل الرسائل: "+e.message}}
+async function sendMessage(){const matchId=$("matchPicker").value,content=$("messageText").value.trim();if(!matchId||!content)return status("اختر محادثة واكتب رسالة.");try{const {error}=await db.from("messages").insert({match_id:matchId,sender_id:currentUser.id,content});if(error)throw error;$("messageText").value="";await loadMessages();status("تم إرسال الرسالة.")}catch(e){status("تعذر إرسال الرسالة. قد يختلف اسم عمود الرسالة في قاعدة البيانات: "+e.message)}}
+async function requestCall(){const match_id=$("callMatchId").value.trim(),receiver_id=$("callReceiverId").value.trim();if(!match_id||!receiver_id)return status("اكتب معرّف التطابق ومعرّف الطرف الآخر.");try{const {error}=await db.from("call_requests").insert({match_id,caller_id:currentUser.id,receiver_id,status:"pending"});if(error)throw error;status("تم تسجيل طلب المكالمة.");await loadCalls()}catch(e){status("تعذر تسجيل الطلب: "+e.message)}}
+async function loadCalls(){const box=$("callsList");if(!box)return;box.textContent="جارٍ تحميل الطلبات...";try{const {data,error}=await db.from("call_requests").select("*").or(`caller_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`).order("created_at",{ascending:false}).limit(30);if(error)throw error;box.innerHTML="";(data||[]).forEach(c=>{const p=document.createElement("p");p.className="status";p.textContent=`طلب ${c.status||"غير محدد"} — ${c.created_at||""}`;box.appendChild(p)});if(!data?.length)box.textContent="لا توجد طلبات مكالمات."}catch(e){box.textContent="تعذر تحميل الطلبات: "+e.message}}
+const defaultPlans=[{name:"مجانية",price:0,description:"إنشاء ملف والتعارف بموافقة الطرفين"},{name:"VIP شهر",price:150,description:"باقة مميزة لمدة شهر"},{name:"VIP 3 شهور",price:350,description:"باقة مميزة لمدة ثلاثة أشهر"}];
+async function loadPlans(){const box=$("plansList");box.innerHTML="";defaultPlans.forEach(p=>{const c=document.createElement("div");c.className="member";c.innerHTML=`<h3>${esc(p.name)}</h3><p>${esc(p.description)}</p><p class="price">${p.price} جنيه</p><p class="small">الدفع غير مفعّل بعد.</p>`;box.appendChild(c)})}
+async function loadRegistrationSetting(){try{registrationOpen=await getRegistrationSetting();$("registrationStatus").textContent=registrationOpen?"التسجيل مفتوح":"التسجيل مغلق";$("toggleRegistration").textContent=registrationOpen?"إغلاق التسجيل":"فتح التسجيل";$("toggleRegistration").disabled=false}catch(e){$("registrationStatus").textContent="تعذر قراءة الإعداد: "+e.message;$("toggleRegistration").disabled=true}}
+$("toggleRegistration").onclick=async()=>{if(!isAdmin)return status("غير مسموح.");try{const next=!registrationOpen;const {error}=await db.from("app_settings").upsert({id:1,registration_open:next});if(error)throw error;registrationOpen=next;await loadRegistrationSetting()}catch(e){status("تعذر تعديل التسجيل: "+e.message)}};
+async function loadAdminMembers(){if(!isAdmin)return;const box=$("adminMembers");box.textContent="جارٍ تحميل الطلبات...";try{const {data,error}=await db.from("profiles").select("id,display_name,city,approved").eq("approved",false).order("created_at",{ascending:true});if(error)throw error;box.innerHTML="";(data||[]).forEach(p=>{const c=document.createElement("div");c.className="member";c.innerHTML=`<b>${esc(p.display_name||"بدون اسم")}</b><p>${esc(p.city||"")}</p>`;const b=document.createElement("button");b.textContent="✅ اعتماد";b.onclick=async()=>{const {error}=await db.from("profiles").update({approved:true}).eq("id",p.id);if(error)status("تعذر الاعتماد: "+error.message);else{status("تم اعتماد الملف.");loadAdminMembers()}};c.appendChild(b);box.appendChild(c)});if(!data?.length)box.textContent="لا توجد ملفات تنتظر الاعتماد."}catch(e){box.textContent="تعذر تحميل الملفات: "+e.message}}
+async function loadAdminReports(){if(!isAdmin)return;const box=$("adminReports");box.textContent="جارٍ تحميل البلاغات...";try{const {data,error}=await db.from("reports").select("*").order("created_at",{ascending:false}).limit(50);if(error)throw error;box.innerHTML="";(data||[]).forEach(r=>{const p=document.createElement("p");p.className="status";p.textContent=`بلاغ: ${r.reason||"بدون سبب"} — ${r.created_at||""}`;box.appendChild(p)});if(!data?.length)box.textContent="لا توجد بلاغات."}catch(e){box.textContent="تعذر تحميل البلاغات: "+e.message}}
+async function loadAdminPlans(){if(!isAdmin)return;$("adminPlans").textContent="أسعار الباقات المعروضة ثابتة في الكود؛ ربط الدفع غير مفعّل."}
+$("signupBtn").addEventListener("click",signup);$("loginBtn").addEventListener("click",login);
+db.auth.getSession().then(({data,error})=>{if(error){status("تعذر فحص الجلسة: "+error.message);return}if(data.session){currentUser=data.session.user;startApp()}});
+db.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"){currentUser=null;isAdmin=false;$("appSection").classList.add("hidden");$("authSection").classList.remove("hidden")}});
+</script></body></html>
