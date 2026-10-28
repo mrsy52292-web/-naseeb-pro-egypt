@@ -237,6 +237,29 @@ footer{text-align:center;padding:20px;color:#765c69}
     </p>
   </section>
 
+<section id="callsSection" class="hidden">
+  <h2>📞 المكالمات الصوتية</h2>
+  <p>اتصل بالطرف الآخر بعد التطابق وموافقته على المكالمة.</p>
+
+  <label for="callMatchPicker">اختر المحادثة</label>
+  <select id="callMatchPicker">
+    <option value="">جارٍ تحميل المحادثات...</option>
+  </select>
+
+  <div class="actions">
+    <button onclick="startVoiceCall()">📞 اتصال</button>
+    <button class="secondary" onclick="acceptVoiceCall()">قبول</button>
+    <button class="secondary" onclick="rejectVoiceCall()">رفض</button>
+    <button class="secondary" onclick="endVoiceCall()">إنهاء المكالمة</button>
+  </div>
+
+  <p id="callStatus" class="notice" aria-live="polite">
+    لا توجد مكالمة نشطة.
+  </p>
+
+  <audio id="remoteAudio" autoplay playsinline></audio>
+</section>
+  
   <section id="adsSection">
     <h2>📢 الإعلانات التجارية</h2>
     <div class="ad-box">
