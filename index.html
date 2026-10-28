@@ -64,7 +64,7 @@ let user=null, currentMatch=null, allMembers=[];
 function el(id){return document.getElementById(id)}
 function safe(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function say(id,msg){el(id).textContent=msg}
-function section(id){
+
 
 function section(id){
   const pages = [
