@@ -321,10 +321,63 @@ footer{text-align:center;padding:20px;color:#765c69}
       </section>
   <footer>
     نصيب 💗 — تعارف جاد للزواج بموافقة الطرفين
-  </footer>
+ </footer>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+$("paymentPackage").addEventListener("change", () => {
+  $("paymentAmount").value =
+    $("paymentPackage").value === "vip" ? 200 : 100;
+});
+
+async function submitPaymentRequest() {
+  if (!currentUser) {
+    $("paymentStatus").textContent = "سجّل الدخول أولًا.";
+    return;
+  }
+
+  const transactionRef = $("transactionRef").value.trim();
+  const senderPhone = $("senderPhone").value.trim();
+  const packageName = $("paymentPackage").value;
+  const amount = Number($("paymentAmount").value);
+
+  if (!transactionRef) {
+    $("paymentStatus").textContent = "اكتب رقم العملية بعد التحويل.";
+    return;
+  }
+
+  if (!["monthly", "vip"].includes(packageName) ||
+      ![100, 200].includes(amount)) {
+    $("paymentStatus").textContent = "اختيار الباقة أو المبلغ غير صحيح.";
+    return;
+  }
+
+  $("paymentStatus").textContent = "جارٍ إرسال الطلب...";
+
+  const { error } = await db
+    .from("manual_payment_requests")
+    .insert({
+      user_id: currentUser.id,
+      package_name: packageName,
+      amount_egp: amount,
+      transaction_ref: transactionRef,
+      sender_phone: senderPhone || null
+    });
+
+  if (error) {
+    $("paymentStatus").textContent =
+      "تعذر إرسال الطلب: " + error.message;
+    return;
+  }
+
+  $("paymentStatus").textContent =
+    "تم إرسال طلب الدفع للمراجعة. لم يتم تفعيل العضوية بعد.";
+
+  $("transactionRef").value = "";
+  $("senderPhone").value = "";
+}
+  
 <script>
 "use strict";
 
