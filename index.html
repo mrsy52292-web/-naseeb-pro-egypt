@@ -1,4 +1,3 @@
-HTML
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -25,7 +24,6 @@ header{
 header h1{margin:0;font-size:30px}
 header p{margin:4px 0 0}
 nav{
-  <button onclick="showSection('paymentSection')">الاشتراكات والدفع</button>
   display:flex;
   gap:8px;
   flex-wrap:wrap;
@@ -151,10 +149,7 @@ footer{text-align:center;padding:20px;color:#765c69}
 
 <nav>
   <button onclick="showSection('authSection')">الحساب</button>
-  <button 
-    <button onclick="showSection('callsSection')">
-  📞 المكالمات الصوتية
-  </button>onclick="showSection('profileSection')">ملفي الشخصي</button>
+  <button onclick="showSection('profileSection')">ملفي الشخصي</button>
   <button onclick="showSection('membersSection')">الأعضاء</button>
   <button onclick="showSection('messagesSection')">الرسائل</button>
   <button onclick="showSection('adsSection')">الإعلانات</button>
@@ -179,40 +174,6 @@ footer{text-align:center;padding:20px;color:#765c69}
     <button class="secondary" onclick="signOut()" style="margin-top:10px">
       تسجيل الخروج
     </button>
-   
-<section id="paymentSection">
-  <h2>💳 اشتراكات نصيب</h2>
-  <p>اختر الباقة، وحوّل المبلغ عبر فودافون كاش، ثم أرسل رقم العملية للمراجعة.</p>
-
-  <label for="paymentPackage">الباقة</label>
-  <select id="paymentPackage">
-    <option value="monthly">عضوية شهرية — 100 جنيه</option>
-    <option value="vip">عضوية VIP — 200 جنيه</option>
-  </select>
-
-  <label for="paymentAmount">المبلغ بالجنيه</label>
-  <input id="paymentAmount" type="number" readonly value="100">
-
-  <div class="notice">
-    <b>فودافون كاش</b>
-    <p>رقم المحفظة سيُضاف بعد تحديد رقم الاستقبال الذي تريد استخدامه.</p>
-    <p class="small">لا تحوّل أي مبلغ قبل التأكد من رقم المحفظة الصحيح.</p>
-  </div>
-
-  <label for="transactionRef">رقم العملية بعد التحويل</label>
-  <input id="transactionRef" maxlength="100"
-    placeholder="اكتب رقم العملية">
-
-  <label for="senderPhone">رقم المحفظة المحوِّلة (اختياري)</label>
-  <input id="senderPhone" type="tel" maxlength="20"
-    placeholder="رقم الهاتف الذي أرسل التحويل">
-
-  <button onclick="submitPaymentRequest()">إرسال طلب الدفع</button>
-  <div id="paymentStatus" class="notice" aria-live="polite">
-    الطلبات الجديدة تنتظر مراجعة الإدارة.
-  </div>
-</section>
-    
     <p class="small">استخدم بريدك الإلكتروني وكلمة مرور لا تقل عن 6 أحرف.</p>
   </section>
 
@@ -272,29 +233,6 @@ footer{text-align:center;padding:20px;color:#765c69}
     </p>
   </section>
 
-<section id="callsSection" class="hidden">
-  <h2>📞 المكالمات الصوتية</h2>
-  <p>اتصل بالطرف الآخر بعد التطابق وموافقته على المكالمة.</p>
-
-  <label for="callMatchPicker">اختر المحادثة</label>
-  <select id="callMatchPicker">
-    <option value="">جارٍ تحميل المحادثات...</option>
-  </select>
-
-  <div class="actions">
-    <button onclick="startVoiceCall()">📞 اتصال</button>
-    <button class="secondary" onclick="acceptVoiceCall()">قبول</button>
-    <button class="secondary" onclick="rejectVoiceCall()">رفض</button>
-    <button class="secondary" onclick="endVoiceCall()">إنهاء المكالمة</button>
-  </div>
-
-  <p id="callStatus" class="notice" aria-live="polite">
-    لا توجد مكالمة نشطة.
-  </p>
-
-  <audio id="remoteAudio" autoplay playsinline></audio>
-</section>
-  
   <section id="adsSection">
     <h2>📢 الإعلانات التجارية</h2>
     <div class="ad-box">
@@ -319,66 +257,12 @@ footer{text-align:center;padding:20px;color:#765c69}
     </p>
     <button onclick="loadAdmin()">تحديث لوحة الإدارة</button>
     <div id="adminContent">سجّل الدخول بحساب مخوّل للإدارة.</div>
-      </section>
-  <footer>
+  </section>  <footer>
     نصيب 💗 — تعارف جاد للزواج بموافقة الطرفين
- </footer>
+  </footer>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
-$("paymentPackage").addEventListener("change", () => {
-  $("paymentAmount").value =
-    $("paymentPackage").value === "vip" ? 200 : 100;
-});
-
-async function submitPaymentRequest() {
-  if (!currentUser) {
-    $("paymentStatus").textContent = "سجّل الدخول أولًا.";
-    return;
-  }
-
-  const transactionRef = $("transactionRef").value.trim();
-  const senderPhone = $("senderPhone").value.trim();
-  const packageName = $("paymentPackage").value;
-  const amount = Number($("paymentAmount").value);
-
-  if (!transactionRef) {
-    $("paymentStatus").textContent = "اكتب رقم العملية بعد التحويل.";
-    return;
-  }
-
-  if (!["monthly", "vip"].includes(packageName) ||
-      ![100, 200].includes(amount)) {
-    $("paymentStatus").textContent = "اختيار الباقة أو المبلغ غير صحيح.";
-    return;
-  }
-
-  $("paymentStatus").textContent = "جارٍ إرسال الطلب...";
-
-  const { error } = await db
-    .from("manual_payment_requests")
-    .insert({
-      user_id: currentUser.id,
-      package_name: packageName,
-      amount_egp: amount,
-      transaction_ref: transactionRef,
-      sender_phone: senderPhone || null
-    });
-
-  if (error) {
-    $("paymentStatus").textContent =
-      "تعذر إرسال الطلب: " + error.message;
-    return;
-  }
-
-  $("paymentStatus").textContent =
-    "تم إرسال طلب الدفع للمراجعة. لم يتم تفعيل العضوية بعد.";
-
-  $("transactionRef").value = "";
-  $("senderPhone").value = "";
-}
-  
 <script>
 "use strict";
 
@@ -894,4 +778,4 @@ db.auth.onAuthStateChange((_event, session) => {
 showSection("authSection");
 </script>
 </body>
-</html>
+  </html>
