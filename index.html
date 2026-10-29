@@ -347,7 +347,24 @@ async function members(){
     el("memberList").textContent="حدث خطأ أثناء تحميل الأعضاء: "+(e.message||e);
   }
     }
- 
+ async function getPhoto(path){
+  if(!path) return null;
+
+  if(path.startsWith("http")){
+    return path;
+  }
+
+  const result = await db.storage
+    .from("member-photos")
+    .createSignedUrl(path, 3600);
+
+  if(result.error || !result.data?.signedUrl){
+    console.log("خطأ تحميل صورة العضو:", result.error?.message);
+    return null;
+  }
+
+  return result.data.signedUrl;
+    }
 function filterMembers(){
   const q=(el("search").value||"").toLowerCase();
 
