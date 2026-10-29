@@ -300,23 +300,54 @@ async function members(){
  filterMembers();
 }
 
-function filterMembers(){
- const q=(el("search").value||"").toLowerCase();
- el("memberList").innerHTML=memberData.filter(p=>
-  (p.display_name||"").toLowerCase().includes(q)||
-  (p.city||"").toLowerCase().includes(q)
- ).map(p=>{
-  const on=p.presence?.is_online&&p.presence.last_seen&&
-   Date.now()-new Date(p.presence.last_seen).getTime()<120000;
-  return `<article class="member">
-  ${p.photo?`<img class="photo" src="${safe(p.photo)}">`:""}
-  <b>${safe(p.display_name||"عضو")}</b>
-  <p class="${on?"online":"offline"}">${on?"● متصل الآن":"● غير متصل"}</p>
-  <p>${safe(p.city||"")}</p><p>${safe(p.bio||"")}</p>
-  <button onclick="likeMember('${safe(p.id)}')">إعجاب</button>
-  </article>`;
- }).join("")||"لا توجد ملفات معتمدة حاليًا.";
-}
+
+async function members(){
+  section("members");
+  el("memberList").textContent="جارٍ تحميل الأعضاء...";
+
+  try {
+    const r=await db.from("profiles")
+      .select("id,display_name,city,bio,photo_url")
+      .eq("approved",true)
+      .neq("id",user.id)
+      .limit(100);
+
+    if(r.error){
+      el("memberList").textContent="تعذر تحميل الأعضاء: "+r.error.message;
+      return;
+    }
+
+    const profiles=r.data||[];
+    const ids=profiles.map(p=>p.id);
+    const presence={};
+
+    if(ids.length){
+      const pr=await db.from("presence")
+        .select("user_id,is_online,last_seen")
+        .in("user_id",ids);
+
+      if(!pr.error){
+        (pr.data||[]).forEach(p=>presence[p.user_id]=p);
+      }
+    }
+
+    memberData=await Promise.all(profiles.map(async p=>{
+      let photo=null;
+      try {
+        photo=await getPhoto(p.photo_url);
+      } catch(e) {
+        console.log("تعذر تحميل صورة عضو:",e);
+      }
+      return {...p,presence:presence[p.id],photo};
+    }));
+
+    filterMembers();
+  } catch(e) {
+    console.error("Members error:",e);
+    el("memberList").textContent="حدث خطأ أثناء تحميل الأعضاء: "+(e.message||e);
+  }
+    }
+    
 
 async function likeMember(id){
  const r=await db.from("likes").insert({
