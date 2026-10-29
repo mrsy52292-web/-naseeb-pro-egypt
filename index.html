@@ -251,13 +251,30 @@ async function saveProfile() {
   </script><script>
 let activeMatch=null, memberData=[];
 
+
+let presenceTimer = null;
+
 async function updatePresence(){
- if(!user)return;
- const r=await db.from("presence").upsert({
-  user_id:user.id,is_online:true,last_seen:new Date().toISOString()
- },{onConflict:"user_id"});
- if(r.error)console.log(r.error.message);
+  if(!user)return;
+
+  async function saveOnlineStatus(){
+    if(!user)return;
+
+    const r=await db.from("presence").upsert({
+      user_id:user.id,
+      is_online:true,
+      last_seen:new Date().toISOString()
+    },{onConflict:"user_id"});
+
+    if(r.error)console.log("Presence:",r.error.message);
+  }
+
+  await saveOnlineStatus();
+
+  if(presenceTimer)clearInterval(presenceTimer);
+  presenceTimer=setInterval(saveOnlineStatus,30000);
 }
+    
 
 async function getPhoto(path){
  if(!path)return "";
