@@ -347,6 +347,27 @@ async function members(){
     el("memberList").textContent="حدث خطأ أثناء تحميل الأعضاء: "+(e.message||e);
   }
     }
+ 
+function filterMembers(){
+  const q=(el("search").value||"").toLowerCase();
+
+  el("memberList").innerHTML=memberData.filter(p=>
+    (p.display_name||"").toLowerCase().includes(q)||
+    (p.city||"").toLowerCase().includes(q)
+  ).map(p=>{
+    const on=p.presence?.is_online&&p.presence.last_seen&&
+      Date.now()-new Date(p.presence.last_seen).getTime()<120000;
+
+    return `<article class="member">
+      ${p.photo?`<img class="photo" src="${safe(p.photo)}">`:""}
+      <b>${safe(p.display_name||"عضو")}</b>
+      <p class="${on?"online":"offline"}">${on?"● متصل الآن":"● غير متصل"}</p>
+      <p>${safe(p.city||"")}</p>
+      <p>${safe(p.bio||"")}</p>
+      <button onclick="likeMember('${safe(p.id)}')">إعجاب</button>
+    </article>`;
+  }).join("")||"لا توجد ملفات معتمدة حاليًا.";
+    }
     
 
 async function likeMember(id){
