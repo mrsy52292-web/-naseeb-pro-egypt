@@ -538,39 +538,36 @@ async function ads(){
  ).join("")||"لا توجد إعلانات معتمدة.";
 }
 
+
 async function requestAd(){
- const r=await db.from("ad_requests").insert({
-  user_id:user.id,business_name:el("adBusiness").value.trim(),
-  contact:el("adContact").value.trim(),description:el("adText").value.trim(),
-  status:"pending"
- });
- say(r.error?"تعذر إرسال الإعلان: "+r.error.message:"تم إرسال طلب الإعلان للمراجعة.");
-}
+  if(!user){
+    say("سجّل الدخول أولًا لإرسال طلب الإعلان.");
+    return;
+  }
 
-async function plans(){
- section("plans");
- el("subscriptionStatus").textContent="اختر الباقة لإرسال طلب اشتراك.";
-}
+  const business = el("adBusiness").value.trim();
+  const contact = el("adContact").value.trim();
+  const description = el("adText").value.trim();
 
-async function subscribe(planName){
- const r=await db.from("subscription_requests").insert({
-  user_id:user.id,plan_name:planName,status:"pending"
- });
- say(r.error?"تعذر طلب الاشتراك: "+r.error.message:
- "تم تسجيل طلب الاشتراك. الدفع الإلكتروني غير مفعّل بعد.");
-}
+  if(!business || !contact || !description){
+    say("من فضلك املأ اسم النشاط ووسيلة التواصل وتفاصيل الإعلان.");
+    return;
+  }
 
-async function admin(){
- section("admin");
- const r=await db.from("admin_roles").select("role")
- .eq("user_id",user.id).maybeSingle();
- if(r.error||!r.data||!["admin","moderator"].includes(r.data.role)){
-  el("adminContent").textContent="هذا الحساب ليس لديه صلاحية إدارة.";
-  return;
- }
- el("adminContent").textContent="تم التحقق من دور الحساب. اختر أدوات الإدارة بعد إعداد السياسات الآمنة.";
-}
+  const r = await db.from("ad_requests").insert({
+    advertiser_name: business,
+    business_name: business,
+    contact_info: contact,
+    ad_description: description,
+    status: "pending"
+  });
 
+  say(r.error
+    ? "تعذر إرسال طلب الإعلان: " + r.error.message
+    : "تم إرسال طلب الإعلان للمراجعة، وسيتم التواصل معك بعد مراجعته."
+  );
+}
+    
 async function pendingProfiles(){
  const r=await db.from("profiles").select("id,display_name,city")
  .eq("approved",false);
