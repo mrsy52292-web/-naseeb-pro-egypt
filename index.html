@@ -82,6 +82,21 @@ function section(id){
     "inbox","calls","ads","plans","admin"
   ];
 
+  pages.forEach(function(page){
+    const item = el(page);
+    if(item) item.classList.add("hidden");
+  });
+
+  const target = el(id);
+
+  if(!target){
+    say("status","القسم غير موجود: " + id);
+    return;
+  }
+
+  target.classList.remove("hidden");
+}
+
 async function admin(){
   if(!user){
     say("status","سجّل الدخول أولًا.");
@@ -108,14 +123,8 @@ async function admin(){
 
   section("admin");
   say("status","مرحبًا بك في لوحة الإدارة.");
-}
-  
-  pages.forEach(function(page){
-    el(page).classList.add("hidden");
-  });
-
-  el(id).classList.remove("hidden");
     }
+  
   
 async function signup(){const email=el("email").value.trim(),password=el("password").value;if(!email||password.length<6)return say("authStatus","اكتب بريدًا صحيحًا وكلمة مرور من 6 أحرف على الأقل.");say("authStatus","جارٍ إنشاء الحساب...");const r=await db.auth.signUp({email,password});if(r.error)return say("authStatus","تعذر إنشاء الحساب: "+r.error.message);say("authStatus",r.data.session?"تم إنشاء الحساب.":"تم الطلب. راجع بريدك لتأكيد الحساب إن طُلب منك ذلك.");if(r.data.session)startApp(r.data.session.user)}
 async function login(){const email=el("email").value.trim(),password=el("password").value;say("authStatus","جارٍ تسجيل الدخول...");const r=await db.auth.signInWithPassword({email,password});if(r.error)return say("authStatus","تعذر تسجيل الدخول: "+r.error.message);startApp(r.data.user)}
