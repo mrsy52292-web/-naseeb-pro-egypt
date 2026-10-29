@@ -254,6 +254,7 @@ let activeMatch=null, memberData=[];
 
 let presenceTimer = null;
 
+
 async function updatePresence(){
   if(!user)return;
 
@@ -266,7 +267,12 @@ async function updatePresence(){
       last_seen:new Date().toISOString()
     },{onConflict:"user_id"});
 
-    if(r.error)console.log("Presence:",r.error.message);
+    if(r.error){
+      console.log("Presence:",r.error.message);
+      say("status","مشكلة في حالة الاتصال: "+r.error.message);
+    }else{
+      say("status","تم تحديث حالة الاتصال بنجاح");
+    }
   }
 
   await saveOnlineStatus();
@@ -275,14 +281,6 @@ async function updatePresence(){
   presenceTimer=setInterval(saveOnlineStatus,30000);
 }
     
-
-async function getPhoto(path){
- if(!path)return "";
- if(path.startsWith("http"))return path;
- const r=await db.storage.from("member-photos").createSignedUrl(path,3600);
- return r.data?.signedUrl||"";
-}
-
 async function members(){
  section("members");
  const r=await db.from("profiles")
