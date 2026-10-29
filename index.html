@@ -90,7 +90,70 @@ async function signup(){const email=el("email").value.trim(),password=el("passwo
 async function login(){const email=el("email").value.trim(),password=el("password").value;say("authStatus","جارٍ تسجيل الدخول...");const r=await db.auth.signInWithPassword({email,password});if(r.error)return say("authStatus","تعذر تسجيل الدخول: "+r.error.message);startApp(r.data.user)}
 async function logout(){await db.auth.signOut();user=null;el("app").classList.add("hidden");el("auth").classList.remove("hidden")}
 async function startApp(u){user=u;el("auth").classList.add("hidden");el("app").classList.remove("hidden");say("status","تم تسجيل الدخول: "+(u.email||""));await loadProfile();await updatePresence();section("profile")}
-async function loadProfile(){const r=await db.from("profiles").select("*").eq("id",user.id).maybeSingle();if(r.error){say("status","تعذر تحميل الملف: "+r.error.message);return}if(r.data){for(const k of ["display_name","birth_date","gender","city","bio"])if(el(k))el(k).value=r.data[k]||""}}
+
+async function loadProfile(){
+  if(!user)return;
+
+  const r=await db.from("profiles")
+    .select("*")
+    .eq("id",user.id)
+    .maybeSingle();
+
+  if(r.error){
+    say("status","تعذر تحميل الملف: "+r.error.message);
+    return;
+  }
+
+  const p=r.data;
+
+  if(p){
+    for(const k of ["display_name","birth_date","gender","city","bio"]){
+      if(el(k))el(k).value=p[k]||"";
+    }
+
+    const img=el("myPhotoPreview");
+    const status=el("myPhotoStatus");
+
+    if(img){
+      img.onerror=()=>{
+        img.style.display="none";
+        if(status)status.textContent="تعذر عرض الصورة. نحتاج مراجعة رابطها وإعدادات التخزين.";
+      };
+
+      img.onload=()=>{
+        img.style.display="inline-block";
+        if(status)status.style.display="none";
+      };
+
+      const path=p.photo_url;
+
+      if(path){
+        if(path.startsWith("http")){
+          img.src=path;
+        }else{
+          const photo=await db.storage
+            .from("member-photos")
+            .createSignedUrl(path,3600);
+
+          if(photo.error||!photo.data?.signedUrl){
+            img.style.display="none";
+            if(status)status.textContent="تعذر تحميل الصورة المحفوظة.";
+          }else{
+            img.src=photo.data.signedUrl;
+          }
+        }
+      }else{
+        img.removeAttribute("src");
+        img.style.display="none";
+        if(status){
+          status.style.display="block";
+          status.textContent="لم يتم حفظ صورة لهذا الملف بعد.";
+        }
+      }
+    }
+  }
+  }
+  
                                              
 async function saveProfile() {
   if (!user) {
