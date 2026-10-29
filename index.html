@@ -528,17 +528,59 @@ async function answerCall(id,status){
  await calls();
 }
 
+
 async function ads(){
- section("ads");
- const r=await db.from("ad_requests").select("title,business_name,description")
- .eq("status","approved").limit(10);
- el("adList").innerHTML=(r.data||[]).map(a=>
- `<div class="member"><b>${safe(a.title)}</b>
- <p>${safe(a.business_name)}</p>${safe(a.description||"")}</div>`
- ).join("")||"لا توجد إعلانات معتمدة.";
+  section("ads");
+
+  const r = await db.from("ad_requests")
+    .select("advertiser_name,business_name,contact_info,ad_description,image_url,status")
+    .eq("status","approved")
+    .limit(10);
+
+  if(r.error){
+    el("adList").textContent = "تعذر تحميل الإعلانات: " + r.error.message;
+    return;
+  }
+
+  el("adList").innerHTML = (r.data || []).map(a => `
+    <article class="member" style="overflow:hidden;padding:0;margin-bottom:16px">
+      ${a.image_url ? `
+        <img src="${safe(a.image_url)}"
+          alt="${safe(a.business_name || "صورة الإعلان")}"
+          style="width:100%;max-height:190px;object-fit:cover;display:block"
+          onerror="this.style.display='none'">
+      ` : ""}
+      <div style="padding:14px">
+        <small style="color:#c5a15c">📢 إعلان</small>
+        <h3 style="margin:8px 0">
+          ${safe(a.business_name || a.advertiser_name || "نشاط تجاري")}
+        </h3>
+        <p>${safe(a.ad_description || "")}</p>
+        ${a.contact_info ? `
+          <button onclick="contactAdvertiser('${encodeURIComponent(a.contact_info)}')">
+            تواصل الآن
+          </button>
+        ` : ""}
+      </div>
+    </article>
+  `).join("") || "لا توجد إعلانات معتمدة حاليًا.";
 }
 
+function contactAdvertiser(contact){
+  const value = decodeURIComponent(contact).trim();
 
+  if(/^https?:\/\//i.test(value)){
+    window.open(value, "_blank", "noopener");
+  } else {
+    const phone = value.replace(/\D/g, "");
+    if(!phone){
+      say("وسيلة التواصل غير صالحة.");
+      return;
+    }
+    window.open("https://wa.me/" + phone, "_blank", "noopener");
+  }
+}
+    
 async function requestAd(){
   if(!user){
     say("سجّل الدخول أولًا لإرسال طلب الإعلان.");
