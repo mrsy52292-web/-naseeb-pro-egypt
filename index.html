@@ -84,8 +84,101 @@ async function login(){const email=el("email").value.trim(),password=el("passwor
 async function logout(){await db.auth.signOut();user=null;el("app").classList.add("hidden");el("auth").classList.remove("hidden")}
 async function startApp(u){user=u;el("auth").classList.add("hidden");el("app").classList.remove("hidden");say("status","تم تسجيل الدخول: "+(u.email||""));await loadProfile();await updatePresence();section("profile")}
 async function loadProfile(){const r=await db.from("profiles").select("*").eq("id",user.id).maybeSingle();if(r.error){say("status","تعذر تحميل الملف: "+r.error.message);return}if(r.data){for(const k of ["display_name","birth_date","gender","city","bio"])if(el(k))el(k).value=r.data[k]||""}}
-async function saveProfile(){const display_name=el("display_name").value.trim(),birth_date=el("birth_date").value,gender=el("gender").value;if(!display_name||!birth_date||!gender)return alert("اكتب الاسم وتاريخ الميلاد والنوع.");const age=(Date.now()-new Date(birth_date).getTime())/31557600000;if(age<18)return alert("التسجيل متاح لمن بلغ 18 عامًا فقط.");let photo_url=null;const f=el("photo").files[0];if(f){const path=user.id+"/"+Date.now()+"-"+f.name;const up=await db.storage.from("member-photos").upload(path,f,{upsert:true});if(up.error)return alert("تعذر رفع الصورة. تأكد من إعداد مساحة الصور: "+up.error.message);photo_url=db.storage.from("member-photos").getPublicUrl(path).data.publicUrl}const data={id:user.id,display_name,birth_date,gender,city:el("city").value.trim(),bio:el("bio").value.trim(),approved:false};if(photo_url)data.photo_url=photo_url;const r=await db.from("profiles").upsert(data);if(r.error)return alert("تعذر حفظ الملف: "+r.error.message);alert("تم حفظ الملف، وسيظهر للأعضاء بعد اعتماده من الإدارة.");}
-                                                                                                                                                                                                                   </script><script>
+                                             
+async function saveProfile() {
+  if (!user) {
+    alert("سجّل الدخول أولًا.");
+    return;
+  }
+
+  const display_name = el("display_name").value.trim();
+  const birth_date = el("birth_date").value;
+  const gender = el("gender").value;
+
+  if (!display_name || !birth_date || !gender) {
+    alert("اكتب الاسم وتاريخ الميلاد والنوع.");
+    return;
+  }
+
+  const age =
+    (Date.now() - new Date(birth_date).getTime()) /
+    31557600000;
+
+  if (!Number.isFinite(age) || age < 18) {
+    alert("التسجيل متاح لمن بلغ 18 عامًا فقط.");
+    return;
+  }
+
+  const existing = await db
+    .from("profiles")
+    .select("id")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (existing.error) {
+    alert("تعذر التحقق من ملفك: " + existing.error.message);
+    return;
+  }
+
+  const data = {
+    id: user.id,
+    display_name,
+    birth_date,
+    gender,
+    city: el("city").value.trim(),
+    bio: el("bio").value.trim()
+  };
+
+  const f = el("photo").files[0];
+
+  if (f) {
+    if (!f.type.startsWith("image/")) {
+      alert("اختر ملف صورة صالحًا.");
+      return;
+    }
+
+    if (f.size > 5 * 1024 * 1024) {
+      alert("حجم الصورة يجب ألا يتجاوز 5 ميجابايت.");
+      return;
+    }
+
+    const path = user.id + "/" + Date.now() + "-" +
+      f.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+
+    const up = await db.storage
+      .from("member-photos")
+      .upload(path, f, { upsert: false });
+
+    if (up.error) {
+      alert("تعذر رفع الصورة: " + up.error.message);
+      return;
+    }
+
+    data.photo_url = path;
+  }
+
+  let result;
+
+  if (existing.data) {
+    result = await db
+      .from("profiles")
+      .update(data)
+      .eq("id", user.id);
+  } else {
+    result = await db
+      .from("profiles")
+      .insert(data);
+  }
+
+  if (result.error) {
+    alert("تعذر حفظ الملف: " + result.error.message);
+    return;
+  }
+
+  alert("تم حفظ بيانات الملف الشخصي.");
+  await loadProfile();
+                                                             }
+  </script><script>
 let activeMatch=null, memberData=[];
 
 async function updatePresence(){
