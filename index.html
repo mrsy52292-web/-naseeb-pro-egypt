@@ -82,6 +82,34 @@ function section(id){
     "inbox","calls","ads","plans","admin"
   ];
 
+async function admin(){
+  if(!user){
+    say("status","سجّل الدخول أولًا.");
+    return;
+  }
+
+  say("status","جارٍ التحقق من صلاحيات الإدارة...");
+
+  const r = await db.from("admin_roles")
+    .select("role")
+    .eq("user_id",user.id)
+    .eq("role","admin")
+    .maybeSingle();
+
+  if(r.error){
+    say("status","تعذر التحقق من صلاحيات الإدارة: "+r.error.message);
+    return;
+  }
+
+  if(!r.data){
+    say("status","هذا الحساب غير معيّن كمشرف حتى الآن.");
+    return;
+  }
+
+  section("admin");
+  say("status","مرحبًا بك في لوحة الإدارة.");
+}
+  
   pages.forEach(function(page){
     el(page).classList.add("hidden");
   });
