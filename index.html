@@ -41,7 +41,14 @@ HTML
 <select id="gender"><option value="">النوع</option><option value="male">ذكر</option><option value="female">أنثى</option></select>
 <input id="city" placeholder="المدينة">
 <textarea id="bio" placeholder="اكتب نبذة مختصرة عنك"></textarea>
-<label>صورتك الشخصية</label><input id="photo" type="file" accept="image/*">
+<label>صورتك الشخصية</label>
+<div style="text-align:center;margin:12px 0">
+  <img id="myPhotoPreview" alt="صورتي الشخصية"
+       style="display:none;width:150px;height:150px;object-fit:cover;border-radius:50%;border:3px solid #741c45">
+  <p id="myPhotoStatus" class="muted">ستظهر صورتك هنا بعد تحميلها.</p>
+</div>
+<input id="photo" type="file" accept="image/*">
+  
 <button onclick="saveProfile()">حفظ الملف الشخصي</button>
 <p class="muted">يجب أن يكون عمرك 18 عامًا أو أكثر. لا تنشر بياناتك الخاصة في النبذة.</p>
 </section>
