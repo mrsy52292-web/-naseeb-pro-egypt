@@ -624,40 +624,84 @@ async function answerCall(id,status){
 async function ads(){
   section("ads");
 
+  const box = el("adList");
+  box.textContent = "جارٍ تحميل الإعلانات...";
+
   const r = await db.from("ad_requests")
     .select("advertiser_name,business_name,contact_info,ad_description,image_url,status")
     .eq("status","approved")
     .limit(10);
 
   if(r.error){
-    el("adList").textContent = "تعذر تحميل الإعلانات: " + r.error.message;
+    box.textContent = "تعذر تحميل الإعلانات: " + r.error.message;
     return;
   }
 
-  el("adList").innerHTML = (r.data || []).map(a => `
-    <article class="member" style="overflow:hidden;padding:0;margin-bottom:16px">
-      ${a.image_url ? `
-        <img src="${safe(a.image_url)}"
-          alt="${safe(a.business_name || "صورة الإعلان")}"
-          style="width:100%;max-height:190px;object-fit:cover;display:block"
-          onerror="this.style.display='none'">
-      ` : ""}
-      <div style="padding:14px">
-        <small style="color:#c5a15c">📢 إعلان</small>
-        <h3 style="margin:8px 0">
+  const adsList = r.data || [];
+
+  if(adsList.length === 0){
+    box.textContent = "لا توجد إعلانات معتمدة حاليًا.";
+    return;
+  }
+
+  box.innerHTML = adsList.map(a => `
+    <article style="
+      background:#fff;
+      border:1px solid #eadde4;
+      border-radius:18px;
+      overflow:hidden;
+      margin:14px 0;
+      box-shadow:0 5px 18px rgba(81,17,47,.10);
+    ">
+      ${
+        a.image_url
+        ? `
+          <img src="${safe(a.image_url)}"
+            alt="${safe(a.business_name || "صورة الإعلان")}"
+            style="width:100%;height:190px;object-fit:cover;display:block"
+            onerror="this.style.display='none'">
+        `
+        : `
+          <div style="
+            height:135px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:linear-gradient(135deg,#741c45,#c5a15c);
+            color:white;
+            font-size:48px;
+          ">📢</div>
+        `
+      }
+
+      <div style="padding:16px">
+        <div style="color:#a77b35;font-size:13px;font-weight:bold">
+          📢 إعلان تجاري
+        </div>
+
+        <h3 style="color:#741c45;margin:9px 0;font-size:21px">
           ${safe(a.business_name || a.advertiser_name || "نشاط تجاري")}
         </h3>
-        <p>${safe(a.ad_description || "")}</p>
-        ${a.contact_info ? `
-          <button onclick="contactAdvertiser('${encodeURIComponent(a.contact_info)}')">
-            تواصل الآن
-          </button>
-        ` : ""}
+
+        <p style="color:#555;line-height:1.8;margin:8px 0 16px">
+          ${safe(a.ad_description || "للتعرف على تفاصيل النشاط تواصل معنا.")}
+        </p>
+
+        ${
+          a.contact_info
+          ? `
+            <button
+              style="width:100%;border-radius:12px"
+              onclick="contactAdvertiser('${encodeURIComponent(a.contact_info)}')">
+              تواصل الآن
+            </button>
+          `
+          : ""
+        }
       </div>
     </article>
-  `).join("") || "لا توجد إعلانات معتمدة حاليًا.";
-}
-
+  `).join("");
+    }
 function contactAdvertiser(contact){
   const value = decodeURIComponent(contact).trim();
 
