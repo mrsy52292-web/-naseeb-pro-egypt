@@ -74,7 +74,26 @@ style="display:none;width:150px;height:150px;object-fit:cover;border-radius:50%;
 <section id="matches" class="card hidden"><h2>التوافقات</h2><div id="matchesList"></div></section>
 <section id="inbox" class="card hidden"><h2>💌 صندوق الرسائل</h2><div id="threads"></div><div id="chat" class="hidden"><h3 id="chatTitle"></h3><div id="messages"></div><textarea id="messageText" placeholder="اكتب رسالتك"></textarea><button onclick="sendMessage()">إرسال الرسالة</button></div></section>
 <section id="calls" class="card hidden"><h2>📞 طلبات المكالمات</h2><div id="callList"></div><p class="muted">هذه النسخة ترسل طلب المكالمة فقط؛ الاتصال الصوتي المباشر يحتاج إعداد WebRTC إضافيًا.</p></section>
-<section id="ads" class="card hidden"><h2>📢 الإعلانات</h2><div id="adList"></div><h3>طلب إعلان</h3><input id="adBusiness" placeholder="اسم النشاط"><input id="adContact" placeholder="وسيلة التواصل"><textarea id="adText" placeholder="تفاصيل الإعلان"></textarea><button onclick="requestAd()">إرسال طلب الإعلان</button></section>
+<section id="ads" class="card hidden">
+  <h2>📢 الإعلانات</h2>
+
+  <div id="adList"></div>
+
+  <h3>طلب إعلان</h3>
+
+  <input id="adBusiness" placeholder="اسم النشاط">
+
+  <input id="adContact" placeholder="وسيلة التواصل">
+
+  <textarea id="adText" placeholder="تفاصيل الإعلان"></textarea>
+
+  <label>صورة النشاط أو المنتج</label>
+  <input id="adImage" type="file" accept="image/*">
+
+  <p class="muted">اختر صورة واضحة، بحد أقصى 5 ميجابايت.</p>
+
+  <button onclick="requestAd()">إرسال طلب الإعلان</button>
+</section>
 <section id="plans" class="card hidden"><h2>⭐ باقات نصيب</h2><div class="member"><b>الباقة المجانية</b><p>إنشاء ملف والتصفح الأساسي</p></div><div class="member"><b>VIP</b><p class="price">يحدد السعر لاحقًا</p><p>مزايا إضافية حسب إعدادات المنصة</p><button onclick="subscribe('VIP')">طلب اشتراك VIP</button></div><div id="subscriptionStatus"></div><p class="muted">طلب الاشتراك لا يعني خصم أموال؛ بوابة الدفع لم تُربط بعد.</p></section>
 <section id="admin" class="card hidden"><h2>🛡️ لوحة الإدارة</h2><p class="muted">تظهر أدوات الإدارة للحسابات التي تم تعيينها مشرفًا في قاعدة البيانات.</p><button onclick="pendingProfiles()">الملفات المنتظرة</button><button onclick="adminReports()">البلاغات</button><button onclick="adminAds()">طلبات الإعلانات</button><div id="adminContent"></div><h3>تعيين مشرف</h3><p class="muted">استخدم SQL الآمن من لوحة Supabase بعد التأكد من هوية المستخدم؛ لا تضع كلمة مرور مشرف داخل الموقع.</p></section>
 </div>
