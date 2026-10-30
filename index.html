@@ -466,23 +466,64 @@ async function acceptLike(other){
 }
 
 async function matches(){
- section("matches");
- const r=await db.from("matches").select("id,user_one,user_two")
- .or(`user_one.eq.${user.id},user_two.eq.${user.id}`);
- if(r.error){el("matchesList").textContent=r.error.message;return;}
- const ids=[...new Set((r.data||[]).map(m=>
-  m.user_one===user.id?m.user_two:m.user_one))];
- const pr=ids.length?await db.from("profiles")
- .select("id,display_name").in("id",ids):{data:[]};
- const names={};(pr.data||[]).forEach(p=>names[p.id]=p.display_name);
- el("matchesList").innerHTML=(r.data||[]).map(m=>{
-  const other=m.user_one===user.id?m.user_two:m.user_one;
-  return `<div class="member"><b>${safe(names[other]||"عضو")}</b>
-  <button onclick="openChat('${safe(m.id)}','${safe(names[other]||"محادثة")}')">فتح صندوق الرسائل</button>
-  <button class="secondary" onclick="requestCall('${safe(m.id)}','${safe(other)}')">طلب مكالمة</button></div>`;
- }).join("")||"لا توجد توافقات حتى الآن.";
-}
+  section("matches");
 
+  const box = el("matchesList");
+  box.textContent = "جارٍ تحميل التوافقات...";
+
+  if(!user){
+    box.textContent = "سجّل الدخول أولًا.";
+    return;
+  }
+
+  try {
+    const r = await db.from("matches")
+      .select("id,user_one,user_two")
+      .or(`user_one.eq.${user.id},user_two.eq.${user.id}`);
+
+    if(r.error){
+      box.textContent = "تعذر تحميل التوافقات: " + r.error.message;
+      return;
+    }
+
+    const rows = r.data || [];
+
+    if(rows.length === 0){
+      box.textContent = "لا توجد توافقات حتى الآن.";
+      return;
+    }
+
+    const ids = [...new Set(rows.map(m =>
+      m.user_one === user.id ? m.user_two : m.user_one
+    ))];
+
+    const pr = await db.from("profiles")
+      .select("id,display_name")
+      .in("id",ids);
+
+    if(pr.error){
+      box.textContent = "تم تحميل التوافقات، لكن تعذر تحميل الأسماء: " + pr.error.message;
+      return;
+    }
+
+    const names = {};
+    (pr.data || []).forEach(p => names[p.id] = p.display_name);
+
+    box.innerHTML = rows.map(m => {
+      const other = m.user_one === user.id ? m.user_two : m.user_one;
+      const name = safe(names[other] || "عضو");
+
+      return `<div class="member">
+        <b>${name}</b>
+        <button onclick="openChat('${safe(m.id)}','${name}')">فتح صندوق الرسائل</button>
+        <button class="secondary" onclick="requestCall('${safe(m.id)}','${safe(other)}')">طلب مكالمة</button>
+      </div>`;
+    }).join("");
+
+  } catch(e) {
+    box.textContent = "حدث خطأ: " + (e.message || e);
+  }
+    }
 async function inbox(){
  section("inbox");
  el("chat").classList.add("hidden");
