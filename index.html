@@ -745,28 +745,70 @@ async function requestAd(){
   const business = el("adBusiness").value.trim();
   const contact = el("adContact").value.trim();
   const description = el("adText").value.trim();
+  const file = el("adImage").files[0];
 
   if(!business || !contact || !description){
     say("status","من فضلك املأ اسم النشاط ووسيلة التواصل وتفاصيل الإعلان.");
     return;
   }
 
+  let imageUrl = null;
+
+  if(file){
+    if(!file.type.startsWith("image/")){
+      say("status","من فضلك اختر ملف صورة صالحًا.");
+      return;
+    }
+
+    if(file.size > 5 * 1024 * 1024){
+      say("status","حجم الصورة يجب ألا يتجاوز 5 ميجابايت.");
+      return;
+    }
+
+    say("status","جارٍ رفع صورة الإعلان...");
+
+    const path = user.id + "/" + Date.now() + "-" +
+      file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+
+    const upload = await db.storage
+      .from("ad-photos")
+      .upload(path,file,{
+        upsert:false,
+        contentType:file.type
+      });
+
+    if(upload.error){
+      say("status","تعذر رفع الصورة: "+upload.error.message);
+      return;
+    }
+
+    const publicResult = db.storage
+      .from("ad-photos")
+      .getPublicUrl(path);
+
+    imageUrl = publicResult.data.publicUrl;
+  }
+
   const r = await db.from("ad_requests").insert({
-    advertiser_name: business,
-    business_name: business,
-    contact_info: contact,
-    ad_description: description,
-    status: "pending"
+    advertiser_name:business,
+    business_name:business,
+    contact_info:contact,
+    ad_description:description,
+    image_url:imageUrl,
+    status:"pending"
   });
 
   if(r.error){
-    say("status","تعذر إرسال طلب الإعلان: " + r.error.message);
-  }else{
-    say("status","تم إرسال طلب الإعلان للمراجعة، وسيتم التواصل معك بعد مراجعته.");
-    el("adBusiness").value = "";
-    el("adContact").value = "";
-    el("adText").value = "";
+    say("status","تعذر إرسال طلب الإعلان: "+r.error.message);
+    return;
   }
+
+  say("status","تم إرسال طلب الإعلان والصورة للمراجعة بنجاح.");
+
+  el("adBusiness").value="";
+  el("adContact").value="";
+  el("adText").value="";
+  el("adImage").value="";
     }
     
 async function pendingProfiles(){
