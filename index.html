@@ -807,6 +807,7 @@ function contactAdvertiser(contact){
   }
 }
     
+
 async function requestAd(){
   if(!user){
     say("status","سجّل الدخول أولًا لإرسال طلب الإعلان.");
@@ -815,11 +816,26 @@ async function requestAd(){
 
   const business = el("adBusiness").value.trim();
   const contact = el("adContact").value.trim();
+  const countryCode = el("adCountryCode").value;
   const description = el("adText").value.trim();
   const file = el("adImage").files[0];
 
   if(!business || !contact || !description){
-    say("status","من فضلك املأ اسم النشاط ووسيلة التواصل وتفاصيل الإعلان.");
+    say("status","املأ اسم النشاط ورقم واتساب وتفاصيل الإعلان.");
+    return;
+  }
+
+  // تجهيز الرقم الدولي
+  let phone = contact.replace(/\D/g,"");
+
+  // إزالة صفر البداية المحلي
+  phone = phone.replace(/^0+/,"");
+
+  // إضافة مفتاح الدولة
+  const internationalPhone = countryCode + phone;
+
+  if(phone.length < 6 || phone.length > 14){
+    say("status","رقم الهاتف غير صحيح. راجع الرقم ومفتاح الدولة.");
     return;
   }
 
@@ -827,7 +843,7 @@ async function requestAd(){
 
   if(file){
     if(!file.type.startsWith("image/")){
-      say("status","من فضلك اختر ملف صورة صالحًا.");
+      say("status","اختر صورة صالحة.");
       return;
     }
 
@@ -853,17 +869,15 @@ async function requestAd(){
       return;
     }
 
-    const publicResult = db.storage
+    imageUrl = db.storage
       .from("ad-photos")
-      .getPublicUrl(path);
-
-    imageUrl = publicResult.data.publicUrl;
+      .getPublicUrl(path).data.publicUrl;
   }
 
   const r = await db.from("ad_requests").insert({
     advertiser_name:business,
     business_name:business,
-    contact_info:contact,
+    contact_info:internationalPhone,
     ad_description:description,
     image_url:imageUrl,
     status:"pending"
@@ -874,13 +888,15 @@ async function requestAd(){
     return;
   }
 
-  say("status","تم إرسال طلب الإعلان والصورة للمراجعة بنجاح.");
+  say("status","تم إرسال طلب الإعلان للمراجعة بنجاح.");
 
   el("adBusiness").value="";
   el("adContact").value="";
   el("adText").value="";
   el("adImage").value="";
+  el("adCountryCode").value="20";
     }
+    
     
 async function pendingProfiles(){
  const r=await db.from("profiles").select("id,display_name,city")
