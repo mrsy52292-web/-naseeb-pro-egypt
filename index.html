@@ -658,6 +658,38 @@ async function ads(){
     return;
   }
 
+function contactAdvertiser(rawPhone){
+  let phone = decodeURIComponent(String(rawPhone || ""))
+    .replace(/[^\d+]/g, "");
+
+  phone = phone.replace(/\D/g, "");
+
+  // إزالة الصفر المحلي وإضافة مفتاح مصر
+  if(phone.startsWith("00")){
+    phone = phone.slice(2);
+  }
+
+  if(phone.startsWith("0")){
+    phone = "20" + phone.slice(1);
+  }else if(phone.startsWith("20")){
+    // الرقم بالفعل بمفتاح مصر
+  }else{
+    phone = "20" + phone;
+  }
+
+  // التحقق من رقم واتساب المصري
+  if(!/^201[0125]\d{8}$/.test(phone)){
+    alert("رقم واتساب غير صحيح. تأكد من إدخال رقم مصري صحيح.");
+    return;
+  }
+
+  window.open(
+    "https://wa.me/" + phone,
+    "_blank",
+    "noopener,noreferrer"
+  );
+      }
+  
   const adsList = r.data || [];
 
   if(!adsList.length){
