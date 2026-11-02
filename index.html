@@ -531,24 +531,34 @@ async function matches(){
   section("matches");
 
   const box = el("matchesList");
-  box.textContent = "جارٍ تحميل التوافقات...";
+  box.textContent = "جارٍ فحص التوافقات...";
 
   if(!user){
-    box.textContent = "سجّل الدخول أولًا.";
+    box.textContent = "لا يوجد حساب مسجل الدخول.";
     return;
   }
 
   try {
     const r = await db.from("matches")
       .select("id,user_one,user_two")
-      .or(`user_one.eq.${user.id},user_two.eq.${user.id}`);
+      .or(
+        `user_one.eq.${user.id},user_two.eq.${user.id}`
+      );
 
-    if(r.error) throw r.error;
+    console.log("Current user:", user.id);
+    console.log("Matches result:", r);
+
+    if(r.error){
+      box.textContent = "خطأ قاعدة البيانات: " + r.error.message;
+      return;
+    }
 
     const rows = r.data || [];
 
     if(!rows.length){
-      box.textContent = "لا توجد توافقات حتى الآن.";
+      box.innerHTML =
+        "<p>لا توجد توافقات لهذا الحساب.</p>" +
+        "<p>رقم حسابك: " + safe(user.id) + "</p>";
       return;
     }
 
@@ -558,9 +568,14 @@ async function matches(){
 
     const pr = await db.from("profiles")
       .select("id,display_name")
-      .in("id",ids);
+      .in("id", ids);
 
-    if(pr.error) throw pr.error;
+    if(pr.error){
+      box.textContent =
+        "التوافق موجود لكن تعذر تحميل الأسماء: " +
+        pr.error.message;
+      return;
+    }
 
     const names = {};
     (pr.data || []).forEach(p => {
@@ -577,7 +592,7 @@ async function matches(){
         <div class="member">
           <b>${name}</b>
           <button onclick="openChat('${m.id}','${name}')">
-            فتح صندوق الرسائل
+            فتح المحادثة
           </button>
           <button class="secondary"
             onclick="requestCall('${m.id}','${other}')">
@@ -588,10 +603,10 @@ async function matches(){
     }).join("");
 
   } catch(e) {
-    box.textContent = "خطأ في التوافقات: " +
-      (e.message || e);
+    console.error(e);
+    box.textContent = "خطأ: " + (e.message || e);
   }
-   }
+    }
 async function inbox(){
   section("inbox");
 
