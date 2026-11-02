@@ -593,23 +593,67 @@ async function matches(){
   }
    }
 async function inbox(){
- section("inbox");
- el("chat").classList.add("hidden");
- const r=await db.from("matches").select("id,user_one,user_two")
- .or(`user_one.eq.${user.id},user_two.eq.${user.id}`);
- if(r.error){el("threads").textContent=r.error.message;return;}
- const ids=[...new Set((r.data||[]).map(m=>
-  m.user_one===user.id?m.user_two:m.user_one))];
- const pr=ids.length?await db.from("profiles")
- .select("id,display_name").in("id",ids):{data:[]};
- const names={};(pr.data||[]).forEach(p=>names[p.id]=p.display_name);
- el("threads").innerHTML=(r.data||[]).map(m=>{
-  const other=m.user_one===user.id?m.user_two:m.user_one;
-  return `<div class="member"><b>${safe(names[other]||"عضو")}</b>
-  <button onclick="openChat('${safe(m.id)}','${safe(names[other]||"محادثة")}')">فتح المحادثة</button></div>`;
- }).join("")||"صندوق الرسائل فارغ حتى الآن.";
-}
+  section("inbox");
 
+  if(!user){
+    el("threads").textContent = "سجّل الدخول أولًا.";
+    return;
+  }
+
+  el("chat").classList.add("hidden");
+  const box = el("threads");
+  box.textContent = "جارٍ تحميل الرسائل...";
+
+  try {
+    const r = await db.from("matches")
+      .select("id,user_one,user_two")
+      .or(`user_one.eq.${user.id},user_two.eq.${user.id}`);
+
+    if(r.error) throw r.error;
+
+    const rows = r.data || [];
+
+    if(!rows.length){
+      box.textContent = "صندوق الرسائل فارغ حتى الآن.";
+      return;
+    }
+
+    const ids = [...new Set(rows.map(m =>
+      m.user_one === user.id ? m.user_two : m.user_one
+    ))];
+
+    const pr = await db.from("profiles")
+      .select("id,display_name")
+      .in("id",ids);
+
+    if(pr.error) throw pr.error;
+
+    const names = {};
+    (pr.data || []).forEach(p => {
+      names[p.id] = p.display_name || "عضو";
+    });
+
+    box.innerHTML = rows.map(m => {
+      const other = m.user_one === user.id
+        ? m.user_two : m.user_one;
+
+      const name = safe(names[other] || "محادثة");
+
+      return `
+        <div class="member">
+          <b>${name}</b>
+          <button onclick="openChat('${m.id}','${name}')">
+            فتح المحادثة
+          </button>
+        </div>
+      `;
+    }).join("");
+
+  } catch(e) {
+    box.textContent = "خطأ في صندوق الرسائل: " +
+      (e.message || e);
+  }
+    }
 async function openChat(id,name){
  activeMatch=id;
  el("chat").classList.remove("hidden");
