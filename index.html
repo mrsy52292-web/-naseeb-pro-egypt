@@ -531,12 +531,16 @@ async function matches(){
   section("matches");
 
   const box = el("matchesList");
-  box.textContent = "جارٍ تحميل التوافقات...";
+  box.textContent = "جارٍ فحص الحساب...";
 
-if(!user){
-  box.textContent = "سجّل الدخول أولًا.";
-  return;
-}
+  if(!user){
+    box.textContent = "سجّل الدخول أولًا.";
+    return;
+  }
+
+  box.textContent =
+    "رقم حسابك الحالي: " + user.id;
+    }
 
 box.textContent = "رقم حسابك الحالي: " + user.id;
     const r = await db.from("matches")
