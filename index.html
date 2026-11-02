@@ -543,14 +543,11 @@ async function matches(){
       .select("id,user_one,user_two")
       .or(`user_one.eq.${user.id},user_two.eq.${user.id}`);
 
-    if(r.error){
-      box.textContent = "تعذر تحميل التوافقات: " + r.error.message;
-      return;
-    }
+    if(r.error) throw r.error;
 
     const rows = r.data || [];
 
-    if(rows.length === 0){
+    if(!rows.length){
       box.textContent = "لا توجد توافقات حتى الآن.";
       return;
     }
@@ -563,29 +560,39 @@ async function matches(){
       .select("id,display_name")
       .in("id",ids);
 
-    if(pr.error){
-      box.textContent = "تم تحميل التوافقات، لكن تعذر تحميل الأسماء: " + pr.error.message;
-      return;
-    }
+    if(pr.error) throw pr.error;
 
     const names = {};
-    (pr.data || []).forEach(p => names[p.id] = p.display_name);
+    (pr.data || []).forEach(p => {
+      names[p.id] = p.display_name || "عضو";
+    });
 
     box.innerHTML = rows.map(m => {
-      const other = m.user_one === user.id ? m.user_two : m.user_one;
+      const other =
+        m.user_one === user.id ? m.user_two : m.user_one;
+
       const name = safe(names[other] || "عضو");
 
-      return `<div class="member">
-        <b>${name}</b>
-        <button onclick="openChat('${safe(m.id)}','${name}')">فتح صندوق الرسائل</button>
-        <button class="secondary" onclick="requestCall('${safe(m.id)}','${safe(other)}')">طلب مكالمة</button>
-      </div>`;
+      return `
+        <div class="member">
+          <b>${name}</b>
+          <button onclick="openChat('${m.id}','${name}')">
+            فتح صندوق الرسائل
+          </button>
+          <button class="secondary"
+            onclick="requestCall('${m.id}','${other}')">
+            طلب مكالمة
+          </button>
+        </div>
+      `;
     }).join("");
 
   } catch(e) {
-    box.textContent = "حدث خطأ: " + (e.message || e);
+    box.textContent =
+      "حدث خطأ في تحميل التوافقات: " +
+      (e.message || e);
   }
-    }
+  }
 async function inbox(){
  section("inbox");
  el("chat").classList.add("hidden");
