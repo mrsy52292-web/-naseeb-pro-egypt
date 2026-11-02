@@ -725,11 +725,29 @@ async function likeMember(id){
   receiver_id:id
  });
 
- status(r.error?
-  "تعذر إرسال الإعجاب: "+r.error.message:
-  "تم إرسال الإعجاب بنجاح."
- );
-}
+ if(r.error &&
+ !r.error.message.toLowerCase().includes("duplicate")){
+  status("تعذر إرسال الإعجاب: "+r.error.message);
+  return;
+ }
+
+ const mutual=await db.from("likes")
+  .select("sender_id")
+  .eq("sender_id",id)
+  .eq("receiver_id",user.id)
+  .maybeSingle();
+
+ if(mutual.error){
+  status("تم الإعجاب، لكن تعذر فحص الإعجاب المتبادل: "+mutual.error.message);
+  return;
+ }
+
+ if(mutual.data){
+  await createMutualMatch(id);
+ }else{
+  status("تم إرسال الإعجاب. في انتظار موافقة الطرف الآخر 💗");
+ }
+ }
 
 async function likes(){
  section("likes");
