@@ -531,18 +531,14 @@ async function matches(){
   section("matches");
 
   const box = el("matchesList");
-  box.textContent = "جارٍ فحص الحساب...";
+  box.textContent = "جارٍ تحميل التوافقات...";
 
   if(!user){
     box.textContent = "سجّل الدخول أولًا.";
     return;
   }
 
-  box.textContent =
-    "رقم حسابك الحالي: " + user.id;
-    }
-
-box.textContent = "رقم حسابك الحالي: " + user.id;
+  try {
     const r = await db.from("matches")
       .select("id,user_one,user_two")
       .or(`user_one.eq.${user.id},user_two.eq.${user.id}`);
@@ -572,8 +568,8 @@ box.textContent = "رقم حسابك الحالي: " + user.id;
     });
 
     box.innerHTML = rows.map(m => {
-      const other =
-        m.user_one === user.id ? m.user_two : m.user_one;
+      const other = m.user_one === user.id
+        ? m.user_two : m.user_one;
 
       const name = safe(names[other] || "عضو");
 
@@ -592,11 +588,10 @@ box.textContent = "رقم حسابك الحالي: " + user.id;
     }).join("");
 
   } catch(e) {
-    box.textContent =
-      "حدث خطأ في تحميل التوافقات: " +
+    box.textContent = "خطأ في التوافقات: " +
       (e.message || e);
   }
-  }
+   }
 async function inbox(){
  section("inbox");
  el("chat").classList.add("hidden");
