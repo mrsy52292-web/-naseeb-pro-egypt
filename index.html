@@ -533,12 +533,12 @@ async function matches(){
   const box = el("matchesList");
   box.textContent = "جارٍ تحميل التوافقات...";
 
-  if(!user){
-    box.textContent = "سجّل الدخول أولًا.";
-    return;
-  }
+if(!user){
+  box.textContent = "سجّل الدخول أولًا.";
+  return;
+}
 
-  try {
+box.textContent = "رقم حسابك الحالي: " + user.id;
     const r = await db.from("matches")
       .select("id,user_one,user_two")
       .or(`user_one.eq.${user.id},user_two.eq.${user.id}`);
