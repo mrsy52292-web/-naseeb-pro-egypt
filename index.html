@@ -1182,19 +1182,92 @@ async function answerCall(callId,newStatus) {
 }
 
 /* الإعلانات والاشتراكات */
-async function loadAds() {
- const box = $("adsList");
- if (!box) return;
+<section id="adsSection" class="section">
+ <div class="card">
+  <h2>📢 إعلانات نصيب</h2>
+  <p class="muted">إعلانات مناسبة ومحترمة تخضع لمراجعة الإدارة قبل النشر.</p>
 
- box.innerHTML = `
-  <div class="card" style="padding:14px">
-   <h3>الإعلانات</h3>
-   <p>يمكنك تجهيز طلب إعلان للتواصل مع إدارة نصيب.</p>
-   <p>لن يتم نشر أي إعلان قبل مراجعته والموافقة عليه.</p>
-   <p class="muted">نظام استقبال ونشر الإعلانات الفعلي يحتاج ربطه بجدول طلبات الإعلانات.</p>
+  <div id="adsList"></div>
+ </div>
+
+ <div class="card">
+  <h2>إرسال طلب إعلان جديد</h2>
+
+  <div class="field">
+   <label>اسم المعلن</label>
+   <input id="advertiserName" maxlength="100" placeholder="اسمك">
   </div>
- `;
-}
+
+  <div class="field">
+   <label>اسم النشاط التجاري</label>
+   <input id="businessName" maxlength="120" placeholder="اسم الشركة أو النشاط">
+  </div>
+
+  <div class="field">
+   <label>الدولة</label>
+   <select id="adCountryCode">
+    <option value="+20">🇪🇬 مصر (+20)</option>
+    <option value="+966">🇸🇦 السعودية (+966)</option>
+    <option value="+971">🇦🇪 الإمارات (+971)</option>
+    <option value="+965">🇰🇼 الكويت (+965)</option>
+    <option value="+974">🇶🇦 قطر (+974)</option>
+    <option value="+973">🇧🇭 البحرين (+973)</option>
+    <option value="+968">🇴🇲 عُمان (+968)</option>
+    <option value="+962">🇯🇴 الأردن (+962)</option>
+    <option value="+964">🇮🇶 العراق (+964)</option>
+    <option value="+961">🇱🇧 لبنان (+961)</option>
+    <option value="+963">🇸🇾 سوريا (+963)</option>
+    <option value="+212">🇲🇦 المغرب (+212)</option>
+    <option value="+213">🇩🇿 الجزائر (+213)</option>
+    <option value="+216">🇹🇳 تونس (+216)</option>
+    <option value="+218">🇱🇾 ليبيا (+218)</option>
+    <option value="+249">🇸🇩 السودان (+249)</option>
+    <option value="+970">🇵🇸 فلسطين (+970)</option>
+    <option value="+90">🇹🇷 تركيا (+90)</option>
+    <option value="+44">🇬🇧 بريطانيا (+44)</option>
+    <option value="+1">🇺🇸 أمريكا (+1)</option>
+   </select>
+  </div>
+
+  <div class="field">
+   <label>رقم الهاتف</label>
+   <input id="adPhone" type="tel" inputmode="tel"
+    maxlength="20" placeholder="رقم الهاتف بدون مفتاح الدولة">
+  </div>
+
+  <div class="field">
+   <label>تفاصيل الإعلان</label>
+   <textarea id="adDescription" maxlength="1500"
+    placeholder="اكتب تفاصيل الإعلان..."></textarea>
+  </div>
+
+  <div class="field">
+   <label>صورة الإعلان</label>
+   <input id="adImage" type="file"
+    accept="image/jpeg,image/png,image/webp">
+   <img id="adImagePreview"
+    class="hidden"
+    alt="معاينة صورة الإعلان"
+    style="width:100%;max-height:250px;object-fit:contain;border-radius:12px;margin-top:10px">
+   <p class="muted">JPG أو PNG أو WebP — بحد أقصى 5 ميجابايت.</p>
+  </div>
+
+  <div class="notice">
+   لن يظهر إعلانك للأعضاء إلا بعد مراجعة الإدارة والموافقة عليه.
+  </div>
+
+  <button class="btn block" onclick="requestAd()">
+   إرسال طلب الإعلان
+  </button>
+
+  <div id="adRequestStatus" class="status"></div>
+ </div>
+
+ <div class="card">
+  <h2>طلباتي الإعلانية</h2>
+  <div id="myAdRequests"></div>
+ </div>
+</section>
 
 async function loadPlans() {
  const box = $("plansList");
