@@ -652,9 +652,9 @@ async function getPhoto(path){
  return r.error?null:r.data?.signedUrl||null;
 }
 
-async function members(){
- section("members");
- el("memberList").textContent="جارٍ تحميل الأعضاء...";
+async function matches(){
+ alert("دالة التوافقات اشتغلت");
+ section("matches");
 
  const r=await db.from("profiles")
   .select("id,display_name,city,bio,photo_url")
