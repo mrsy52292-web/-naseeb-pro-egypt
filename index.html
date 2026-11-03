@@ -691,6 +691,70 @@ async function matches(){
 }
 
 function filterMembers(){
+/* =====================================
+   نظام الأعضاء والتوافقات والإعجابات
+===================================== */
+
+// عرض الأعضاء
+async function members(){
+
+ if(!user){
+  status("سجل الدخول أولاً.");
+  return;
+ }
+
+ section("members");
+
+ const box=el("memberList");
+ box.textContent="جارٍ تحميل الأعضاء...";
+
+ const r=await db.from("profiles")
+  .select("id,display_name,city,bio,photo_url")
+  .eq("approved",true)
+  .neq("id",user.id)
+  .limit(100);
+
+ if(r.error){
+  box.textContent="تعذر تحميل الأعضاء: "+r.error.message;
+  return;
+ }
+
+ const profiles=r.data||[];
+
+ if(!profiles.length){
+  box.textContent="لا يوجد أعضاء معتمدون حاليًا.";
+  memberData=[];
+  return;
+ }
+
+ const ids=profiles.map(p=>p.id);
+ const presence={};
+
+ const pr=await db.from("presence")
+  .select("user_id,is_online,last_seen")
+  .in("user_id",ids);
+
+ if(!pr.error){
+  (pr.data||[]).forEach(p=>{
+   presence[p.user_id]=p;
+  });
+ }
+
+ memberData=await Promise.all(
+  profiles.map(async p=>({
+   ...p,
+   presence:presence[p.id],
+   photo:await getPhoto(p.photo_url)
+  }))
+ );
+
+ filterMembers();
+}
+
+
+// البحث عن الأعضاء
+function filterMembers(){
+
  const q=(el("search").value||"").toLowerCase();
 
  const list=memberData.filter(p=>
@@ -699,25 +763,319 @@ function filterMembers(){
  );
 
  el("memberList").innerHTML=list.map(p=>{
+
   const online=p.presence?.is_online&&
    p.presence.last_seen&&
    Date.now()-new Date(p.presence.last_seen).getTime()<120000;
 
   return `
    <article class="member">
-    ${p.photo?`<img src="${safe(p.photo)}" alt="صورة العضو">`:""}
+
+    ${p.photo?`
+     <img src="${safe(p.photo)}" alt="صورة العضو">
+    `:""}
+
     <b>${safe(p.display_name||"عضو")}</b>
+
     <p class="${online?"online":"offline"}">
      ${online?"● متصل الآن":"● غير متصل"}
     </p>
+
     <p>${safe(p.city||"")}</p>
     <p>${safe(p.bio||"")}</p>
-    <button onclick="likeMember('${safe(p.id)}')">إعجاب 💗</button>
+
+    <button onclick="likeMember('${safe(p.id)}')">
+     إعجاب 💗
+    </button>
+
    </article>
   `;
- }).join("")||"لا توجد ملفات معتمدة حاليًا.";
+ }).join("")||"لا توجد نتائج.";
 }
 
+
+// إنشاء توافق بعد التأكد من الإعجاب المتبادل
+async function createMutualMatch(other){
+
+ if(!user||!other||other===user.id)return;
+
+ const first=user.id<other?user.id:other;
+ const second=user.id<other?other:user.id;
+
+ const r=await db.from("matches")
+  .select("id")
+  .eq("user_one",first)
+  .eq("user_two",second)
+  .maybeSingle();
+
+ if(r.error){
+  status("تعذر فحص التوافق: "+r.error.message);
+  return;
+ }
+
+ if(r.data){
+  status("التوافق موجود بالفعل 💗");
+  return;
+ }
+
+ const created=await db.from("matches").insert({
+  user_one:first,
+  user_two:second
+ });
+
+ if(created.error){
+  status("تعذر إنشاء التوافق: "+created.error.message);
+  return;
+ }
+
+ status("مبروك! تم إنشاء توافق متبادل 💗");
+}
+
+
+// إرسال إعجاب
+async function likeMember(id){
+
+ if(!user)return;
+
+ if(id===user.id)return;
+
+ const existing=await db.from("likes")
+  .select("sender_id")
+  .eq("sender_id",user.id)
+  .eq("receiver_id",id)
+  .maybeSingle();
+
+ if(existing.error){
+  status("تعذر التحقق من الإعجاب: "+existing.error.message);
+  return;
+ }
+
+ if(!existing.data){
+
+  const r=await db.from("likes").insert({
+   sender_id:user.id,
+   receiver_id:id
+  });
+
+  if(r.error){
+   status("تعذر إرسال الإعجاب: "+r.error.message);
+   return;
+  }
+ }
+
+ const mutual=await db.from("likes")
+  .select("sender_id")
+  .eq("sender_id",id)
+  .eq("receiver_id",user.id)
+  .maybeSingle();
+
+ if(mutual.error){
+  status("تعذر التحقق من الإعجاب المتبادل: "+mutual.error.message);
+  return;
+ }
+
+ if(mutual.data){
+  await createMutualMatch(id);
+ }else{
+  status("تم إرسال الإعجاب. في انتظار موافقة الطرف الآخر 💗");
+ }
+}
+
+
+// عرض الإعجابات الواردة
+async function likes(){
+
+ if(!user)return;
+
+ section("likes");
+
+ const box=el("likesList");
+ box.textContent="جارٍ تحميل الإعجابات...";
+
+ const r=await db.from("likes")
+  .select("sender_id")
+  .eq("receiver_id",user.id);
+
+ if(r.error){
+  box.textContent=r.error.message;
+  return;
+ }
+
+ const ids=[...new Set((r.data||[]).map(x=>x.sender_id))];
+
+ if(!ids.length){
+  box.textContent="لا توجد إعجابات واردة.";
+  return;
+ }
+
+ const p=await db.from("profiles")
+  .select("id,display_name,city")
+  .in("id",ids)
+  .eq("approved",true);
+
+ if(p.error){
+  box.textContent=p.error.message;
+  return;
+ }
+
+ box.innerHTML=(p.data||[]).map(x=>`
+
+  <div class="member">
+
+   <b>${safe(x.display_name||"عضو")}</b>
+
+   <p>${safe(x.city||"")}</p>
+
+   <button onclick="acceptLike('${safe(x.id)}')">
+    موافقة متبادلة 💗
+   </button>
+
+  </div>
+
+ `).join("")||"لا توجد إعجابات واردة من أعضاء معتمدين.";
+}
+
+
+// الموافقة على الإعجاب
+async function acceptLike(other){
+
+ if(!user||!other||other===user.id)return;
+
+ const incoming=await db.from("likes")
+  .select("sender_id")
+  .eq("sender_id",other)
+  .eq("receiver_id",user.id)
+  .maybeSingle();
+
+ if(incoming.error){
+  status("تعذر التحقق من الإعجاب: "+incoming.error.message);
+  return;
+ }
+
+ if(!incoming.data){
+  status("الإعجاب الأصلي غير موجود.");
+  return;
+ }
+
+ const approval=await db.from("likes")
+  .select("sender_id")
+  .eq("sender_id",user.id)
+  .eq("receiver_id",other)
+  .maybeSingle();
+
+ if(approval.error){
+  status("تعذر التحقق من الموافقة: "+approval.error.message);
+  return;
+ }
+
+ if(!approval.data){
+
+  const a=await db.from("likes").insert({
+   sender_id:user.id,
+   receiver_id:other
+  });
+
+  if(a.error){
+   status("تعذر تسجيل الموافقة: "+a.error.message);
+   return;
+  }
+ }
+
+ await createMutualMatch(other);
+}
+
+
+// عرض التوافقات
+async function matches(){
+
+ if(!user){
+  status("سجل الدخول أولاً.");
+  return;
+ }
+
+ section("matches");
+
+ const box=el("matchesList");
+ box.textContent="جارٍ تحميل التوافقات...";
+
+ const r=await db.from("matches")
+  .select("id,user_one,user_two")
+  .or(
+   `user_one.eq.${user.id},user_two.eq.${user.id}`
+  )
+  .order("id",{ascending:false});
+
+ if(r.error){
+  box.textContent="تعذر تحميل التوافقات: "+r.error.message;
+  return;
+ }
+
+ const rows=r.data||[];
+
+ if(!rows.length){
+  box.textContent="لا توجد توافقات حتى الآن. عندما يوافق الطرفان سيظهر التوافق هنا 💗";
+  return;
+ }
+
+ const ids=[...new Set(rows.map(m=>
+  m.user_one===user.id?m.user_two:m.user_one
+ ))];
+
+ const pr=await db.from("profiles")
+  .select("id,display_name,city,photo_url")
+  .in("id",ids);
+
+ if(pr.error){
+  box.textContent="تعذر تحميل بيانات الأعضاء: "+pr.error.message;
+  return;
+ }
+
+ const profiles={};
+
+ (pr.data||[]).forEach(p=>{
+  profiles[p.id]=p;
+ });
+
+ const cards=await Promise.all(rows.map(async m=>{
+
+  const other=m.user_one===user.id?
+   m.user_two:m.user_one;
+
+  const p=profiles[other];
+
+  if(!p)return "";
+
+  const photo=await getPhoto(p.photo_url);
+
+  return `
+   <article class="member">
+
+    ${photo?`
+     <img src="${safe(photo)}" alt="صورة العضو">
+    `:""}
+
+    <h3>💗 ${safe(p.display_name||"عضو")}</h3>
+
+    <p>${safe(p.city||"")}</p>
+
+    <p class="online">تم التوافق بنجاح</p>
+
+    <button onclick="openChat('${safe(m.id)}','${safe(p.display_name||"عضو")}')">
+     💌 فتح المحادثة
+    </button>
+
+    <button class="secondary"
+     onclick="requestCall('${safe(m.id)}','${safe(other)}')">
+     📞 طلب مكالمة
+    </button>
+
+   </article>
+  `;
+
+ }));
+
+ box.innerHTML=cards.join("")||"لا توجد توافقات قابلة للعرض.";
+ }
 async function likeMember(id){
  if(!user)return;
 
