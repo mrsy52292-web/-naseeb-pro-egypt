@@ -1113,6 +1113,174 @@ async function permanentlyDeleteFromTrash(trashId) {
  await loadTrash();
 }
 
+/* إحصائيات الإعلانات للإدارة */
+async function loadAdStatistics() {
+    if (!(await checkAdminRole())) {
+        alert("ليس لديك صلاحية عرض الإحصائيات.");
+        return;
+    }
+
+    prepareAdminInterface();
+
+    const box = $("naseebAdStats");
+    if (!box) return;
+
+    box.textContent = "جارٍ تحميل إحصائيات الإعلانات...";
+
+    // تحميل جميع أحداث المشاهدة والنقر على دفعات
+    let allEvents = [];
+    let offset = 0;
+    const pageSize = 1000;
+
+    while (true) {
+        const { data, error } = await db
+            .from("ad_statistics")
+            .select("ad_id,event_type")
+            .order("created_at", { ascending: true })
+            .range(offset, offset + pageSize - 1);
+
+        if (error) {
+            box.textContent =
+                "تعذر تحميل الإحصائيات: " + error.message;
+            return;
+        }
+
+        allEvents = allEvents.concat(data || []);
+
+        if (!data || data.length < pageSize) break;
+
+        offset += pageSize;
+    }
+
+    // تجميع المشاهدات والنقرات
+    const stats = {};
+
+    for (const event of allEvents) {
+        if (!stats[event.ad_id]) {
+            stats[event.ad_id] = {
+                impressions: 0,
+                clicks: 0
+            };
+        }
+
+        if (event.event_type === "impression") {
+            stats[event.ad_id].impressions++;
+        }
+
+        if (event.event_type === "click") {
+            stats[event.ad_id].clicks++;
+        }
+    }
+
+    const totalImpressions = allEvents.filter(
+        e => e.event_type === "impression"
+    ).length;
+
+    const totalClicks = allEvents.filter(
+        e => e.event_type === "click"
+    ).length;
+
+    const ctr = totalImpressions > 0
+        ? (totalClicks / totalImpressions * 100).toFixed(2)
+        : "0.00";
+
+    box.innerHTML = "";
+
+    // ملخص الإحصائيات
+    const summary = document.createElement("div");
+    summary.className = "grid";
+
+    const summaryItems = [
+        ["👁️ إجمالي المشاهدات", totalImpressions],
+        ["👆 إجمالي النقرات", totalClicks],
+        ["📈 معدل النقر CTR", ctr + "%"]
+    ];
+
+    for (const [label, value] of summaryItems) {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.style.cssText = "margin:5px 0;padding:12px";
+
+        const title = document.createElement("div");
+        title.className = "muted";
+        title.textContent = label;
+
+        const number = document.createElement("h2");
+        number.style.margin = "8px 0 0";
+        number.textContent = value;
+
+        card.append(title, number);
+        summary.appendChild(card);
+    }
+
+    box.appendChild(summary);
+
+    const ids = Object.keys(stats);
+
+    if (!ids.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent =
+            "لا توجد مشاهدات أو نقرات مسجلة حتى الآن.";
+        box.appendChild(empty);
+        return;
+    }
+
+    // تحميل أسماء الإعلانات
+    const { data: ads, error: adsError } = await db
+        .from("ad_requests")
+        .select("id,business_name")
+        .in("id", ids);
+
+    if (adsError) {
+        const errorBox = document.createElement("p");
+        errorBox.className = "status";
+        errorBox.textContent =
+            "تم تحميل الأرقام، لكن تعذر تحميل أسماء الإعلانات: " +
+            adsError.message;
+        box.appendChild(errorBox);
+        return;
+    }
+
+    const adsMap = new Map(
+        (ads || []).map(ad => [ad.id, ad.business_name])
+    );
+
+    const heading = document.createElement("h3");
+    heading.textContent = "تفاصيل كل إعلان";
+    heading.style.marginTop = "20px";
+    box.appendChild(heading);
+
+    for (const id of ids) {
+        const item = stats[id];
+
+        const adCtr = item.impressions > 0
+            ? (item.clicks / item.impressions * 100).toFixed(2)
+            : "0.00";
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.style.cssText = "padding:14px;margin:10px 0";
+
+        const title = document.createElement("h3");
+        title.textContent =
+            adsMap.get(id) || "إعلان غير معروف";
+
+        const details = document.createElement("p");
+        details.textContent =
+            "المشاهدات: " + item.impressions +
+            " | النقرات: " + item.clicks +
+            " | معدل النقر: " + adCtr + "%";
+
+        const idText = document.createElement("small");
+        idText.className = "muted";
+        idText.textContent = "رقم الإعلان: " + id;
+
+        card.append(title, details, idText);
+        box.appendChild(card);
+    }
+ }
+ 
 /* طلبات المكالمات */
 async function requestCall(matchId,otherId) {
  if (!currentUser) return alert("سجل الدخول أولاً.");
