@@ -200,7 +200,7 @@ let currentChatMatch = null;
 let currentChatUser = null;
 let isAdmin = false;
 let appStarting = false;
-
+const trackedAdImpressions = new Set();
 const $ = id => document.getElementById(id);
 
 function status(id, message, error = false) {
