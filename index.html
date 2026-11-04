@@ -1215,71 +1215,296 @@ async function loadAdStatistics() {
 
     box.appendChild(summary);
 
-    const ids = Object.keys(stats);
 
-    if (!ids.length) {
-        const empty = document.createElement("div");
-        empty.className = "empty";
-        empty.textContent =
-            "لا توجد مشاهدات أو نقرات مسجلة حتى الآن.";
-        box.appendChild(empty);
+/* لوحة إحصائيات الإعلانات المتكاملة */
+async function loadAdStatistics() {
+    if (!(await checkAdminRole())) {
+        alert("ليس لديك صلاحية عرض الإحصائيات.");
         return;
     }
 
-    // تحميل أسماء الإعلانات
-    const { data: ads, error: adsError } = await db
-        .from("ad_requests")
-        .select("id,business_name")
-        .in("id", ids);
+    prepareAdminInterface();
 
-    if (adsError) {
-        const errorBox = document.createElement("p");
-        errorBox.className = "status";
-        errorBox.textContent =
-            "تم تحميل الأرقام، لكن تعذر تحميل أسماء الإعلانات: " +
-            adsError.message;
-        box.appendChild(errorBox);
-        return;
-    }
+    const box = $("naseebAdStats");
+    if (!box) return;
 
-    const adsMap = new Map(
-        (ads || []).map(ad => [ad.id, ad.business_name])
-    );
+    box.innerHTML = '<div class="empty">جارٍ تحميل إحصائيات الإعلانات...</div>';
 
-    const heading = document.createElement("h3");
-    heading.textContent = "تفاصيل كل إعلان";
-    heading.style.marginTop = "20px";
-    box.appendChild(heading);
+    try {
+        // 1- تحميل جميع طلبات الإعلانات
+        const { data: ads, error: adsError } = await db
+            .from("ad_requests")
+            .select(`
+                id,
+                business_name,
+                status,
+                payment_status,
+                duration_days,
+                starts_at,
+                expires_at,
+                is_active,
+                created_at
+            `)
+            .order("created_at", { ascending: false });
 
-    for (const id of ids) {
-        const item = stats[id];
+        if (adsError) throw adsError;
 
-        const adCtr = item.impressions > 0
-            ? (item.clicks / item.impressions * 100).toFixed(2)
+        const allAds = ads || [];
+
+        // 2- حساب حالات الطلبات والمدفوعات
+        const total = allAds.length;
+        const pending = allAds.filter(a => a.status === "pending").length;
+        const approved = allAds.filter(a => a.status === "approved").length;
+        const rejected = allAds.filter(a => a.status === "rejected").length;
+        const paid = allAds.filter(a => a.payment_status === "paid").length;
+        const unpaid = allAds.filter(a => a.payment_status === "unpaid").length;
+
+        // 3- تحميل أحداث المشاهدة والنقر
+        let events = [];
+        let offset = 0;
+        const pageSize = 1000;
+
+        while (true) {
+            const { data, error } = await db
+                .from("ad_statistics")
+                .select("ad_id,event_type,created_at")
+                .order("created_at", { ascending: true })
+                .range(offset, offset + pageSize - 1);
+
+            if (error) throw error;
+
+            events = events.concat(data || []);
+
+            if (!data || data.length < pageSize) break;
+            offset += pageSize;
+        }
+
+        // 4- تجميع إحصائيات كل إعلان
+        const stats = {};
+
+        for (const event of events) {
+            if (!stats[event.ad_id]) {
+                stats[event.ad_id] = {
+                    impressions: 0,
+                    clicks: 0
+                };
+            }
+
+            if (event.event_type === "impression") {
+                stats[event.ad_id].impressions++;
+            }
+
+            if (event.event_type === "click") {
+                stats[event.ad_id].clicks++;
+            }
+        }
+
+        const impressions = events.filter(
+            e => e.event_type === "impression"
+        ).length;
+
+        const clicks = events.filter(
+            e => e.event_type === "click"
+        ).length;
+
+        const ctr = impressions
+            ? (clicks / impressions * 100).toFixed(2)
             : "0.00";
 
-        const card = document.createElement("div");
-        card.className = "card";
-        card.style.cssText = "padding:14px;margin:10px 0";
+        // 5- تجهيز الواجهة
+        box.innerHTML = "";
 
-        const title = document.createElement("h3");
-        title.textContent =
-            adsMap.get(id) || "إعلان غير معروف";
+        const makeCard = (label, value) => {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.style.cssText = "padding:12px;margin:5px 0";
 
-        const details = document.createElement("p");
-        details.textContent =
-            "المشاهدات: " + item.impressions +
-            " | النقرات: " + item.clicks +
-            " | معدل النقر: " + adCtr + "%";
+            const title = document.createElement("div");
+            title.className = "muted";
+            title.textContent = label;
 
-        const idText = document.createElement("small");
-        idText.className = "muted";
-        idText.textContent = "رقم الإعلان: " + id;
+            const number = document.createElement("h2");
+            number.style.margin = "8px 0 0";
+            number.textContent = value;
 
-        card.append(title, details, idText);
-        box.appendChild(card);
+            card.append(title, number);
+            return card;
+        };
+
+        const addHeading = (text) => {
+            const heading = document.createElement("h3");
+            heading.textContent = text;
+            heading.style.margin = "20px 0 10px";
+            box.appendChild(heading);
+        };
+
+        // 6- ملخص طلبات الإعلانات
+        addHeading("📋 ملخص طلبات الإعلانات");
+
+        const requestsGrid = document.createElement("div");
+        requestsGrid.className = "grid";
+
+        [
+            ["إجمالي الطلبات", total],
+            ["قيد المراجعة", pending],
+            ["مقبولة", approved],
+            ["مرفوضة", rejected],
+            ["مدفوعة", paid],
+            ["غير مدفوعة", unpaid]
+        ].forEach(([label, value]) => {
+            requestsGrid.appendChild(makeCard(label, String(value)));
+        });
+
+        box.appendChild(requestsGrid);
+
+        // 7- ملخص المشاهدات والنقرات
+        addHeading("📈 أداء الإعلانات");
+
+        const performanceGrid = document.createElement("div");
+        performanceGrid.className = "grid";
+
+        [
+            ["👁️ إجمالي المشاهدات", impressions],
+            ["👆 إجمالي النقرات", clicks],
+            ["📊 معدل النقر CTR", ctr + "%"]
+        ].forEach(([label, value]) => {
+            performanceGrid.appendChild(makeCard(label, String(value)));
+        });
+
+        box.appendChild(performanceGrid);
+
+        // 8- ترجمة الحالات
+        const statusNames = {
+            pending: "قيد المراجعة",
+            approved: "مقبول",
+            rejected: "مرفوض"
+        };
+
+        const paymentNames = {
+            paid: "مدفوع",
+            unpaid: "غير مدفوع"
+        };
+
+        const formatDate = value => {
+            if (!value) return "لم يحدد";
+
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return "غير معروف";
+
+            return date.toLocaleString("ar-EG");
+        };
+
+        const isCurrentlyActive = ad => {
+            if (!ad.is_active || !ad.starts_at || !ad.expires_at) {
+                return false;
+            }
+
+            const now = Date.now();
+
+            return new Date(ad.starts_at).getTime() <= now &&
+                   new Date(ad.expires_at).getTime() > now;
+        };
+
+        // 9- تفاصيل جميع الإعلانات
+        addHeading("📢 تفاصيل طلبات الإعلانات");
+
+        if (!allAds.length) {
+            const empty = document.createElement("div");
+            empty.className = "empty";
+            empty.textContent = "لا توجد طلبات إعلانات.";
+            box.appendChild(empty);
+            return;
+        }
+
+        for (const ad of allAds) {
+            const item = stats[ad.id] || {
+                impressions: 0,
+                clicks: 0
+            };
+
+            const adCtr = item.impressions
+                ? (item.clicks / item.impressions * 100).toFixed(2)
+                : "0.00";
+
+            const card = document.createElement("div");
+            card.className = "card";
+            card.style.cssText = "padding:14px;margin:10px 0";
+
+            const title = document.createElement("h3");
+            title.textContent = ad.business_name || "إعلان بدون اسم";
+
+            const statusText = document.createElement("p");
+            statusText.textContent =
+                "حالة الطلب: " +
+                (statusNames[ad.status] || ad.status || "غير محدد");
+
+            const paymentText = document.createElement("p");
+            paymentText.textContent =
+                "حالة الدفع: " +
+                (paymentNames[ad.payment_status] ||
+                 ad.payment_status ||
+                 "غير محدد");
+
+            const activeText = document.createElement("p");
+            activeText.textContent =
+                "حالة العرض: " +
+                (isCurrentlyActive(ad) ? "يعمل حاليًا" :
+                 ad.is_active ? "غير نشط حاليًا" : "متوقف");
+
+            const durationText = document.createElement("p");
+            durationText.textContent =
+                "مدة الإعلان: " +
+                (ad.duration_days ?? "لم تحدد") + " يوم";
+
+            const startText = document.createElement("p");
+            startText.textContent =
+                "بداية العرض: " + formatDate(ad.starts_at);
+
+            const endText = document.createElement("p");
+            endText.textContent =
+                "نهاية العرض: " + formatDate(ad.expires_at);
+
+            const statsText = document.createElement("p");
+            statsText.textContent =
+                "المشاهدات: " + item.impressions +
+                " | النقرات: " + item.clicks +
+                " | CTR: " + adCtr + "%";
+
+            const createdText = document.createElement("small");
+            createdText.className = "muted";
+            createdText.textContent =
+                "تاريخ الطلب: " + formatDate(ad.created_at);
+
+            card.append(
+                title,
+                statusText,
+                paymentText,
+                activeText,
+                durationText,
+                startText,
+                endText,
+                statsText,
+                createdText
+            );
+
+            box.appendChild(card);
+        }
+
+        const footer = document.createElement("p");
+        footer.className = "muted";
+        footer.textContent =
+            "تم تحديث الإحصائيات من قاعدة البيانات.";
+        box.appendChild(footer);
+
+    } catch (error) {
+        console.error("Ad statistics error:", error);
+
+        box.textContent =
+            "تعذر تحميل إحصائيات الإعلانات: " +
+            (error.message || "خطأ غير معروف");
     }
  }
+ 
  
 /* طلبات المكالمات */
 async function requestCall(matchId,otherId) {
