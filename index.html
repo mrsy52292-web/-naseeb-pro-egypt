@@ -223,9 +223,13 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
       <textarea id="adDescription"
         placeholder="اكتب تفاصيل الإعلان..." required></textarea>
 
-      <label>رابط صورة الإعلان</label>
-      <input id="adImageUrl" type="url"
-        placeholder="رابط الصورة (اختياري)">
+<label>صورة الإعلان من معرض الهاتف</label>
+<input
+  id="adImageFile"
+  type="file"
+  accept="image/jpeg,image/png,image/webp"
+>
+<div id="adImagePreview"></div>
 
       <label>مدة الإعلان</label>
       <select id="adDuration" required>
