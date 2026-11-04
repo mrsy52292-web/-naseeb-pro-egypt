@@ -1390,7 +1390,17 @@ async function loadAdStatistics() {
             const card = document.createElement("div");
             card.className = "card";
             card.style.cssText = "padding:14px;margin:10px 0";
+// عرض صورة الإعلان في لوحة الإدارة
+if (ad.image_url) {
+    const img = document.createElement("img");
+    img.src = ad.image_url;
+    img.alt = "صورة الإعلان";
+    img.loading = "lazy";
+    img.style.cssText =
+        "width:100%;max-height:240px;object-fit:contain;border-radius:12px;margin:10px 0;background:#f5eaf0";
 
+    card.appendChild(img);
+ }
             const details = [
                 ad.business_name || "إعلان بدون اسم",
                 "حالة الطلب: " + (statusNames[ad.status] || ad.status || "غير محدد"),
