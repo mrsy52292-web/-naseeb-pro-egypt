@@ -1214,6 +1214,7 @@ async function loadAdStatistics() {
         const { data: ads, error: adsError } = await db
             .from("ad_requests")
             .select(`
+               payment_status,
                 id,
                 business_name,
                 image_url,
