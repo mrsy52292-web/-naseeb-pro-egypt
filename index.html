@@ -1183,18 +1183,144 @@ async function answerCall(callId,newStatus) {
 
 /* الإعلانات والاشتراكات */
 async function loadAds() {
- const box = $("adsList");
- if (!box) return;
+    const box = $("adsList");
+    if (!box || !currentUser) return;
 
- box.innerHTML = `
-  <div class="card" style="padding:14px">
-   <h3>الإعلانات</h3>
-   <p>يمكنك تجهيز طلب إعلان للتواصل مع إدارة نصيب.</p>
-   <p>لن يتم نشر أي إعلان قبل مراجعته والموافقة عليه.</p>
-   <p class="muted">نظام استقبال ونشر الإعلانات الفعلي يحتاج ربطه بجدول طلبات الإعلانات.</p>
-  </div>
- `;
-}
+    box.innerHTML = '<div class="empty">جارٍ تحميل الإعلانات...</div>';
+
+    const now = new Date().toISOString();
+
+    const { data, error } = await db
+        .from("ad_requests")
+        .select(`
+            id,
+            business_name,
+            ad_description,
+            image_url,
+            starts_at,
+            expires_at
+        `)
+        .eq("status", "approved")
+        .eq("payment_status", "paid")
+        .eq("is_active", true)
+        .lte("starts_at", now)
+        .gt("expires_at", now)
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        box.textContent = "تعذر تحميل الإعلانات: " + error.message;
+        return;
+    }
+
+    box.innerHTML = "";
+
+    if (!data || !data.length) {
+        box.innerHTML = `
+            <div class="empty">
+                📢 لا توجد إعلانات متاحة حاليًا.
+            </div>
+        `;
+        return;
+    }
+
+    for (const ad of data) {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.style.cssText = "padding:14px;margin:12px 0";
+
+        const title = document.createElement("h3");
+        title.textContent = ad.business_name || "إعلان تجاري";
+
+        card.appendChild(title);
+
+        if (ad.image_url) {
+            try {
+                const imageUrl = new URL(ad.image_url);
+
+                if (imageUrl.protocol === "https:" ||
+                    imageUrl.protocol === "http:") {
+                    const img = document.createElement("img");
+                    img.src = imageUrl.href;
+                    img.alt = "صورة الإعلان";
+                    img.loading = "lazy";
+                    img.style.cssText =
+                        "width:100%;max-height:220px;object-fit:cover;border-radius:12px;margin:10px 0";
+                    card.appendChild(img);
+                }
+            } catch (e) {
+                console.warn("رابط صورة الإعلان غير صالح");
+            }
+        }
+
+        const description = document.createElement("p");
+        description.textContent = ad.ad_description || "";
+        card.appendChild(description);
+
+        const button = document.createElement("button");
+        button.className = "btn block";
+        button.textContent = "عرض تفاصيل الإعلان";
+
+        button.onclick = async () => {
+            const { error: trackError } = await db.rpc(
+                "track_ad_event",
+                {
+                    p_ad_id: ad.id,
+                    p_event_type: "click"
+                }
+            );
+
+            if (trackError) {
+                console.error("Ad click tracking:", trackError.message);
+            }
+
+            alert(
+                (ad.business_name || "تفاصيل الإعلان") +
+                "\n\n" +
+                (ad.ad_description || "")
+            );
+        };
+
+        card.appendChild(button);
+        box.appendChild(card);
+
+        // تسجيل المشاهدة مرة واحدة لكل إعلان في تحميل الصفحة
+        if (!trackedAdImpressions.has(ad.id)) {
+            const trackImpression = async () => {
+                if (trackedAdImpressions.has(ad.id)) return;
+
+                trackedAdImpressions.add(ad.id);
+
+                const { error: trackError } = await db.rpc(
+                    "track_ad_event",
+                    {
+                        p_ad_id: ad.id,
+                        p_event_type: "impression"
+                    }
+                );
+
+                if (trackError) {
+                    console.error(
+                        "Ad impression tracking:",
+                        trackError.message
+                    );
+                }
+            };
+
+            if ("IntersectionObserver" in window) {
+                const observer = new IntersectionObserver(entries => {
+                    if (entries.some(entry => entry.isIntersecting)) {
+                        observer.disconnect();
+                        trackImpression();
+                    }
+                }, { threshold: 0.3 });
+
+                observer.observe(card);
+            } else {
+                await trackImpression();
+            }
+        }
+    }
+    }
 
 async function loadPlans() {
  const box = $("plansList");
