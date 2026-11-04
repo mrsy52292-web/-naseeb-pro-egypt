@@ -1113,10 +1113,238 @@ async function permanentlyDeleteFromTrash(trashId) {
  await loadTrash();
 }
 
+
 /* إحصائيات الإعلانات للإدارة */
+async function loadAdStatistics() {
+    if (!(await checkAdminRole())) {
+        alert("ليس لديك صلاحية عرض الإحصائيات.");
+        return;
+    }
 
+    prepareAdminInterface();
 
- 
+    const box = $("naseebAdStats");
+    if (!box) return;
+
+    box.innerHTML = '<div class="empty">جارٍ تحميل الإحصائيات...</div>';
+
+    try {
+        const { data: ads, error: adsError } = await db
+            .from("ad_requests")
+            .select(`
+                id,
+                business_name,
+                status,
+                payment_status,
+                duration_days,
+                starts_at,
+                expires_at,
+                is_active,
+                created_at
+            `)
+            .order("created_at", { ascending: false });
+
+        if (adsError) throw adsError;
+
+        const allAds = ads || [];
+
+        let events = [];
+        let offset = 0;
+        const pageSize = 1000;
+
+        while (true) {
+            const { data, error } = await db
+                .from("ad_statistics")
+                .select("ad_id,event_type,created_at")
+                .order("created_at", { ascending: true })
+                .range(offset, offset + pageSize - 1);
+
+            if (error) throw error;
+
+            events = events.concat(data || []);
+
+            if (!data || data.length < pageSize) break;
+            offset += pageSize;
+        }
+
+        const stats = {};
+
+        for (const event of events) {
+            if (!stats[event.ad_id]) {
+                stats[event.ad_id] = {
+                    impressions: 0,
+                    clicks: 0
+                };
+            }
+
+            if (event.event_type === "impression") {
+                stats[event.ad_id].impressions++;
+            }
+
+            if (event.event_type === "click") {
+                stats[event.ad_id].clicks++;
+            }
+        }
+
+        const impressions = events.filter(
+            e => e.event_type === "impression"
+        ).length;
+
+        const clicks = events.filter(
+            e => e.event_type === "click"
+        ).length;
+
+        const ctr = impressions
+            ? (clicks / impressions * 100).toFixed(2)
+            : "0.00";
+
+        const counts = {
+            total: allAds.length,
+            pending: allAds.filter(a => a.status === "pending").length,
+            approved: allAds.filter(a => a.status === "approved").length,
+            rejected: allAds.filter(a => a.status === "rejected").length,
+            paid: allAds.filter(a => a.payment_status === "paid").length,
+            unpaid: allAds.filter(a => a.payment_status === "unpaid").length
+        };
+
+        box.innerHTML = "";
+
+        function addHeading(text) {
+            const h = document.createElement("h3");
+            h.textContent = text;
+            h.style.margin = "20px 0 10px";
+            box.appendChild(h);
+        }
+
+        function addGrid(items) {
+            const grid = document.createElement("div");
+            grid.className = "grid";
+
+            for (const [label, value] of items) {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.style.cssText = "padding:12px;margin:5px 0";
+
+                const title = document.createElement("div");
+                title.className = "muted";
+                title.textContent = label;
+
+                const number = document.createElement("h2");
+                number.style.margin = "8px 0 0";
+                number.textContent = String(value);
+
+                card.append(title, number);
+                grid.appendChild(card);
+            }
+
+            box.appendChild(grid);
+        }
+
+        addHeading("📋 ملخص طلبات الإعلانات");
+
+        addGrid([
+            ["إجمالي الطلبات", counts.total],
+            ["قيد المراجعة", counts.pending],
+            ["مقبولة", counts.approved],
+            ["مرفوضة", counts.rejected],
+            ["مدفوعة", counts.paid],
+            ["غير مدفوعة", counts.unpaid]
+        ]);
+
+        addHeading("📈 أداء الإعلانات");
+
+        addGrid([
+            ["👁️ المشاهدات", impressions],
+            ["👆 النقرات", clicks],
+            ["📊 معدل النقر CTR", ctr + "%"]
+        ]);
+
+        addHeading("📢 تفاصيل الإعلانات");
+
+        if (!allAds.length) {
+            const empty = document.createElement("div");
+            empty.className = "empty";
+            empty.textContent = "لا توجد طلبات إعلانات.";
+            box.appendChild(empty);
+            return;
+        }
+
+        const statusNames = {
+            pending: "قيد المراجعة",
+            approved: "مقبول",
+            rejected: "مرفوض"
+        };
+
+        const paymentNames = {
+            paid: "مدفوع",
+            unpaid: "غير مدفوع"
+        };
+
+        function formatDate(value) {
+            if (!value) return "لم يحدد";
+            const date = new Date(value);
+            return Number.isNaN(date.getTime())
+                ? "غير معروف"
+                : date.toLocaleString("ar-EG");
+        }
+
+        for (const ad of allAds) {
+            const item = stats[ad.id] || {
+                impressions: 0,
+                clicks: 0
+            };
+
+            const adCtr = item.impressions
+                ? (item.clicks / item.impressions * 100).toFixed(2)
+                : "0.00";
+
+            const active =
+                ad.is_active &&
+                ad.starts_at &&
+                ad.expires_at &&
+                new Date(ad.starts_at).getTime() <= Date.now() &&
+                new Date(ad.expires_at).getTime() > Date.now();
+
+            const card = document.createElement("div");
+            card.className = "card";
+            card.style.cssText = "padding:14px;margin:10px 0";
+
+            const details = [
+                ad.business_name || "إعلان بدون اسم",
+                "حالة الطلب: " + (statusNames[ad.status] || ad.status || "غير محدد"),
+                "حالة الدفع: " + (paymentNames[ad.payment_status] || ad.payment_status || "غير محدد"),
+                "حالة العرض: " + (active ? "يعمل حاليًا" : "غير نشط"),
+                "المدة: " + (ad.duration_days ?? "غير محددة") + " يوم",
+                "بداية العرض: " + formatDate(ad.starts_at),
+                "نهاية العرض: " + formatDate(ad.expires_at),
+                "المشاهدات: " + item.impressions,
+                "النقرات: " + item.clicks,
+                "CTR: " + adCtr + "%",
+                "تاريخ الطلب: " + formatDate(ad.created_at)
+            ];
+
+            details.forEach((value, index) => {
+                const p = document.createElement(index === 0 ? "h3" : "p");
+                p.textContent = value;
+                card.appendChild(p);
+            });
+
+            box.appendChild(card);
+        }
+
+        const footer = document.createElement("p");
+        footer.className = "muted";
+        footer.textContent = "تم تحديث الإحصائيات من قاعدة البيانات.";
+        box.appendChild(footer);
+
+    } catch (error) {
+        console.error("Ad statistics error:", error);
+        box.textContent =
+            "تعذر تحميل الإحصائيات: " +
+            (error.message || "خطأ غير معروف");
+    }
+      }
+  
  
 /* طلبات المكالمات */
 async function requestCall(matchId,otherId) {
