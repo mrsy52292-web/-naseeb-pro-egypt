@@ -164,7 +164,85 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
 </section>
 
 <section id="callsSection" class="section"><div class="card"><h2>المكالمات</h2><div id="callsList"></div></div></section>
-<section id="adsSection" class="section"><div class="card"><h2>الإعلانات</h2><p class="muted">إعلانات مناسبة ومحترمة تخضع للمراجعة قبل النشر.</p><div id="adsList"></div></div></section>
+
+<section id="adsSection" class="section">
+  <div class="card">
+    <h2>📢 إعلانات نصيب</h2>
+    <p class="muted">
+      إعلانات مناسبة ومحترمة تخضع لمراجعة الإدارة قبل النشر.
+    </p>
+    <div id="adsList"></div>
+  </div>
+
+  <div class="card">
+    <h2>📣 اطلب إعلانك معنا</h2>
+    <p class="muted">
+      أرسل بيانات نشاطك وسيتم مراجعة طلبك من الإدارة.
+    </p>
+
+    <form id="adRequestForm">
+      <label>اسم المعلن</label>
+      <input id="adAdvertiserName" type="text"
+        placeholder="الاسم بالكامل" required>
+
+      <label>اسم النشاط التجاري</label>
+      <input id="adBusinessName" type="text"
+        placeholder="اسم الشركة أو النشاط" required>
+
+      <label>الدولة ومفتاح الاتصال</label>
+      <select id="adCountryCode" required>
+        <option value="+20">🇪🇬 مصر (+20)</option>
+        <option value="+966">🇸🇦 السعودية (+966)</option>
+        <option value="+971">🇦🇪 الإمارات (+971)</option>
+        <option value="+965">🇰🇼 الكويت (+965)</option>
+        <option value="+974">🇶🇦 قطر (+974)</option>
+        <option value="+973">🇧🇭 البحرين (+973)</option>
+        <option value="+968">🇴🇲 عُمان (+968)</option>
+        <option value="+962">🇯🇴 الأردن (+962)</option>
+        <option value="+961">🇱🇧 لبنان (+961)</option>
+        <option value="+970">🇵🇸 فلسطين (+970)</option>
+        <option value="+964">🇮🇶 العراق (+964)</option>
+        <option value="+963">🇸🇾 سوريا (+963)</option>
+        <option value="+967">🇾🇪 اليمن (+967)</option>
+        <option value="+249">🇸🇩 السودان (+249)</option>
+        <option value="+218">🇱🇾 ليبيا (+218)</option>
+        <option value="+216">🇹🇳 تونس (+216)</option>
+        <option value="+213">🇩🇿 الجزائر (+213)</option>
+        <option value="+212">🇲🇦 المغرب (+212)</option>
+        <option value="+222">🇲🇷 موريتانيا (+222)</option>
+        <option value="+252">🇸🇴 الصومال (+252)</option>
+        <option value="+253">🇩🇯 جيبوتي (+253)</option>
+        <option value="+269">🇰🇲 جزر القمر (+269)</option>
+      </select>
+
+      <label>رقم الهاتف بدون مفتاح الدولة</label>
+      <input id="adPhone" type="tel"
+        placeholder="مثال: 1012345678" required>
+
+      <label>وصف الإعلان</label>
+      <textarea id="adDescription"
+        placeholder="اكتب تفاصيل الإعلان..." required></textarea>
+
+      <label>رابط صورة الإعلان</label>
+      <input id="adImageUrl" type="url"
+        placeholder="رابط الصورة (اختياري)">
+
+      <label>مدة الإعلان</label>
+      <select id="adDuration" required>
+        <option value="7">أسبوع</option>
+        <option value="15">15 يومًا</option>
+        <option value="30">شهر</option>
+      </select>
+
+      <button type="submit" class="btn">
+        إرسال طلب الإعلان
+      </button>
+
+      <p id="adRequestMessage" class="muted"></p>
+    </form>
+  </div>
+</section>
+ 
 <section id="plansSection" class="section"><div class="card"><h2>العضويات والاشتراكات</h2><div id="plansList"></div></div></section>
 <section id="adminSection" class="section"><div class="card"><h2>لوحة الإدارة</h2><div id="adminStatus" class="status"></div><div id="adminContent"></div></div></section>
 
