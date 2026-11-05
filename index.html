@@ -1373,145 +1373,29 @@ image_url,
             unpaid: "غير مدفوع"
         };
 
-        function formatDate(value) {
-            if (!value) return "لم يحدد";
-            const date = new Date(value);
-            return Number.isNaN(date.getTime())
-                ? "غير معروف"
-                : date.toLocaleString("ar-EG");
-        }
+        details.forEach((value, index) => {
+    const p = document.createElement(index === 0 ? "h3" : "p");
+    p.textContent = value;
+    card.appendChild(p);
+});
 
-        for (const ad of allAds) {
-            const item = stats[ad.id] || {
-                impressions: 0,
-                clicks: 0
-            };
+if (
+    ad.status === "approved" &&
+    ad.payment_status === "unpaid" &&
+    !ad.is_active
+) {
+    const payButton = document.createElement("button");
+    payButton.className = "btn gold block";
+    payButton.textContent = "💰 تسجيل استلام الدفع وتفعيل الإعلان";
 
-            const adCtr = item.impressions
-                ? (item.clicks / item.impressions * 100).toFixed(2)
-                : "0.00";
+    payButton.onclick = () =>
+        activateAdAfterPayment(ad.id, ad.duration_days);
 
-            const active =
-                ad.is_active &&
-                ad.starts_at &&
-                ad.expires_at &&
-                new Date(ad.starts_at).getTime() <= Date.now() &&
-                new Date(ad.expires_at).getTime() > Date.now();
+    card.appendChild(payButton);
+}
 
-            const card = document.createElement("div");
-            card.className = "card";
-            card.style.cssText = "padding:14px;margin:10px 0";
-// عرض صورة الإعلان في لوحة الإدارة
-if (ad.image_url) {
-    const img = document.createElement("img");
-    img.src = ad.image_url;
-    img.alt = "صورة الإعلان";
-    img.loading = "lazy";
-    img.style.cssText =
-        "width:100%;max-height:240px;object-fit:contain;border-radius:12px;margin:10px 0;background:#f5eaf0";
-
-    card.appendChild(img);
- }
-            const details = [
-                ad.business_name || "إعلان بدون اسم",
-                "حالة الطلب: " + (statusNames[ad.status] || ad.status || "غير محدد"),
-                "حالة الدفع: " + (paymentNames[ad.payment_status] || ad.payment_status || "غير محدد"),
-                "حالة العرض: " + (active ? "يعمل حاليًا" : "غير نشط"),
-                "المدة: " + (ad.duration_days ?? "غير محددة") + " يوم",
-                "بداية العرض: " + formatDate(ad.starts_at),
-                "نهاية العرض: " + formatDate(ad.expires_at),
-                "المشاهدات: " + item.impressions,
-                "النقرات: " + item.clicks,
-                "CTR: " + adCtr + "%",
-                "تاريخ الطلب: " + formatDate(ad.created_at)
-            ];
-
-            details.forEach((value, index) => {
-                const p = document.createElement(index === 0 ? "h3" : "p");
-                p.textContent = value;
-                card.appendChild(p);
-            });
-
-            box.appendChild(card);
-        }
-
-        const footer = document.createElement("p");
-        footer.className = "muted";
-        footer.textContent = "تم تحديث الإحصائيات من قاعدة البيانات.";
-        box.appendChild(footer);
-
-    } catch (error) {
-        console.error("Ad statistics error:", error);
-        box.textContent =
-            "تعذر تحميل الإحصائيات: " +
-            (error.message || "خطأ غير معروف");
-    }
-      }
-  
- /* تسجيل الدفع وتفعيل الإعلان */
-async function activateAdAfterPayment(adId, durationDays) {
-    if (!(await checkAdminRole())) {
-        alert("ليس لديك صلاحية.");
-        return;
-    }
-
-    if (!validUUID(adId) || ![7, 15, 30].includes(Number(durationDays))) {
-        alert("بيانات الإعلان غير صحيحة.");
-        return;
-    }
-
-    const amountText = prompt("اكتب المبلغ الذي استلمته بالجنيه المصري:");
-
-    if (amountText === null) return;
-
-    const amount = Number(amountText.trim().replace(",", "."));
-
-    if (!Number.isFinite(amount) || amount <= 0) {
-        alert("اكتب مبلغًا صحيحًا.");
-        return;
-    }
-
-    if (!confirm(
-        "هل تؤكد استلام مبلغ " + amount +
-        " جنيه وتفعيل الإعلان لمدة " + durationDays + " يوم؟"
-    )) return;
-
-    const start = new Date();
-    const end = new Date(
-        start.getTime() + Number(durationDays) * 24 * 60 * 60 * 1000
-    );
-
-    const { data, error } = await db
-        .from("ad_requests")
-        .update({
-            price_egp: amount,
-            payment_status: "paid",
-            starts_at: start.toISOString(),
-            expires_at: end.toISOString(),
-            is_active: true
-        })
-        .eq("id", adId)
-        .eq("status", "approved")
-        .eq("payment_status", "unpaid")
-        .eq("is_active", false)
-        .select("id")
-        .maybeSingle();
-
-    if (error) {
-        alert("تعذر تفعيل الإعلان: " + error.message);
-        return;
-    }
-
-    if (!data) {
-        alert("لم يتم التفعيل. تأكد من حالة الإعلان.");
-        return;
-    }
-
-    alert("تم تسجيل الدفع وتفعيل الإعلان بنجاح ❤️");
-
-    await loadAdStatistics();
-    await loadAds();
- }
+box.appendChild(card);
+        
 /* طلبات المكالمات */
 async function requestCall(matchId,otherId) {
  if (!currentUser) return alert("سجل الدخول أولاً.");
