@@ -1203,7 +1203,214 @@ async function permanentlyDeleteFromTrash(trashId) {
  alert("تم حذف الملف الشخصي وسجل السلة.");
  await loadTrash();
 }
+async function loadAdStatistics() {
+    if (!(await checkAdminRole())) {
+        alert("ليس لديك صلاحية عرض الإحصائيات.");
+        return;
+    }
 
+    prepareAdminInterface();
+
+    const box = $("naseebAdStats");
+    if (!box) return;
+
+    box.innerHTML = '<div class="empty">جارٍ تحميل الإحصائيات...</div>';
+
+    try {
+        const { data: ads, error: adsError } = await db
+            .from("ad_requests")
+            .select(`
+                id,
+                business_name,
+                ad_description,
+                price_egp,
+                image_url,
+                status,
+                payment_status,
+                duration_days,
+                starts_at,
+                expires_at,
+                is_active,
+                created_at
+            `)
+            .order("created_at", { ascending: false });
+
+        if (adsError) throw adsError;
+
+        const allAds = ads || [];
+
+        const { data: events, error: eventsError } = await db
+            .from("ad_statistics")
+            .select("ad_id,event_type");
+
+        if (eventsError) throw eventsError;
+
+        const stats = {};
+
+        for (const event of events || []) {
+            if (!stats[event.ad_id]) {
+                stats[event.ad_id] = {
+                    impressions: 0,
+                    clicks: 0
+                };
+            }
+
+            if (event.event_type === "impression") {
+                stats[event.ad_id].impressions++;
+            }
+
+            if (event.event_type === "click") {
+                stats[event.ad_id].clicks++;
+            }
+        }
+
+        const impressions = (events || []).filter(
+            e => e.event_type === "impression"
+        ).length;
+
+        const clicks = (events || []).filter(
+            e => e.event_type === "click"
+        ).length;
+
+        const ctr = impressions
+            ? (clicks / impressions * 100).toFixed(2)
+            : "0.00";
+
+        const counts = {
+            total: allAds.length,
+            pending: allAds.filter(a => a.status === "pending").length,
+            approved: allAds.filter(a => a.status === "approved").length,
+            rejected: allAds.filter(a => a.status === "rejected").length,
+            paid: allAds.filter(a => a.payment_status === "paid").length,
+            unpaid: allAds.filter(a => a.payment_status === "unpaid").length
+        };
+
+        box.innerHTML = "";
+
+        function addHeading(title) {
+            const h = document.createElement("h3");
+            h.textContent = title;
+            h.style.margin = "20px 0 10px";
+            box.appendChild(h);
+        }
+
+        function addGrid(items) {
+            const grid = document.createElement("div");
+            grid.className = "grid";
+
+            for (const [label, value] of items) {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.style.cssText = "padding:12px;margin:5px 0";
+
+                const title = document.createElement("div");
+                title.className = "muted";
+                title.textContent = label;
+
+                const number = document.createElement("h2");
+                number.style.margin = "8px 0 0";
+                number.textContent = String(value);
+
+                card.append(title, number);
+                grid.appendChild(card);
+            }
+
+            box.appendChild(grid);
+        }
+
+        addHeading("📋 ملخص طلبات الإعلانات");
+
+        addGrid([
+            ["إجمالي الطلبات", counts.total],
+            ["قيد المراجعة", counts.pending],
+            ["مقبولة", counts.approved],
+            ["مرفوضة", counts.rejected],
+            ["مدفوعة", counts.paid],
+            ["غير مدفوعة", counts.unpaid]
+        ]);
+
+        addHeading("📈 أداء الإعلانات");
+
+        addGrid([
+            ["👁️ المشاهدات", impressions],
+            ["👆 النقرات", clicks],
+            ["📊 معدل النقر CTR", ctr + "%"]
+        ]);
+
+        addHeading("📢 تفاصيل الإعلانات");
+
+        if (!allAds.length) {
+            box.insertAdjacentHTML(
+                "beforeend",
+                '<div class="empty">لا توجد طلبات إعلانات.</div>'
+            );
+            return;
+        }
+
+        const statusNames = {
+            pending: "قيد المراجعة",
+            approved: "مقبول",
+            rejected: "مرفوض"
+        };
+
+        const paymentNames = {
+            paid: "مدفوع",
+            unpaid: "غير مدفوع"
+        };
+
+        for (const ad of allAds) {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.style.cssText = "padding:14px;margin:12px 0";
+
+            if (ad.image_url) {
+                const img = document.createElement("img");
+                img.src = ad.image_url;
+                img.alt = "صورة الإعلان";
+                img.style.cssText =
+                    "width:100%;max-height:200px;object-fit:cover;border-radius:12px";
+                card.appendChild(img);
+            }
+
+            const details = [
+                ad.business_name || "إعلان بدون اسم",
+                "الوصف: " + (ad.ad_description || "لا يوجد"),
+                "حالة الطلب: " + (statusNames[ad.status] || ad.status),
+                "حالة الدفع: " + (paymentNames[ad.payment_status] || ad.payment_status),
+                "السعر: " + (ad.price_egp ?? "لم يُحدد") + " جنيه",
+                "المدة: " + (ad.duration_days || "غير محددة") + " يومًا",
+                "المشاهدات: " + (stats[ad.id]?.impressions || 0),
+                "النقرات: " + (stats[ad.id]?.clicks || 0),
+                "حالة التفعيل: " + (ad.is_active ? "مفعل" : "غير مفعل")
+            ];
+
+            details.forEach((value, index) => {
+                const p = document.createElement(index === 0 ? "h3" : "p");
+                p.textContent = value;
+                card.appendChild(p);
+            });
+
+            if (
+                ad.status === "approved" &&
+                ad.payment_status === "unpaid" &&
+                !ad.is_active
+            ) {
+                const payButton = document.createElement("button");
+                payButton.className = "btn gold block";
+                payButton.textContent = "💰 تسجيل استلام الدفع وتفعيل الإعلان";
+                payButton.onclick = () => activateAdAfterPayment(ad.id);
+                card.appendChild(payButton);
+            }
+
+            box.appendChild(card);
+        }
+
+    } catch (error) {
+        console.error("Ad statistics error:", error);
+        box.textContent =
+            "تعذر تحميل الإحصائيات: " + error.message;
+    }
+ }
 
 /* إحصائيات الإعلانات للإدارة */
 
