@@ -273,7 +273,9 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
 const SUPABASE_URL = "https://gdavyferkvekaprdgcft.supabase.co";
 const SUPABASE_KEY = "sb_publishable_QJnnLMv9pltgpeKQgmPGuw_c4CAyG7K";
 const PHOTO_BUCKET = "member-photos";
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const db = window.supabase
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+  : null;
 
 let currentUser = null;
 let myProfile = null;
