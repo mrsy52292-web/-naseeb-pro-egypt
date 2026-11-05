@@ -1105,10 +1105,14 @@ async function loadTrash() {
 
  for (const item of data) {
   const profile = item.profile_data || {};
-  const date = item.deleted_at ? new Date(item.deleted_at).toLocaleString("ar-EG") : "";
+  const date = item.deleted_at
+   ? new Date(item.deleted_at).toLocaleString("ar-EG")
+   : "";
+
   const card = document.createElement("div");
   card.className = "card";
   card.style.cssText = "padding:12px;margin:8px 0";
+
   card.innerHTML = `
    <strong>${escapeHTML(profile.display_name || "عضو بدون اسم")}</strong>
    <p class="muted">${escapeHTML(profile.city || "")}</p>
@@ -1119,23 +1123,14 @@ async function loadTrash() {
     <button class="btn danger" type="button" onclick="permanentlyDeleteFromTrash('${item.id}')">حذف نهائي</button>
    </div>
   `;
-  if (
-    ad.status === "approved" &&
-    ad.payment_status === "unpaid" &&
-    !ad.is_active
-) {
-    const payButton = document.createElement("button");
-    payButton.className = "btn gold block";
-    payButton.textContent = "💰 تسجيل استلام الدفع وتفعيل الإعلان";
 
-    payButton.onclick = () =>
-        activateAdAfterPayment(ad.id, ad.duration_days);
-
-    card.appendChild(payButton);
-   }
   box.appendChild(card);
  }
-}
+        }
+
+
+ 
+
 
 /* استعادة ملف من السلة */
 async function restoreFromTrash(trashId) {
