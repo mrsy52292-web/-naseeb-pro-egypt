@@ -1123,7 +1123,21 @@ async function loadTrash() {
     <button class="btn danger" type="button" onclick="permanentlyDeleteFromTrash('${item.id}')">حذف نهائي</button>
    </div>
   `;
+if (
+    ad.status === "approved" &&
+    ad.payment_status === "unpaid" &&
+    !ad.is_active
+) {
+    const payButton = document.createElement("button");
+    payButton.className = "btn gold block";
+    payButton.textContent = "💰 تسجيل استلام الدفع وتفعيل الإعلان";
 
+    payButton.onclick = () =>
+        activateAdAfterPayment(ad.id, ad.duration_days);
+
+    card.appendChild(payButton);
+  }
+  
   box.appendChild(card);
  }
         }
