@@ -1452,7 +1452,70 @@ if (ad.image_url) {
     }
       }
   
- 
+ /* تسجيل الدفع وتفعيل الإعلان */
+async function activateAdAfterPayment(adId, durationDays) {
+    if (!(await checkAdminRole())) {
+        alert("ليس لديك صلاحية.");
+        return;
+    }
+
+    if (!validUUID(adId) || ![7, 15, 30].includes(Number(durationDays))) {
+        alert("بيانات الإعلان غير صحيحة.");
+        return;
+    }
+
+    const amountText = prompt("اكتب المبلغ الذي استلمته بالجنيه المصري:");
+
+    if (amountText === null) return;
+
+    const amount = Number(amountText.trim().replace(",", "."));
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+        alert("اكتب مبلغًا صحيحًا.");
+        return;
+    }
+
+    if (!confirm(
+        "هل تؤكد استلام مبلغ " + amount +
+        " جنيه وتفعيل الإعلان لمدة " + durationDays + " يوم؟"
+    )) return;
+
+    const start = new Date();
+    const end = new Date(
+        start.getTime() + Number(durationDays) * 24 * 60 * 60 * 1000
+    );
+
+    const { data, error } = await db
+        .from("ad_requests")
+        .update({
+            price_egp: amount,
+            payment_status: "paid",
+            starts_at: start.toISOString(),
+            expires_at: end.toISOString(),
+            is_active: true
+        })
+        .eq("id", adId)
+        .eq("status", "approved")
+        .eq("payment_status", "unpaid")
+        .eq("is_active", false)
+        .select("id")
+        .maybeSingle();
+
+    if (error) {
+        alert("تعذر تفعيل الإعلان: " + error.message);
+        return;
+    }
+
+    if (!data) {
+        alert("لم يتم التفعيل. تأكد من حالة الإعلان.");
+        return;
+    }
+
+    alert("تم تسجيل الدفع وتفعيل الإعلان بنجاح ❤️");
+
+    await loadAdStatistics();
+    await loadAds();
+ }
 /* طلبات المكالمات */
 async function requestCall(matchId,otherId) {
  if (!currentUser) return alert("سجل الدخول أولاً.");
