@@ -1680,10 +1680,10 @@ async function loadAds() {
         .select(`
             id,
             business_name,
-            ad_description,
-            image_url,
-            starts_at,
-            expires_at
+price_egp,
+image_url,
+status,
+duration_days,
         `)
         .eq("status", "approved")
         .eq("payment_status", "paid")
