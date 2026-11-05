@@ -1223,13 +1223,17 @@ async function loadAdStatistics() {
     id,
     business_name,
     ad_description,
-    image_url
+    price_egp,
+    image_url,
+    status,
+    payment_status,
+    duration_days,
+    starts_at,
+    expires_at,
+    is_active,
+    created_at
 `)
-                starts_at,
-                expires_at,
-                is_active,
-                created_at
-            `)
+.order("created_at", { ascending: false });
             .order("created_at", { ascending: false });
 
         if (adsError) throw adsError;
