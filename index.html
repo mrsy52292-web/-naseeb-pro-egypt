@@ -1224,9 +1224,10 @@ async function loadAdStatistics() {
             .from("ad_requests")
             .select(`
                payment_status,
-                id,
-                business_name,
-                image_url,
+id,
+business_name,
+price_egp,
+image_url,
                 status,
                 duration_days,
                 starts_at,
