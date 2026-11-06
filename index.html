@@ -1396,7 +1396,56 @@ async function loadAdStatistics() {
                 p.textContent = value;
                 card.appendChild(p);
             });
+const methodNames = {
+    vodafone_cash: "فودافون كاش",
+    instapay: "إنستاباي"
+};
 
+const reviewNames = {
+    pending: "قيد المراجعة",
+    approved: "تمت المراجعة",
+    rejected: "مرفوض"
+};
+
+const paymentInfo = [
+    "وسيلة الدفع: " + (methodNames[ad.payment_method] || "غير محددة"),
+    "مرجع التحويل: " + (ad.payment_reference || "لم يُذكر"),
+    "حالة مراجعة الإيصال: " + (reviewNames[ad.payment_review_status] || ad.payment_review_status || "غير محددة"),
+    "تاريخ تقديم الإيصال: " + (
+        ad.payment_submitted_at
+            ? new Date(ad.payment_submitted_at).toLocaleString("ar-EG")
+            : "غير مسجل"
+    )
+];
+
+paymentInfo.forEach(value => {
+    const p = document.createElement("p");
+    p.textContent = value;
+    card.appendChild(p);
+});
+
+if (ad.payment_receipt_path) {
+    const { data: receiptData, error: receiptError } = await db.storage
+        .from("ad-payment-receipts")
+        .createSignedUrl(ad.payment_receipt_path, 3600);
+
+    const receiptLink = document.createElement("a");
+    receiptLink.target = "_blank";
+    receiptLink.rel = "noopener noreferrer";
+    receiptLink.textContent = receiptError
+        ? "تعذر فتح إيصال التحويل"
+        : "📄 فتح صورة إيصال التحويل";
+
+    if (!receiptError && receiptData?.signedUrl) {
+        receiptLink.href = receiptData.signedUrl;
+    }
+
+    card.appendChild(receiptLink);
+} else {
+    const p = document.createElement("p");
+    p.textContent = "لم يتم إرفاق إيصال تحويل.";
+    card.appendChild(p);
+ }
             if (
                 ad.status === "approved" &&
                 ad.payment_status === "unpaid" &&
