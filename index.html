@@ -1599,132 +1599,15 @@ async function answerCall(callId,newStatus) {
 /* الإعلانات والاشتراكات */
  // نظام إرسال طلبات الإعلانات ورفع الصور
 function setupAdRequestForm() {
-  const form = $("adRequestForm");
-  if (!form || form.dataset.bound === "true") return;
+  
 
-  form.dataset.bound = "true";
+    
 
-  form.addEventListener("submit", async function (e) {
-    e.preventDefault();
+      
 
-    const message = $("adRequestMessage");
-    const submitButton = form.querySelector('button[type="submit"]');
-
-    if (!currentUser) {
-      message.textContent = "من فضلك سجل الدخول أولًا.";
-      return;
-    }
-
-    const advertiserName = $("adAdvertiserName").value.trim();
-    const businessName = $("adBusinessName").value.trim();
-    const countryCode = $("adCountryCode").value;
-    const phone = $("adPhone").value.trim();
-    const description = $("adDescription").value.trim();
-    const duration = Number($("adDuration").value);
-    const imageFile = $("adImageFile").files[0];
-
-    if (!advertiserName || !businessName || !phone || !description) {
-      message.textContent = "من فضلك أكمل البيانات المطلوبة.";
-      return;
-    }
-
-    if (!/^[0-9+\s()-]{6,20}$/.test(phone)) {
-      message.textContent = "رقم الهاتف غير صحيح.";
-      return;
-    }
-
-    if (![7, 15, 30].includes(duration)) {
-      message.textContent = "مدة الإعلان غير صحيحة.";
-      return;
-    }
-
-    if (imageFile) {
-      const allowedTypes = [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ];
-
-      if (!allowedTypes.includes(imageFile.type)) {
-        message.textContent = "اختر صورة JPG أو PNG أو WebP.";
-        return;
-      }
-
-      if (imageFile.size > 5 * 1024 * 1024) {
-        message.textContent = "حجم الصورة يجب ألا يتجاوز 5 ميجابايت.";
-        return;
-      }
-    }
-
-    submitButton.disabled = true;
-    message.textContent = "جاري إرسال طلب الإعلان...";
-
-    let imageUrl = null;
-
-    try {
-      // رفع صورة الإعلان إن وُجدت
-      if (imageFile) {
-        const extensions = {
-          "image/jpeg": "jpg",
-          "image/png": "png",
-          "image/webp": "webp"
-        };
-
-        const extension = extensions[imageFile.type];
-        const imagePath =
-          currentUser.id + "/" + crypto.randomUUID() + "." + extension;
-
-        const { error: uploadError } = await db.storage
-          .from("ad-photos")
-          .upload(imagePath, imageFile, {
-            contentType: imageFile.type,
-            upsert: false
-          });
-
-        if (uploadError) throw uploadError;
-
-        const { data: publicData } = db.storage
-          .from("ad-photos")
-          .getPublicUrl(imagePath);
-
-        imageUrl = publicData.publicUrl;
-      }
-
-      // حفظ طلب الإعلان في قاعدة البيانات
-      const { error: insertError } = await db
-        .from("ad_requests")
-        .insert({
-          advertiser_id: currentUser.id,
-          advertiser_name: advertiserName,
-          business_name: businessName,
-          contact_info: countryCode + " " + phone,
-          ad_description: description,
-          image_url: imageUrl,
-          duration_days: duration,
-          status: "pending",
-          payment_status: "unpaid",
-          is_active: false
-        });
-
-      if (insertError) throw insertError;
-
-      message.textContent =
-        "تم إرسال طلبك بنجاح ❤️ الإعلان الآن قيد مراجعة الإدارة.";
-
-      form.reset();
-
-      const preview = $("adImagePreview");
-      if (preview) preview.innerHTML = "";
-
-    } catch (error) {
-      console.error("Ad request error:", error);
-      message.textContent =
-        "تعذر إرسال الطلب: " + (error.message || "حدث خطأ، حاول مرة أخرى.");
-    } finally {
-      submitButton.disabled = false;
-    }
-  });
-}
+    
+        
+      
 
 setupAdRequestForm();
 
