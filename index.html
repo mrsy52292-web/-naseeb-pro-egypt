@@ -1612,98 +1612,13 @@ async function reviewAdRequest(adId, decision) {
  }
         
 /* تسجيل استلام الدفع وتفعيل الإعلان بعد اعتماد الإيصال */
-async function activateAdAfterPayment(adId) {
-    if (!(await checkAdminRole())) {
-        alert("ليس لديك صلاحية تفعيل الإعلانات.");
-        return;
-    }
-
-    if (!validUUID(adId)) {
-        alert("رقم الإعلان غير صحيح.");
-        return;
-    }
-
-    if (!confirm(
-        "هل تحققت من وصول المبلغ فعلًا؟\n\n" +
-        "سيتم تسجيل الدفع وتفعيل الإعلان وبدء مدة عرضه الآن."
-    )) {
-        return;
-    }
-
-    try {
-        const { data: ad, error: readError } = await db
-            .from("ad_requests")
-            .select("id,status,payment_status,payment_review_status,duration_days,is_active")
-            .eq("id", adId)
-            .maybeSingle();
-
-        if (readError) throw readError;
-        if (!ad) throw new Error("الإعلان غير موجود.");
-
-        if (ad.status !== "approved") {
-            throw new Error("يجب الموافقة على الإعلان أولًا.");
-        }
-
-        if (ad.payment_review_status !== "approved") {
-            throw new Error("يجب اعتماد إيصال التحويل أولًا.");
-        }
-
-        if (ad.payment_status !== "unpaid" || ad.is_active) {
-            throw new Error("الإعلان مدفوع بالفعل أو مفعّل.");
-        }
-
-        const duration = Number(ad.duration_days);
-
-        if (![7, 15, 30].includes(duration)) {
-            throw new Error("مدة الإعلان المسجلة غير صحيحة.");
-        }
-
-        const startsAt = new Date();
-        const expiresAt = new Date(
-            startsAt.getTime() + duration * 24 * 60 * 60 * 1000
-        );
-
-        const { data, error: updateError } = await db
-            .from("ad_requests")
-            .update({
-                payment_status: "paid",
-                is_active: true,
-                starts_at: startsAt.toISOString(),
-                expires_at: expiresAt.toISOString()
-            })
-            .eq("id", adId)
-            .eq("status", "approved")
-            .eq("payment_status", "unpaid")
-            .eq("payment_review_status", "approved")
-            .eq("is_active", false)
-            .select("id")
-            .maybeSingle();
-
-        if (updateError) throw updateError;
-        if (!data) {
-            throw new Error("لم يتم التفعيل. راجع حالة الإعلان وصلاحيات التحديث.");
-        }
-
-        alert("تم تسجيل استلام الدفع وتفعيل الإعلان لمدة " + duration + " يومًا.");
-
-        await loadAdStatistics();
-
-    } catch (error) {
-        console.error("Ad activation error:", error);
-        alert("تعذر تفعيل الإعلان: " + error.message);
-    }
-              }            
-        
-        
-                        
-            
-
- 
-            
-
 
 
     
+        
+        
+
+        
     
     
         
