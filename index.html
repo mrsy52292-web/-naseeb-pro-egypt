@@ -2264,7 +2264,9 @@ $("adPaymentMethod").addEventListener(
     }
   });
 }
-const { data: paymentSetting, error: paymentSettingError } = await db
+
+setupAdRequestForm();
+  const { data: paymentSetting, error: paymentSettingError } = await db
     .from("payment_settings")
     .select("account_number,is_active")
     .eq("method", paymentMethod)
@@ -2274,9 +2276,7 @@ if (paymentSettingError || !paymentSetting ||
     !paymentSetting.is_active || !paymentSetting.account_number?.trim()) {
     message.textContent = "وسيلة الدفع غير متاحة حاليًا. اختر وسيلة أخرى أو تواصل مع الإدارة.";
     return;
- }
-setupAdRequestForm();
-      
+}    
 
 async function loadAds() {
     const box = $("adsList");
