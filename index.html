@@ -1491,11 +1491,11 @@ if (ad.payment_receipt_path) {
     card.appendChild(reviewActions);
      }
             if (
-            
-                ad.status === "approved" &&
-                ad.payment_status === "unpaid" &&
-                !ad.is_active
-            ) {
+    ad.status === "approved" &&
+    ad.payment_status === "unpaid" &&
+    ad.payment_review_status === "approved" &&
+    !ad.is_active
+)
                 const payButton = document.createElement("button");
                 payButton.className = "btn gold block";
                 payButton.textContent = "💰 تسجيل استلام الدفع وتفعيل الإعلان";
