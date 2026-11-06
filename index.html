@@ -1598,18 +1598,264 @@ async function answerCall(callId,newStatus) {
 
 /* الإعلانات والاشتراكات */
  // نظام إرسال طلبات الإعلانات ورفع الصور
+
 function setupAdRequestForm() {
-  
+  const form = $("adRequestForm");
+  if (!form || form.dataset.bound === "true") return;
 
-    
+  form.dataset.bound = "true";
 
-      
+  // إضافة حقول الدفع والإيصال تلقائيًا
+  const submitButton = form.querySelector('button[type="submit"]');
 
-    
-        
-      
+  const paymentFields = document.createElement("div");
+  paymentFields.id = "adPaymentFields";
+
+  paymentFields.innerHTML = `
+    <hr style="margin:20px 0;border:0;border-top:1px solid #f0e3eb">
+
+    <h3 style="color:#741c45">💳 بيانات الدفع</h3>
+
+    <label>اختر وسيلة الدفع</label>
+    <select id="adPaymentMethod" required
+      style="width:100%;padding:12px;border:1px solid #f0e3eb;border-radius:12px;margin:8px 0 14px">
+      <option value="">اختر وسيلة الدفع</option>
+      <option value="vodafone_cash">فودافون كاش</option>
+      <option value="instapay">إنستاباي</option>
+    </select>
+
+    <div class="notice">
+      بعد التحويل إلى وسيلة الدفع الرسمية المعلنة من إدارة نصيب،
+      ارفع صورة إيصال التحويل للمراجعة.
+      لا تعتمد على أي بيانات دفع غير معلنة رسميًا داخل الموقع.
+    </div>
+
+    <label>رقم مرجع التحويل (اختياري)</label>
+    <input id="adPaymentReference" type="text"
+      maxlength="100"
+      placeholder="رقم العملية أو المرجع"
+      style="width:100%;padding:12px;border:1px solid #f0e3eb;border-radius:12px;margin:8px 0 14px">
+
+    <label>صورة إيصال التحويل (مطلوبة)</label>
+    <input id="adPaymentReceipt" type="file"
+      accept="image/jpeg,image/png,image/webp"
+      required
+      style="width:100%;padding:10px;margin:8px 0">
+
+    <div id="adReceiptPreview"></div>
+  `;
+
+  form.insertBefore(paymentFields, submitButton);
+
+  // معاينة الإيصال
+  $("adPaymentReceipt").addEventListener("change", function () {
+    const file = this.files?.[0];
+    const preview = $("adReceiptPreview");
+    preview.innerHTML = "";
+
+    if (!file) return;
+
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      alert("اختار إيصالًا بصيغة JPG أو PNG أو WebP.");
+      this.value = "";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("حجم الإيصال يجب ألا يتجاوز 5 ميجابايت.");
+      this.value = "";
+      return;
+    }
+
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(file);
+    img.style.cssText =
+      "width:100%;max-height:220px;object-fit:contain;border-radius:12px;margin:10px 0";
+    img.alt = "معاينة إيصال التحويل";
+
+    preview.appendChild(img);
+  });
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const message = $("adRequestMessage");
+    const button = form.querySelector('button[type="submit"]');
+
+    if (!currentUser) {
+      message.textContent = "من فضلك سجل الدخول أولًا.";
+      return;
+    }
+
+    if (!db) {
+      message.textContent = "تعذر الاتصال بالخدمة. أعد تحميل الصفحة.";
+      return;
+    }
+
+    const advertiserName = $("adAdvertiserName").value.trim();
+    const businessName = $("adBusinessName").value.trim();
+    const countryCode = $("adCountryCode").value;
+    const phone = $("adPhone").value.trim();
+    const description = $("adDescription").value.trim();
+    const duration = Number($("adDuration").value);
+
+    const paymentMethod = $("adPaymentMethod").value;
+    const paymentReference = $("adPaymentReference").value.trim();
+    const receiptFile = $("adPaymentReceipt").files?.[0];
+    const imageFile = $("adImageFile").files?.[0];
+
+    if (!advertiserName || !businessName || !phone || !description) {
+      message.textContent = "من فضلك أكمل بيانات الإعلان.";
+      return;
+    }
+
+    if (!/^[0-9+\s()-]{6,20}$/.test(phone)) {
+      message.textContent = "رقم الهاتف غير صحيح.";
+      return;
+    }
+
+    if (![7, 15, 30].includes(duration)) {
+      message.textContent = "مدة الإعلان غير صحيحة.";
+      return;
+    }
+
+    if (!["vodafone_cash", "instapay"].includes(paymentMethod)) {
+      message.textContent = "اختر وسيلة الدفع.";
+      return;
+    }
+
+    if (!receiptFile) {
+      message.textContent = "ارفع صورة إيصال التحويل أولًا.";
+      return;
+    }
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+
+    if (!allowedTypes.includes(receiptFile.type)) {
+      message.textContent = "صيغة الإيصال غير مدعومة.";
+      return;
+    }
+
+    if (receiptFile.size > 5 * 1024 * 1024) {
+      message.textContent = "حجم الإيصال يجب ألا يتجاوز 5 ميجابايت.";
+      return;
+    }
+
+    if (imageFile &&
+        (!allowedTypes.includes(imageFile.type) ||
+         imageFile.size > 5 * 1024 * 1024)) {
+      message.textContent = "صورة الإعلان يجب أن تكون JPG أو PNG أو WebP وبحجم لا يتجاوز 5 ميجابايت.";
+      return;
+    }
+
+    button.disabled = true;
+    message.textContent = "جارٍ رفع الإيصال وإرسال طلب الإعلان...";
+
+    let receiptPath = null;
+    let imagePath = null;
+
+    try {
+      const extensions = {
+        "image/jpeg": "jpg",
+        "image/png": "png",
+        "image/webp": "webp"
+      };
+
+      // رفع إيصال الدفع إلى المساحة الخاصة
+      const receiptExtension = extensions[receiptFile.type];
+      receiptPath =
+        currentUser.id + "/" + crypto.randomUUID() + "." + receiptExtension;
+
+      const { error: receiptError } = await db.storage
+        .from("ad-payment-receipts")
+        .upload(receiptPath, receiptFile, {
+          contentType: receiptFile.type,
+          upsert: false
+        });
+
+      if (receiptError) throw receiptError;
+
+      // رفع صورة الإعلان إلى مساحتها المعتادة
+      let imageUrl = null;
+
+      if (imageFile) {
+        imagePath =
+          currentUser.id + "/" + crypto.randomUUID() + "." +
+          extensions[imageFile.type];
+
+        const { error: imageError } = await db.storage
+          .from("ad-photos")
+          .upload(imagePath, imageFile, {
+            contentType: imageFile.type,
+            upsert: false
+          });
+
+        if (imageError) throw imageError;
+
+        const { data: publicData } = db.storage
+          .from("ad-photos")
+          .getPublicUrl(imagePath);
+
+        imageUrl = publicData.publicUrl;
+      }
+
+      // حفظ الطلب وربطه ببيانات الدفع والإيصال
+      const { error: insertError } = await db
+        .from("ad_requests")
+        .insert({
+          advertiser_id: currentUser.id,
+          advertiser_name: advertiserName,
+          business_name: businessName,
+          contact_info: countryCode + " " + phone,
+          ad_description: description,
+          image_url: imageUrl,
+          duration_days: duration,
+
+          status: "pending",
+          payment_status: "unpaid",
+          is_active: false,
+
+          payment_method: paymentMethod,
+          payment_reference: paymentReference || null,
+          payment_receipt_path: receiptPath,
+          payment_submitted_at: new Date().toISOString(),
+          payment_review_status: "pending"
+        });
+
+      if (insertError) throw insertError;
+
+      message.textContent =
+        "تم إرسال طلب الإعلان وإيصال التحويل بنجاح ❤️ الطلب الآن في انتظار مراجعة الإدارة والتحقق من الدفع.";
+
+      form.reset();
+
+      $("adImagePreview").innerHTML = "";
+      $("adReceiptPreview").innerHTML = "";
+
+    } catch (error) {
+      console.error("Ad payment submission error:", error);
+
+      // تنظيف الملفات المرفوعة إذا فشل حفظ الطلب
+      if (receiptPath) {
+        await db.storage.from("ad-payment-receipts")
+          .remove([receiptPath]);
+      }
+
+      if (imagePath) {
+        await db.storage.from("ad-photos")
+          .remove([imagePath]);
+      }
+
+      message.textContent =
+        "تعذر إرسال الطلب: " + (error.message || "حدث خطأ غير معروف.");
+    } finally {
+      button.disabled = false;
+    }
+  });
+}
 
 setupAdRequestForm();
+      
 
 async function loadAds() {
     const box = $("adsList");
