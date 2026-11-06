@@ -1470,7 +1470,53 @@ if (ad.payment_receipt_path) {
 
 /* إحصائيات الإعلانات للإدارة */
 
-            
+/* اعتماد أو رفض إيصال الدفع */
+async function reviewAdPaymentReceipt(adId, decision) {
+    if (!(await checkAdminRole())) {
+        alert("ليس لديك صلاحية مراجعة الإيصالات.");
+        return;
+    }
+
+    if (!validUUID(adId) || !["approved", "rejected"].includes(decision)) {
+        alert("بيانات المراجعة غير صحيحة.");
+        return;
+    }
+
+    const message = decision === "approved"
+        ? "هل تحققت من وصول المبلغ فعلًا؟ سيتم اعتماد الإيصال."
+        : "هل تريد رفض إيصال التحويل؟";
+
+    if (!confirm(message)) return;
+
+    try {
+        const { data, error } = await db
+            .from("ad_requests")
+            .update({
+                payment_review_status: decision,
+                payment_reviewed_at: new Date().toISOString(),
+                payment_reviewed_by: currentUser.id
+            })
+            .eq("id", adId)
+            .eq("payment_review_status", "pending")
+            .select("id")
+            .maybeSingle();
+
+        if (error) throw error;
+        if (!data) {
+            throw new Error("لم يتم تحديث الإيصال. ربما تمت مراجعته بالفعل أو لا توجد صلاحية تحديث.");
+        }
+
+        alert(decision === "approved"
+            ? "تم اعتماد الإيصال."
+            : "تم رفض الإيصال.");
+
+        await loadAdStatistics();
+
+    } catch (error) {
+        console.error("Receipt review error:", error);
+        alert("تعذرت مراجعة الإيصال: " + error.message);
+    }
+ }            
 
         
             
