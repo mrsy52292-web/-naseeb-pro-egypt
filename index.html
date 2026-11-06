@@ -875,15 +875,25 @@ async function sendMessage() {
 }
 
 /* إصلاح تشغيل الجلسة: لا نضع عمليات Supabase داخل callback مباشرة */
-db.auth.onAuthStateChange((event,session) => {
- if (event==="SIGNED_IN" && session) {
-  setTimeout(() => startApp(),0);
- } else if (event==="SIGNED_OUT") {
-  currentUser = null;
-  myProfile = null;
-  isAdmin = false;
-  location.reload();
- }
+if (db) {
+    db.auth.onAuthStateChange((event, session) => {
+        if (event === "SIGNED_IN" && session) {
+            setTimeout(() => startApp(), 0);
+        } else if (event === "SIGNED_OUT") {
+            currentUser = null;
+            myProfile = null;
+            isAdmin = false;
+            location.reload();
+        }
+    });
+} else {
+    console.error("Supabase لم يتم تحميلها.");
+    status(
+        "authStatus",
+        "تعذر تحميل خدمة تسجيل الدخول. تأكد من اتصال الإنترنت ثم أعد تحميل الصفحة.",
+        true
+    );
+                           }
 });/* التحقق من صلاحية الإدارة */
 async function checkAdminRole() {
  const adminNav = $("adminNav");
