@@ -1423,7 +1423,28 @@ paymentInfo.forEach(value => {
     p.textContent = value;
     card.appendChild(p);
 });
+// مراجعة طلب الإعلان نفسه
+if (ad.status === "pending") {
+    const adActions = document.createElement("div");
+    adActions.className = "actions";
+    adActions.style.marginTop = "12px";
 
+    const approveAdButton = document.createElement("button");
+    approveAdButton.className = "btn";
+    approveAdButton.textContent = "✅ الموافقة على الإعلان";
+    approveAdButton.onclick = () =>
+        reviewAdRequest(ad.id, "approved");
+
+    const rejectAdButton = document.createElement("button");
+    rejectAdButton.className = "btn danger";
+    rejectAdButton.textContent = "❌ رفض الإعلان";
+    rejectAdButton.onclick = () =>
+        reviewAdRequest(ad.id, "rejected");
+
+    adActions.append(approveAdButton, rejectAdButton);
+    card.appendChild(adActions);
+             }
+         
 if (ad.payment_receipt_path) {
     const { data: receiptData, error: receiptError } = await db.storage
         .from("ad-payment-receipts")
