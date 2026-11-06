@@ -329,12 +329,37 @@ function showSection(id, button) {
 async function login() {
  const email = $("authEmail").value.trim();
  const password = $("authPassword").value;
- if (!email || !password) return status("authStatus","اكتب البريد الإلكتروني وكلمة المرور.",true);
+
+ if (!email || !password) {
+  return status("authStatus","اكتب البريد الإلكتروني وكلمة المرور.",true);
+ }
+
+ if (!db) {
+  return status("authStatus","خدمة تسجيل الدخول لم يتم تحميلها. أعد تحميل الصفحة.",true);
+ }
 
  status("authStatus","جارٍ تسجيل الدخول...");
- const {error} = await db.auth.signInWithPassword({email,password});
- if (error) return status("authStatus",error.message,true);
- await startApp();
+
+ try {
+  const {data,error} = await db.auth.signInWithPassword({
+   email,
+   password
+  });
+
+  if (error) {
+   return status("authStatus","تعذر تسجيل الدخول: "+error.message,true);
+  }
+
+  if (data.session) {
+   await startApp();
+  } else {
+   status("authStatus","تم الاتصال، لكن لم يتم إنشاء جلسة دخول.",true);
+  }
+
+ } catch (error) {
+  console.error("Login error:",error);
+  status("authStatus","حدث خطأ أثناء تسجيل الدخول: "+error.message,true);
+ }
 }
 
 async function signup() {
