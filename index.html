@@ -1539,9 +1539,10 @@ if (ad.payment_receipt_path) {
     payButton.onclick = () => activateAdAfterPayment(ad.id);
         card.appendChild(payButton);
             }
+
+            box.appendChild(card);
         }
     } catch (error) {
-
     
         console.error("Ad statistics error:", error);
         box.textContent =
