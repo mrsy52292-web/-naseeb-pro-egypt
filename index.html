@@ -1446,7 +1446,31 @@ if (ad.payment_receipt_path) {
     p.textContent = "لم يتم إرفاق إيصال تحويل.";
     card.appendChild(p);
  }
+         if (
+    ad.payment_review_status === "pending" &&
+    ad.payment_receipt_path
+) {
+    const reviewActions = document.createElement("div");
+    reviewActions.className = "actions";
+    reviewActions.style.marginTop = "12px";
+
+    const approveButton = document.createElement("button");
+    approveButton.className = "btn";
+    approveButton.textContent = "✅ اعتماد الإيصال";
+    approveButton.onclick = () =>
+        reviewAdPaymentReceipt(ad.id, "approved");
+
+    const rejectButton = document.createElement("button");
+    rejectButton.className = "btn danger";
+    rejectButton.textContent = "❌ رفض الإيصال";
+    rejectButton.onclick = () =>
+        reviewAdPaymentReceipt(ad.id, "rejected");
+
+    reviewActions.append(approveButton, rejectButton);
+    card.appendChild(reviewActions);
+     }
             if (
+            
                 ad.status === "approved" &&
                 ad.payment_status === "unpaid" &&
                 !ad.is_active
