@@ -1973,7 +1973,42 @@ async function answerCall(callId,newStatus) {
 
 /* الإعلانات والاشتراكات */
  // نظام إرسال طلبات الإعلانات ورفع الصور
+async function loadAdPaymentDetails() {
+    const method = $("adPaymentMethod")?.value;
+    const box = $("adPaymentDetails");
 
+    if (!box) return;
+
+    if (!method) {
+        box.textContent = "اختر وسيلة الدفع لعرض بيانات التحويل الرسمية.";
+        return;
+    }
+
+    box.textContent = "جارٍ تحميل بيانات التحويل...";
+
+    const { data, error } = await db
+        .from("payment_settings")
+        .select("display_name,account_name,account_number,instructions,is_active")
+        .eq("method", method)
+        .maybeSingle();
+
+    if (error) {
+        box.textContent = "تعذر تحميل بيانات الدفع. حاول مرة أخرى.";
+        return;
+    }
+
+    if (!data || !data.is_active) {
+        box.textContent = "وسيلة الدفع دي غير متاحة حاليًا.";
+        return;
+    }
+
+    box.innerHTML = `
+        <strong>${escapeHTML(data.display_name)}</strong>
+        <p>اسم صاحب الحساب: ${escapeHTML(data.account_name)}</p>
+        <p>رقم التحويل: ${escapeHTML(data.account_number)}</p>
+        <p>${escapeHTML(data.instructions || "حوّل المبلغ ثم أرفق صورة الإيصال.")}</p>
+    `;
+ }
 function setupAdRequestForm() {
   const form = $("adRequestForm");
   if (!form || form.dataset.bound === "true") return;
