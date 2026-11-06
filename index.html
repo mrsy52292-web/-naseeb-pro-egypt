@@ -1001,7 +1001,138 @@ function prepareAdminInterface() {
 
     box.appendChild(wrapper);
   }
-  
+ /* إعدادات الدفع */
+
+async function loadPaymentSettings() {
+    if (!(await checkAdminRole())) {
+        alert("ليس لديك صلاحية تعديل إعدادات الدفع.");
+        return;
+    }
+
+    prepareAdminInterface();
+
+    const box = $("naseebPaymentSettings");
+    if (!box) return;
+
+    box.innerHTML = '<div class="empty">جارٍ تحميل إعدادات الدفع...</div>';
+
+    const { data, error } = await db
+        .from("payment_settings")
+        .select("*");
+
+    if (error) {
+        box.textContent = "تعذر تحميل الإعدادات: " + error.message;
+        return;
+    }
+
+    const settings = data || [];
+
+    const methods = [
+        { id: "vodafone_cash", name: "فودافون كاش" },
+        { id: "instapay", name: "إنستاباي" }
+    ];
+
+    box.innerHTML = "";
+
+    for (const method of methods) {
+        const setting = settings.find(
+            item => item.method === method.id
+        ) || {};
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.style.cssText = "padding:14px;margin:12px 0";
+
+        card.innerHTML = `
+            <h3>${method.name}</h3>
+
+            <div class="field">
+                <label>اسم وسيلة الدفع</label>
+                <input id="pay_name_${method.id}"
+                    value="${escapeHTML(setting.display_name || method.name)}">
+            </div>
+
+            <div class="field">
+                <label>اسم صاحب الحساب</label>
+                <input id="pay_owner_${method.id}"
+                    value="${escapeHTML(setting.account_name || "")}"
+                    placeholder="اسم صاحب الحساب">
+            </div>
+
+            <div class="field">
+                <label>رقم الحساب أو المحفظة</label>
+                <input id="pay_number_${method.id}"
+                    value="${escapeHTML(setting.account_number || "")}"
+                    placeholder="أدخل رقم التحويل">
+            </div>
+
+            <div class="field">
+                <label>تعليمات التحويل للعميل</label>
+                <textarea id="pay_instructions_${method.id}"
+                    placeholder="اكتب تعليمات التحويل">${escapeHTML(setting.instructions || "")}</textarea>
+            </div>
+
+            <div class="field">
+                <label>
+                    <input type="checkbox"
+                        id="pay_active_${method.id}"
+                        ${setting.is_active !== false ? "checked" : ""}>
+                    وسيلة الدفع مفعلة
+                </label>
+            </div>
+
+            <button class="btn block" type="button"
+                onclick="savePaymentSetting('${method.id}')">
+                💾 حفظ إعدادات ${method.name}
+            </button>
+        `;
+
+        box.appendChild(card);
+    }
+
+    status("naseebAdminMessage", "تم تحميل إعدادات الدفع.");
+}
+
+async function savePaymentSetting(method) {
+    if (!(await checkAdminRole())) {
+        alert("ليس لديك صلاحية حفظ إعدادات الدفع.");
+        return;
+    }
+
+    if (!["vodafone_cash", "instapay"].includes(method)) return;
+
+    const display_name = $("pay_name_" + method).value.trim();
+    const account_name = $("pay_owner_" + method).value.trim();
+    const account_number = $("pay_number_" + method).value.trim();
+    const instructions = $("pay_instructions_" + method).value.trim();
+    const is_active = $("pay_active_" + method).checked;
+
+    if (!display_name || !account_name || !account_number) {
+        return alert("اكتب اسم الوسيلة واسم صاحب الحساب ورقم الحساب.");
+    }
+
+    const { error } = await db
+        .from("payment_settings")
+        .upsert({
+            method,
+            display_name,
+            account_name,
+            account_number,
+            instructions,
+            is_active,
+            updated_at: new Date().toISOString(),
+            updated_by: currentUser.id
+        }, {
+            onConflict: "method"
+        });
+
+    if (error) {
+        alert("تعذر حفظ الإعدادات: " + error.message);
+        return;
+    }
+
+    alert("تم حفظ إعدادات الدفع بنجاح 💗");
+ } 
 
 /* تحميل الملفات المعلقة */
 async function loadAdmin() {
