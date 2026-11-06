@@ -1562,7 +1562,57 @@ async function reviewAdPaymentReceipt(adId, decision) {
         alert("تعذرت مراجعة الإيصال: " + error.message);
     }
  }            
+/* الموافقة على طلب الإعلان أو رفضه */
+async function reviewAdRequest(adId, decision) {
+    if (!(await checkAdminRole())) {
+        alert("ليس لديك صلاحية مراجعة الإعلانات.");
+        return;
+    }
 
+    if (
+        !validUUID(adId) ||
+        !["approved", "rejected"].includes(decision)
+    ) {
+        alert("بيانات المراجعة غير صحيحة.");
+        return;
+    }
+
+    const question = decision === "approved"
+        ? "هل تريد الموافقة على نشر هذا الإعلان؟"
+        : "هل تريد رفض طلب الإعلان؟";
+
+    if (!confirm(question)) return;
+
+    try {
+        const { data, error } = await db
+            .from("ad_requests")
+            .update({ status: decision })
+            .eq("id", adId)
+            .eq("status", "pending")
+            .select("id")
+            .maybeSingle();
+
+        if (error) throw error;
+
+        if (!data) {
+            throw new Error(
+                "لم يتم تحديث الطلب. ربما تمت مراجعته بالفعل أو لا توجد صلاحية."
+            );
+        }
+
+        alert(
+            decision === "approved"
+                ? "تمت الموافقة على طلب الإعلان."
+                : "تم رفض طلب الإعلان."
+        );
+
+        await loadAdStatistics();
+
+    } catch (error) {
+        console.error("Ad request review error:", error);
+        alert("تعذرت مراجعة الإعلان: " + error.message);
+    }
+ }
         
 /* تسجيل استلام الدفع وتفعيل الإعلان بعد اعتماد الإيصال */
 async function activateAdAfterPayment(adId) {
