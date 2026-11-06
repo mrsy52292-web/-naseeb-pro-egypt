@@ -958,30 +958,37 @@ function prepareAdminInterface() {
             <h3>إدارة الأعضاء</h3>
 
             <div class="actions">
-                <button class="btn" type="button"
-                    onclick="loadAdmin()">
+                <button class="btn" type="button" onclick="loadAdmin()">
                     الأعضاء المعلقون
                 </button>
 
-                <button class="btn light" type="button"
-                    onclick="loadTrash()">
+                <button class="btn light" type="button" onclick="loadTrash()">
                     🗑️ سلة المهملات
                 </button>
 
-                <button class="btn light" type="button"
-                    onclick="loadCalls()">
+                <button class="btn light" type="button" onclick="loadCalls()">
                     طلبات المكالمات
                 </button>
 
-                <button class="btn gold" type="button"
-                    onclick="loadAdStatistics()">
+                <button class="btn gold" type="button" onclick="loadAdStatistics()">
                     📊 إحصائيات الإعلانات
+                </button>
+
+                <button class="btn" type="button" onclick="loadPaymentSettings()">
+                    💳 إعدادات الدفع
                 </button>
             </div>
 
             <div id="naseebAdminMessage" class="status"></div>
             <div id="naseebPendingList"></div>
             <div id="naseebTrashList"></div>
+        </div>
+
+        <div class="card">
+            <h3>💳 إعدادات الدفع</h3>
+            <div id="naseebPaymentSettings">
+                اضغط على إعدادات الدفع لتعديل بيانات التحويل.
+            </div>
         </div>
 
         <div class="card">
