@@ -1537,10 +1537,12 @@ if (ad.payment_receipt_path) {
     payButton.className = "btn gold block";
     payButton.textContent = "💰 تسجيل استلام الدفع وتفعيل الإعلان";
     payButton.onclick = () => activateAdAfterPayment(ad.id);
-    card.appendChild(payButton);
- }
-
+        card.appendChild(payButton);
+            }
+        }
     } catch (error) {
+
+    
         console.error("Ad statistics error:", error);
         box.textContent =
             "تعذر تحميل الإحصائيات: " + error.message;
