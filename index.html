@@ -1417,9 +1417,7 @@ async function loadAdStatistics() {
         is_active,
         created_at
     `)
-     
-false });
-.order("created_at", { ascending: false });
+    .order("created_at", { ascending: false });
         if (adsError) throw adsError;
 
         const allAds = ads || [];
