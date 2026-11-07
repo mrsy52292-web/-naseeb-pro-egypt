@@ -1394,8 +1394,7 @@ async function loadAdStatistics() {
     box.innerHTML = '<div class="empty">جارٍ تحميل الإحصائيات...</div>';
 
     try {
-        const { data: ads, error: adsError } = await db
-    .from("ad_requests")
+        
 const { data: ads, error: adsError } = await db
     .from("ad_requests")
     .select(`
