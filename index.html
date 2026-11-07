@@ -2297,11 +2297,13 @@ async function loadAds() {
         const { data, error } = await db
             .from("ad_requests")
             .select(`
-                id,
-                business_name,
-                ad_description,
-                image_url
-            `)
+    id,
+    advertiser_name,
+    contact_info,
+    business_name,
+    ad_description,
+    image_url
+`)
             .eq("status", "approved")
             .eq("payment_status", "paid")
             .eq("is_active", true)
