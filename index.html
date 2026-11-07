@@ -2137,13 +2137,13 @@ const { data: paymentSetting, error: paymentSettingError } = await db
   .select("account_number,is_active")
   .eq("method", paymentMethod)
   .maybeSingle();
-
 if (
   paymentSettingError ||
   !paymentSetting ||
   !paymentSetting.is_active ||
+  !paymentSetting.account_name?.trim() ||
   !paymentSetting.account_number?.trim()
-) {
+)
   message.textContent =
     "وسيلة الدفع غير متاحة حاليًا. اختر وسيلة أخرى أو تواصل مع الإدارة.";
   return;
