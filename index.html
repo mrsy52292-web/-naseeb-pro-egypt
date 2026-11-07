@@ -1397,12 +1397,13 @@ async function loadAdStatistics() {
         const { data: ads, error: adsError } = await db
     .from("ad_requests")
     .select(`
-        id,
-        advertiser_name,
-        contact_info,
-        business_name,
-        ad_description,
-        image_url,
+    id,
+    advertiser_name,
+    contact_info,
+    business_name,
+    ad_description,
+    image_url
+`)
         status,
         payment_status,
         payment_method,
