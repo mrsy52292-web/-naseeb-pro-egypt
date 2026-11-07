@@ -2362,14 +2362,23 @@ async function loadAds() {
             button.className = "btn block";
             button.textContent = "عرض تفاصيل الإعلان";
 
-            button.onclick = async () => {
-                const { error: trackError } = await db.rpc(
-                    "track_ad_event",
-                    {
-                        p_ad_id: ad.id,
-                        p_event_type: "click"
-                    }
-                );
+            button.onclick = () => {
+    alert(
+        "📢 تفاصيل الإعلان\n\n" +
+        "اسم النشاط: " + (ad.business_name || "غير محدد") +
+        "\nاسم المعلن: " + (ad.advertiser_name || "غير محدد") +
+        "\nرقم التواصل: " + (ad.contact_info || "غير متاح") +
+        "\n\nوصف الإعلان:\n" + (ad.ad_description || "لا يوجد")
+    );
+
+    // تسجيل النقرة في الخلفية دون تعطيل فتح التفاصيل
+    db.rpc("track_ad_event", {
+        p_ad_id: ad.id,
+        p_event_type: "click"
+    }).then(({ error }) => {
+        if (error) console.error("Ad click tracking:", error.message);
+    });
+};
 
                 if (trackError) {
                     console.error("Ad click tracking:", trackError.message);
