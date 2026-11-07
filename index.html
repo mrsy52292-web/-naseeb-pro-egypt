@@ -2129,12 +2129,12 @@ $("adPaymentMethod").addEventListener(
       message.textContent = "مدة الإعلان غير صحيحة.";
       return;
     }
-
-    if (!["vodafone_cash", "instapay"].includes(paymentMethod)) {
+if (!["vodafone_cash", "instapay"].includes(paymentMethod)) {
       message.textContent = "اختر وسيلة الدفع.";
       return;
-    }
-
+}
+   
+    
     if (!receiptFile) {
       message.textContent = "ارفع صورة إيصال التحويل أولًا.";
       return;
