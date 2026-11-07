@@ -1395,30 +1395,31 @@ async function loadAdStatistics() {
 
     try {
         const { data: ads, error: adsError } = await db
-            .from("ad_requests")
-            .select(`
-    id,
-    advertiser_name,
-    contact_info,
-    business_name,
-    ad_description,
-    image_url
-`)
-    status,
-    payment_status,
-    payment_method,
-    payment_reference,
-    payment_receipt_path,
-    payment_submitted_at,
-    payment_review_status,
-    duration_days,
-    starts_at,
-    expires_at,
-    is_active,
-    created_at
-`)
+    .from("ad_requests")
+    .select(`
+        id,
+        advertiser_name,
+        contact_info,
+        business_name,
+        ad_description,
+        image_url,
+        status,
+        payment_status,
+        payment_method,
+        payment_reference,
+        payment_receipt_path,
+        payment_submitted_at,
+        payment_review_status,
+        duration_days,
+        price_egp,
+        starts_at,
+        expires_at,
+        is_active,
+        created_at
+    `)
+     
+false });
 .order("created_at", { ascending: false });
-
         if (adsError) throw adsError;
 
         const allAds = ads || [];
