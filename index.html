@@ -1992,13 +1992,10 @@ async function loadAdPaymentDetails() {
         .eq("method", method)
         .maybeSingle();
 
-    if (error) {
-        box.textContent = "تعذر تحميل بيانات الدفع. حاول مرة أخرى.";
-        return;
-    }
-
-    if (!data || !data.is_active) {
-        box.textContent = "وسيلة الدفع دي غير متاحة حاليًا.";
+    if (error || !data || !data.is_active ||
+        !data.account_name?.trim() ||
+        !data.account_number?.trim()) {
+        box.textContent = "وسيلة الدفع غير متاحة حاليًا. يرجى التواصل مع الإدارة.";
         return;
     }
 
@@ -2009,6 +2006,7 @@ async function loadAdPaymentDetails() {
         <p>${escapeHTML(data.instructions || "حوّل المبلغ ثم أرفق صورة الإيصال.")}</p>
     `;
  }
+
 function setupAdRequestForm() {
   const form = $("adRequestForm");
   if (!form || form.dataset.bound === "true") return;
