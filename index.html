@@ -1578,8 +1578,7 @@ if (endDate && !isNaN(endDate.getTime()) && endDate <= now) {
                 "المدة: " + (ad.duration_days || "غير محددة") + " يومًا",
                 "المشاهدات: " + (stats[ad.id]?.impressions || 0),
                 "النقرات: " + (stats[ad.id]?.clicks || 0),
-                "حالة التفعيل: " + (ad.is_active ? "مفعل" : "غير مفعل")
-            ];
+                "حالة الإعلان: " + adActivationStatus
 
             details.forEach((value, index) => {
                 const p = document.createElement(index === 0 ? "h3" : "p");
