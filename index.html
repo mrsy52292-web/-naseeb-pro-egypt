@@ -2376,189 +2376,20 @@ function showAdDetails(ad) {
  
 
 async function loadAds() {
-    const box = $("adsList");
-    if (!box || !currentUser) return;
+    
 
-    box.innerHTML = '<div class="empty">جارٍ تحميل الإعلانات...</div>';
+ 
 
-    try {
-        const now = new Date().toISOString();
+            
 
-        const { data, error } = await db
-            .from("ad_requests")
-            .select(`
-                id,
-                advertiser_name,
-                contact_info,
-                business_name,
-                ad_description,
-                image_url
-            `)
-            .eq("status", "approved")
-            .eq("payment_status", "paid")
-            .eq("is_active", true)
-            .lte("starts_at", now)
-            .gt("expires_at", now)
-            .order("created_at", { ascending: false });
 
-        if (error) throw error;
-
-        box.innerHTML = "";
-
-        if (!data || !data.length) {
-            box.innerHTML =
-                '<div class="empty">📢 لا توجد إعلانات متاحة حاليًا.</div>';
-            return;
-        }
-
-        for (const ad of data) {
-            const card = document.createElement("div");
-            card.className = "card";
-            card.style.cssText = "padding:14px;margin:12px 0";
-
-            const title = document.createElement("h3");
-            title.textContent = ad.business_name || "إعلان تجاري";
-            card.appendChild(title);
-
-            if (ad.image_url) {
-                try {
-                    const imageUrl = new URL(ad.image_url);
-
-                    if (
-                        imageUrl.protocol === "https:" ||
-                        imageUrl.protocol === "http:"
-                    ) {
-                        const img = document.createElement("img");
-                        img.src = imageUrl.href;
-                        img.alt = "صورة الإعلان";
-                        img.loading = "lazy";
-                        img.style.cssText =
-                            "width:100%;max-height:220px;object-fit:cover;border-radius:12px;margin:10px 0";
-                        card.appendChild(img);
-                    }
-                } catch (e) {
-                    console.warn("رابط صورة الإعلان غير صالح");
-                }
-            }
-
-            const description = document.createElement("p");
-            description.textContent = ad.ad_description || "";
-            card.appendChild(description);
-
-            const button = document.createElement("button");
-            button.className = "btn block";
-            button.textContent = "عرض تفاصيل الإعلان";
-
-            button.onclick = () => {
-                showAdDetails(ad);
-
-                db.rpc("track_ad_event", {
-                    p_ad_id: ad.id,
-                    p_event_type: "click"
-                }).then(({ error }) => {
-                    if (error) {
-                        console.error("Ad click tracking:", error.message);
-                    }
-                });
-            };
-
-            card.appendChild(button);
-            box.appendChild(card);
-
-            if (!trackedAdImpressions.has(ad.id)) {
-                const trackImpression = async () => {
-                    if (trackedAdImpressions.has(ad.id)) return;
-
-                    trackedAdImpressions.add(ad.id);
-
-                    const { error: trackError } = await db.rpc(
-                        "track_ad_event",
-                        {
-                            p_ad_id: ad.id,
-                            p_event_type: "impression"
-                        }
-                    );
-
-                    if (trackError) {
-                        console.error(
-                            "Ad impression tracking:",
-                            trackError.message
-                        );
-                    }
-                };
-
-                if ("IntersectionObserver" in window) {
-                    const observer = new IntersectionObserver(entries => {
-                        if (entries.some(entry => entry.isIntersecting)) {
-                            observer.disconnect();
-                            trackImpression();
-                        }
-                    }, { threshold: 0.3 });
-
-                    observer.observe(card);
-                } else {
-                    await trackImpression();
-                }
-            }
-        }
-    } catch (error) {
-        console.error("Load ads error:", error);
-        box.textContent =
-            "تعذر تحميل الإعلانات: " +
-            (error.message || "حدث خطأ غير معروف.");
-    }
-}
+ 
  
 
 
             
             
-            box.appendChild(card);
-
-            if (!trackedAdImpressions.has(ad.id)) {
-                const trackImpression = async () => {
-                    if (trackedAdImpressions.has(ad.id)) return;
-
-                    trackedAdImpressions.add(ad.id);
-
-                    const { error: trackError } = await db.rpc(
-                        "track_ad_event",
-                        {
-                            p_ad_id: ad.id,
-                            p_event_type: "impression"
-                        }
-                    );
-
-                    if (trackError) {
-                        console.error(
-                            "Ad impression tracking:",
-                            trackError.message
-                        );
-                    }
-                };
-
-                if ("IntersectionObserver" in window) {
-                    const observer = new IntersectionObserver(entries => {
-                        if (entries.some(entry => entry.isIntersecting)) {
-                            observer.disconnect();
-                            trackImpression();
-                        }
-                    }, { threshold: 0.3 });
-
-                    observer.observe(card);
-                } else {
-                    await trackImpression();
-                }
-            }
-        }
-    } catch (error) {
-        console.error("Load ads error:", error);
-        box.textContent =
-            "تعذر تحميل الإعلانات: " +
-            (error.message || "حدث خطأ غير معروف.");
-    }
- }
- 
+            
 
          
 
