@@ -2285,6 +2285,96 @@ if (
 
 setupAdRequestForm();
 
+function showAdDetails(ad) {
+    // حذف أي نافذة تفاصيل قديمة
+    document.getElementById("adDetailsModal")?.remove();
+
+    const modal = document.createElement("div");
+    modal.id = "adDetailsModal";
+    modal.style.cssText = `
+        position:fixed;inset:0;background:rgba(0,0,0,.65);
+        z-index:9999;display:flex;align-items:center;
+        justify-content:center;padding:15px;overflow:auto
+    `;
+
+    const content = document.createElement("div");
+    content.style.cssText = `
+        background:white;width:100%;max-width:450px;
+        max-height:90vh;overflow:auto;border-radius:18px;
+        padding:20px;position:relative
+    `;
+
+    const title = document.createElement("h2");
+    title.textContent = "📢 تفاصيل الإعلان";
+
+    const close = document.createElement("button");
+    close.textContent = "✕ إغلاق";
+    close.className = "btn light block";
+    close.onclick = () => modal.remove();
+
+    content.append(title);
+
+    if (ad.image_url) {
+        const img = document.createElement("img");
+        img.src = ad.image_url;
+        img.alt = "صورة الإعلان";
+        img.style.cssText =
+            "width:100%;max-height:220px;object-fit:contain;border-radius:12px";
+        content.appendChild(img);
+    }
+
+    const business = document.createElement("h3");
+    business.textContent = ad.business_name || "إعلان تجاري";
+
+    const advertiser = document.createElement("p");
+    advertiser.textContent =
+        "اسم المعلن: " + (ad.advertiser_name || "غير محدد");
+
+    const description = document.createElement("p");
+    description.style.whiteSpace = "pre-wrap";
+    description.textContent =
+        "وصف الإعلان:\n" + (ad.ad_description || "لا يوجد");
+
+    content.append(business, advertiser, description);
+
+    const whatsappButton = document.createElement("button");
+    whatsappButton.className = "btn block";
+    whatsappButton.style.cssText =
+        "background:#168B50;margin:12px 0";
+    whatsappButton.textContent =
+        "🟢 تواصل مع المعلن عبر واتساب";
+
+    whatsappButton.onclick = () => {
+        const phone = String(ad.contact_info || "")
+            .replace(/\D/g, "");
+
+        if (!phone || phone.length < 8) {
+            alert("رقم واتساب المعلن غير متاح أو غير صحيح.");
+            return;
+        }
+
+        const message =
+            "السلام عليكم، أنا مهتم بإعلانك على موقع نصيب 💗\n" +
+            "اسم الإعلان: " + (ad.business_name || "إعلان تجاري");
+
+        const whatsappUrl =
+            "https://wa.me/" + phone +
+            "?text=" + encodeURIComponent(message);
+
+        window.open(whatsappUrl, "_blank");
+    };
+
+    content.append(whatsappButton, close);
+    modal.appendChild(content);
+
+    modal.addEventListener("click", event => {
+        if (event.target === modal) modal.remove();
+    });
+
+    document.body.appendChild(modal);
+         }
+ 
+ 
 async function loadAds() {
     const box = $("adsList");
     if (!box || !currentUser) return;
