@@ -1888,7 +1888,47 @@ async function activateAdAfterPayment(adId) {
     }
  }        
 
-    
+async function renewAd(adId) {
+    if (!(await checkAdminRole())) {
+        alert("ليس لديك صلاحية تجديد الإعلانات.");
+        return;
+    }
+
+    if (!validUUID(adId)) {
+        alert("رقم الإعلان غير صحيح.");
+        return;
+    }
+
+    const durationInput = prompt("اختر مدة التجديد بالأيام: 7 أو 15 أو 30");
+    if (durationInput === null) return;
+
+    const duration = Number(durationInput);
+
+    if (![7, 15, 30].includes(duration)) {
+        alert("المدة غير صحيحة. اختر 7 أو 15 أو 30 يومًا.");
+        return;
+    }
+
+    if (!confirm("هل استلمت مبلغ التجديد فعلًا؟ سيتم بدء فترة عرض جديدة لمدة " + duration + " يومًا.")) return;
+
+    try {
+        const { data, error } = await db.rpc("admin_renew_ad", {
+            p_ad_id: adId,
+            p_duration_days: duration
+        });
+
+        if (error) throw error;
+        if (!data) throw new Error("لم يتم تسجيل فترة التجديد.");
+
+        alert("تم تجديد الإعلان بنجاح لمدة " + duration + " يومًا.");
+        await loadAdStatistics();
+        await loadAds();
+
+    } catch (error) {
+        console.error("Ad renewal error:", error);
+        alert("تعذر تجديد الإعلان: " + error.message);
+    }
+ }    
         
 /* طلبات المكالمات */
 async function requestCall(matchId,otherId) {
