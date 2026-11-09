@@ -2374,7 +2374,7 @@ function showAdDetails(ad) {
     document.body.appendChild(modal);
          }
  
- 
+
 async function loadAds() {
     const box = $("adsList");
     if (!box || !currentUser) return;
@@ -2387,13 +2387,13 @@ async function loadAds() {
         const { data, error } = await db
             .from("ad_requests")
             .select(`
-    id,
-    advertiser_name,
-    contact_info,
-    business_name,
-    ad_description,
-    image_url
-`)
+                id,
+                advertiser_name,
+                contact_info,
+                business_name,
+                ad_description,
+                image_url
+            `)
             .eq("status", "approved")
             .eq("payment_status", "paid")
             .eq("is_active", true)
@@ -2405,12 +2405,9 @@ async function loadAds() {
 
         box.innerHTML = "";
 
-        if (!data || data.length === 0) {
-            box.innerHTML = `
-                <div class="empty">
-                    📢 لا توجد إعلانات متاحة حاليًا.
-                </div>
-            `;
+        if (!data || !data.length) {
+            box.innerHTML =
+                '<div class="empty">📢 لا توجد إعلانات متاحة حاليًا.</div>';
             return;
         }
 
@@ -2439,7 +2436,7 @@ async function loadAds() {
                             "width:100%;max-height:220px;object-fit:cover;border-radius:12px;margin:10px 0";
                         card.appendChild(img);
                     }
-                } catch (imageError) {
+                } catch (e) {
                     console.warn("رابط صورة الإعلان غير صالح");
                 }
             }
@@ -2451,24 +2448,69 @@ async function loadAds() {
             const button = document.createElement("button");
             button.className = "btn block";
             button.textContent = "عرض تفاصيل الإعلان";
-button.onclick = () => {
-    alert(
-        "📢 تفاصيل الإعلان\n\n" +
-        "اسم النشاط: " + (ad.business_name || "غير محدد") +
-        "\nاسم المعلن: " + (ad.advertiser_name || "غير محدد") +
-        "\nرقم التواصل: " + (ad.contact_info || "غير متاح") +
-        "\n\nوصف الإعلان:\n" + (ad.ad_description || "لا يوجد")
-    );
 
-    db.rpc("track_ad_event", {
-        p_ad_id: ad.id,
-        p_event_type: "click"
-    }).then(({ error }) => {
-        if (error) {
-            console.error("Ad click tracking:", error.message);
+            button.onclick = () => {
+                showAdDetails(ad);
+
+                db.rpc("track_ad_event", {
+                    p_ad_id: ad.id,
+                    p_event_type: "click"
+                }).then(({ error }) => {
+                    if (error) {
+                        console.error("Ad click tracking:", error.message);
+                    }
+                });
+            };
+
+            card.appendChild(button);
+            box.appendChild(card);
+
+            if (!trackedAdImpressions.has(ad.id)) {
+                const trackImpression = async () => {
+                    if (trackedAdImpressions.has(ad.id)) return;
+
+                    trackedAdImpressions.add(ad.id);
+
+                    const { error: trackError } = await db.rpc(
+                        "track_ad_event",
+                        {
+                            p_ad_id: ad.id,
+                            p_event_type: "impression"
+                        }
+                    );
+
+                    if (trackError) {
+                        console.error(
+                            "Ad impression tracking:",
+                            trackError.message
+                        );
+                    }
+                };
+
+                if ("IntersectionObserver" in window) {
+                    const observer = new IntersectionObserver(entries => {
+                        if (entries.some(entry => entry.isIntersecting)) {
+                            observer.disconnect();
+                            trackImpression();
+                        }
+                    }, { threshold: 0.3 });
+
+                    observer.observe(card);
+                } else {
+                    await trackImpression();
+                }
+            }
         }
-    });
-};
+    } catch (error) {
+        console.error("Load ads error:", error);
+        box.textContent =
+            "تعذر تحميل الإعلانات: " +
+            (error.message || "حدث خطأ غير معروف.");
+    }
+}
+ 
+
+
             
             card.appendChild(button);
             box.appendChild(card);
