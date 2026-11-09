@@ -1681,17 +1681,37 @@ if (ad.payment_receipt_path) {
     reviewActions.append(approveButton, rejectButton);
     card.appendChild(reviewActions);
      }
+                        if (
+                ad.status === "approved" &&
+                ad.payment_status === "unpaid" &&
+                ad.payment_review_status === "approved" &&
+                !ad.is_active
+            ) {
+                const payButton = document.createElement("button");
+                payButton.className = "btn gold block";
+                payButton.textContent = "💰 تسجيل استلام الدفع وتفعيل الإعلان";
+                payButton.onclick = () => activateAdAfterPayment(ad.id);
+                card.appendChild(payButton);
+            }
+
+            // تجديد الإعلان المنتهي بواسطة الإدارة فقط
+            const adEndDate = ad.expires_at
+                ? new Date(ad.expires_at)
+                : null;
+
             if (
-    ad.status === "approved" &&
-    ad.payment_status === "unpaid" &&
-    ad.payment_review_status === "approved" &&
-    !ad.is_active
-) {
-    const payButton = document.createElement("button");
-    payButton.className = "btn gold block";
-    payButton.textContent = "💰 تسجيل استلام الدفع وتفعيل الإعلان";
-    payButton.onclick = () => activateAdAfterPayment(ad.id);
-        card.appendChild(payButton);
+                ad.status === "approved" &&
+                ad.payment_status === "paid" &&
+                adEndDate &&
+                !Number.isNaN(adEndDate.getTime()) &&
+                adEndDate <= new Date()
+            ) {
+                const renewButton = document.createElement("button");
+                renewButton.className = "btn gold block";
+                renewButton.style.marginTop = "10px";
+                renewButton.textContent = "🔄 تجديد الإعلان";
+                renewButton.onclick = () => renewAd(ad.id);
+                card.appendChild(renewButton);
             }
 
             box.appendChild(card);
