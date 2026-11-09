@@ -1569,22 +1569,24 @@ if (endDate && !isNaN(endDate.getTime()) && endDate <= now) {
 } else if (ad.is_active) {
     adActivationStatus = "مفعل";
  }
-            const details = [
-                ad.business_name || "إعلان بدون اسم",
-                "الوصف: " + (ad.ad_description || "لا يوجد"),
-                "حالة الطلب: " + (statusNames[ad.status] || ad.status),
-                "حالة الدفع: " + (paymentNames[ad.payment_status] || ad.payment_status),
-                "السعر: " + (ad.price_egp ?? "لم يُحدد") + " جنيه",
-                "المدة: " + (ad.duration_days || "غير محددة") + " يومًا",
-                "المشاهدات: " + (stats[ad.id]?.impressions || 0),
-                "النقرات: " + (stats[ad.id]?.clicks || 0),
-                "حالة الإعلان: " + adActivationStatus
+const details = [
+    ad.business_name || "إعلان بدون اسم",
+    "الوصف: " + (ad.ad_description || "لا يوجد"),
+    "حالة الطلب: " + (statusNames[ad.status] || ad.status),
+    "حالة الدفع: " + (paymentNames[ad.payment_status] || ad.payment_status),
+    "السعر: " + (ad.price_egp ?? "لم يُحدد") + " جنيه",
+    "المدة: " + (ad.duration_days || "غير محددة") + " يومًا",
+    "المشاهدات: " + (stats[ad.id]?.impressions || 0),
+    "النقرات: " + (stats[ad.id]?.clicks || 0),
+    "حالة الإعلان: " + adActivationStatus
+];
 
-            details.forEach((value, index) => {
-                const p = document.createElement(index === 0 ? "h3" : "p");
-                p.textContent = value;
-                card.appendChild(p);
-            });
+details.forEach((value, index) => {
+    const p = document.createElement(index === 0 ? "h3" : "p");
+    p.textContent = value;
+    card.appendChild(p);
+});
+         
 const methodNames = {
     vodafone_cash: "فودافون كاش",
     instapay: "إنستاباي"
