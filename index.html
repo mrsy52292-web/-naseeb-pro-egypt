@@ -1556,7 +1556,19 @@ const { data: ads, error: adsError } = await db
                     "width:100%;max-height:200px;object-fit:cover;border-radius:12px";
                 card.appendChild(img);
             }
+const now = new Date();
+const startDate = ad.starts_at ? new Date(ad.starts_at) : null;
+const endDate = ad.expires_at ? new Date(ad.expires_at) : null;
 
+let adActivationStatus = "غير مفعل";
+
+if (endDate && !isNaN(endDate.getTime()) && endDate <= now) {
+    adActivationStatus = "منتهي";
+} else if (ad.is_active && startDate && startDate > now) {
+    adActivationStatus = "لم يبدأ بعد";
+} else if (ad.is_active) {
+    adActivationStatus = "مفعل";
+ }
             const details = [
                 ad.business_name || "إعلان بدون اسم",
                 "الوصف: " + (ad.ad_description || "لا يوجد"),
